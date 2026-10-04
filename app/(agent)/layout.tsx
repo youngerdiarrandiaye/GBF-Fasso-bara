@@ -29,6 +29,11 @@ export default async function AgentLayout({ children }: { children: React.ReactN
     .eq("id", user.id)
     .single();
 
+  // « / » est l'accueil Agent : un admin connecté y arrive après une
+  // déconnexion/reconnexion ou un lien, on l'envoie directement sur son espace.
+  if (profil?.role === "admin" && profil.actif) {
+    redirect("/admin");
+  }
   if (!profil || profil.role !== "agent" || !profil.actif) {
     redirect("/login");
   }

@@ -37,6 +37,10 @@ module.exports = {
       dk: 'var(--color-green-dk)',
       text: 'var(--color-text-green)',
     },
+    encre: {
+      DEFAULT: 'var(--color-encre)',
+      muted: 'var(--color-encre-muted)',
+    },
     navy: {
       DEFAULT: 'var(--color-navy)',
       dk: 'var(--color-navy-dk)',

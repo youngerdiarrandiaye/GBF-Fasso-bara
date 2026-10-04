@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { InlineAlert } from "@/components/ui/InlineAlert";
 
 /**
- * Connexion — redirige automatiquement vers /nouvelle-facture si le profil
+ * Connexion — redirige automatiquement vers l'accueil Agent (/) si le profil
  * connecté est un agent actif, ou vers /admin s'il s'agit d'un administrateur.
  * Le rôle réel provient toujours de la table `utilisateurs`
  * (RLS `utilisateurs_self_select`), jamais d'une valeur décidée côté client.
@@ -58,7 +58,7 @@ export function LoginForm() {
     }
 
     if (profil.role === "agent") {
-      router.push("/nouvelle-facture");
+      router.push("/");
       router.refresh();
       return;
     }

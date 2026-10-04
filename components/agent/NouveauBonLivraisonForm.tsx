@@ -142,7 +142,14 @@ function FactureLinkPicker({
   );
 }
 
-export function NouveauBonLivraisonForm({ espaceAdmin = false }: { espaceAdmin?: boolean }) {
+export function NouveauBonLivraisonForm({
+  espaceAdmin = false,
+  factureInitiale = null,
+}: {
+  espaceAdmin?: boolean;
+  /** Facture à livrer présélectionnée (bouton « Livrer » de l'accueil). */
+  factureInitiale?: FactureLegere | null;
+}) {
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -227,6 +234,15 @@ export function NouveauBonLivraisonForm({ espaceAdmin = false }: { espaceAdmin?:
     }
   }
 
+  // Présélection depuis « À livrer » : même chargement qu'un choix manuel,
+  // donc mêmes données imposées et même revérification serveur.
+  const factureInitialeChargee = useRef(false);
+  useEffect(() => {
+    if (!factureInitiale || factureInitialeChargee.current) return;
+    factureInitialeChargee.current = true;
+    void choisirFacture(factureInitiale);
+  }, [factureInitiale]);
+
   function ajouterProduit(produit: ProduitAvecStockEntrepot) {
     if (!entrepotId) return;
     const { quantiteStock } = stockPourEntrepot(produit, entrepotId);
@@ -307,8 +323,9 @@ export function NouveauBonLivraisonForm({ espaceAdmin = false }: { espaceAdmin?:
       <h1 className="text-h1 text-text">Nouveau bon de livraison</h1>
       <ol aria-label="Étapes de la livraison" className="grid grid-cols-3 gap-2">
         {["Client", "Produits", "Confirmation"].map((label, index) => (
-          <li key={label} aria-current={etape === index + 1 ? "step" : undefined} className={`rounded-input border px-2 py-3 text-center text-body ${etape === index + 1 ? "border-green bg-surface-2 font-semibold text-text" : "border-border text-muted"}`}>
-            {index + 1}. {label}
+          <li key={label} aria-current={etape === index + 1 ? "step" : undefined} className="flex flex-col gap-1.5 pt-1 text-body">
+            <span aria-hidden="true" className={`h-1 rounded-pill ${index + 1 <= etape ? "bg-green-dk" : "bg-border"}`} />
+            <span className={etape === index + 1 ? "font-semibold text-text" : index + 1 < etape ? "font-medium text-green-text" : "text-muted"}>{label}</span>
           </li>
         ))}
       </ol>

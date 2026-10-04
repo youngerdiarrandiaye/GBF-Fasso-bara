@@ -26,7 +26,7 @@ export function NavBar({ nom }: { nom: string }) {
     <header className="sticky top-0 z-sticky border-b border-border bg-surface shadow-sm">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-input bg-green text-body-sm font-bold text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-input bg-green-dk text-body-sm font-bold text-white">
             GFB
           </span>
           <span className="hidden text-h3 text-text sm:inline">FASSO BARA</span>

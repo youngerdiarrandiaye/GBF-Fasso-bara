@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { ServiceWorkerRegister } from "@/components/ui/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -25,12 +27,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#16A34A",
+  themeColor: "#15803D",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className="h-full">
+    <html lang="fr" className={`h-full ${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="h-full min-h-screen bg-bg font-sans text-text antialiased">
         {children}
         <ServiceWorkerRegister />

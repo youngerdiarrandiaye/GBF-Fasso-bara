@@ -536,9 +536,12 @@ export function NouvelleFactureForm({
             onClick={() => changerEtape(index + 1)}
             disabled={actionEnCours !== null || (index > 0 && (!client || !entrepotId)) || (index === 2 && lignes.length === 0)}
             aria-current={etape === index + 1 ? "step" : undefined}
-            className={`focus-ring min-h-14 rounded-card border px-2 py-3 text-body font-medium disabled:opacity-40 ${etape === index + 1 ? "border-green bg-green/10 text-text" : "border-border bg-surface text-muted"}`}
+            className="focus-ring flex min-h-tap flex-col gap-1.5 rounded-input px-1 pt-1 text-left text-body disabled:opacity-40"
           >
-            <span className="mr-1">{index + 1}.</span> {libelle}
+            <span aria-hidden="true" className={`h-1 rounded-pill ${index + 1 <= etape ? "bg-green-dk" : "bg-border"}`} />
+            <span className={etape === index + 1 ? "font-semibold text-text" : index + 1 < etape ? "font-medium text-green-text" : "text-muted"}>
+              {libelle}
+            </span>
           </button>
         ))}
       </nav>

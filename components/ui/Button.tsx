@@ -15,7 +15,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "bg-green text-white border border-green hover:bg-green-dk",
+  // Vert foncé : contraste AA du texte blanc (#16A34A ne l'atteint pas) — D-25.
+  primary: "bg-green-dk text-white border border-green-dk hover:brightness-90",
   secondary: "bg-surface-2 text-text border border-border hover:bg-border/60",
   outline: "bg-transparent text-text border border-border hover:bg-surface-2",
   ghost: "bg-transparent text-text border border-transparent hover:bg-surface-2",

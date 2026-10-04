@@ -39,7 +39,7 @@ export function BottomTabBar() {
               aria-label={tab.primary ? "Créer une facture" : tab.label}
               className={cn(
                 "focus-ring tap-target flex flex-col items-center justify-center gap-0.5 rounded-input px-2 text-caption",
-                tab.primary ? "bg-green font-semibold text-white" : actif ? "text-green-text" : "text-muted"
+                tab.primary ? "bg-green-dk font-semibold text-white" : actif ? "text-green-text" : "text-muted"
               )}
             >
               <FontAwesomeIcon icon={tab.icon} className="h-4 w-4" aria-hidden="true" />

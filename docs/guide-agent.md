@@ -18,7 +18,9 @@ utilisez le sommaire pour aller directement à ce qui vous concerne.
 
 ## 1. Créer une facture en 2 minutes
 
-Depuis l'espace Agent, ouvrez **Nouvelle facture**.
+Après connexion, vous arrivez sur l'**accueil** : vos ventes du jour, les raccourcis, et la liste
+**À livrer** (vos factures validées qui n'ont pas encore de bon de livraison, avec un bouton
+**Livrer** qui ouvre le bon déjà rempli). Ouvrez **Nouvelle facture**.
 
 1. **Entrepôt source** — en haut de l'écran, toujours visible. Choisissez l'entrepôt d'où
    partent les produits. C'est obligatoire dès le brouillon : sans entrepôt sélectionné,
@@ -158,6 +160,8 @@ recevez rien, votre administrateur peut redéfinir votre mot de passe.
 
 ## Changelog de ce guide
 
+- **4 octobre 2026** — Nouvelle présentation « Comptoir » : accueil avec ventes du jour et liste
+  « À livrer ».
 - **4 octobre 2026** — Échéance de paiement facultative, envoi de facture par e-mail, mot de
   passe oublié (section 7).
 - **4 octobre 2026** — Le stock sort désormais au bon de livraison, plus à la validation de

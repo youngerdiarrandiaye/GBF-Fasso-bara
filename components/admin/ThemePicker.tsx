@@ -4,21 +4,23 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 
 const STORAGE_KEY = "gfb-admin-background";
+// « Comptoir » (clair) est le fond par défaut depuis D-25 ; l'ancien choix
+// « Clair » (lavande) enregistré dans un navigateur est repris en Comptoir.
 const THEMES = [
+  { id: "comptoir", label: "Comptoir", color: "#F4F6F3" },
   { id: "forest", label: "Vert sombre", color: "#0F1712" },
   { id: "night", label: "Bleu nuit", color: "#101827" },
-  { id: "light", label: "Clair", color: "#F4F5FA" },
   { id: "sand", label: "Sable", color: "#F5EFE4" },
 ] as const;
 type Theme = (typeof THEMES)[number]["id"];
 
 export function ThemePicker({ collapsed }: { collapsed: boolean }) {
-  const [theme, setTheme] = useState<Theme>("forest");
+  const [theme, setTheme] = useState<Theme>("comptoir");
 
   useEffect(() => {
     let saved: string | null = null;
     try { saved = window.localStorage.getItem(STORAGE_KEY); } catch { /* Stockage indisponible. */ }
-    const initial = THEMES.find((item) => item.id === saved)?.id ?? "forest";
+    const initial = THEMES.find((item) => item.id === saved)?.id ?? "comptoir";
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(initial);
     document.documentElement.setAttribute("data-admin-background", initial);
@@ -42,7 +44,7 @@ export function ThemePicker({ collapsed }: { collapsed: boolean }) {
           )}>
             <input type="radio" name="admin-background" value={item.id} checked={theme === item.id}
               onChange={() => chooseTheme(item.id)} className="peer sr-only" />
-            <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/15 peer-focus-visible:ring-2 peer-focus-visible:ring-green peer-focus-visible:ring-offset-2" style={{ backgroundColor: item.color, color: item.id === "light" || item.id === "sand" ? "#182331" : "#FFFFFF" }}>{theme === item.id ? "✓" : ""}</span>
+            <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/15 peer-focus-visible:ring-2 peer-focus-visible:ring-green peer-focus-visible:ring-offset-2" style={{ backgroundColor: item.color, color: item.id === "comptoir" || item.id === "sand" ? "#182331" : "#FFFFFF" }}>{theme === item.id ? "✓" : ""}</span>
             {item.label}
           </label>
         ))}

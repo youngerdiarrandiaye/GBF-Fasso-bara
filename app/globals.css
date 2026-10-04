@@ -54,6 +54,11 @@
      Aucune couleur hors palette : tout est réutilisé/dérivé des tokens vert,
      vert foncé, vert néon (--color-hero-end) et turquoise (--color-accent-start).
      --------------------------------------------------------------------------- */
+  /* Carte « encre » : bloc de synthèse sombre sur fond clair (ventes du
+     jour de l'accueil Agent, D-25). Texte blanc ≈ 15:1, texte muted ≈ 9:1. */
+  --color-encre: #0E2A1A;
+  --color-encre-muted: #B9D8C3;
+
   --color-chart-serie-1: var(--color-green);    /* vert clair — CA facturé */
   --color-chart-serie-2: var(--color-green-dk); /* vert foncé — CA encaissé */
 
@@ -68,10 +73,10 @@
      cartes = rounded-xl, modals = rounded-2xl ; les badges de STATUT dérogent
      et utilisent rounded-full, voir --radius-badge-pill)
      --------------------------------------------------------------------------- */
-  --radius-input: 8px;          /* rounded-lg */
+  --radius-input: 10px;         /* champs, boutons — « Comptoir » (D-25) */
   --radius-badge: 8px;          /* rounded-lg — badges génériques (rôle, catégorie, kit) */
   --radius-badge-pill: 9999px;  /* rounded-full — badges de STATUT uniquement */
-  --radius-card: 12px;          /* rounded-xl */
+  --radius-card: 14px;          /* cartes — « Comptoir » (D-25) */
   --radius-card-lg: var(--radius-card); /* 12px de secours — voir override [data-theme="admin"] et §3.6/D-11 */
   --radius-modal: 16px;         /* rounded-2xl */
 
@@ -96,8 +101,10 @@
      --------------------------------------------------------------------------- */
   /* Pile locale uniquement : aucun téléchargement de police ne bloque le
      build ou le premier affichage, et la police native évite les décalages. */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Roboto Mono', monospace;
+  /* Geist (paquet npm `geist`, servi par l'application via next/font/local :
+     aucun appel réseau à l'exécution) — direction « Comptoir » (D-25). */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
 
   --text-display: 2rem;      /* 32px — valeurs clés dashboard */
   --text-display-lg: 2.5rem; /* 40px — valeur centrale de la jauge radiale (RadialGauge), emphase exceptionnelle */
@@ -148,12 +155,15 @@
    ============================================================================= */
 :root,
 [data-theme="admin"] {
-  --color-bg: #0F1712;
-  --color-surface: #16211A;
-  --color-surface-2: #1E2C22;
-  --color-border: #2C3D30;
-  --color-text: #F0F6F2;
-  --color-muted: #8FA294;
+  /* « Comptoir » (D-25) : fond clair vert-gris, cartes blanches, encre
+     vert très sombre. Les fonds sombres restent proposés dans le sélecteur
+     de thème (data-admin-background="forest" / "night", plus bas). */
+  --color-bg: #F4F6F3;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F1F4F0;
+  --color-border: #E3E8E2;
+  --color-text: #0E1A13;
+  --color-muted: #5B6A60;
 
   --color-navy: #1E2A45;
   --color-navy-dk: #141C30;
@@ -164,41 +174,41 @@
   --color-sidebar-bg: #FFFFFF;
   --color-sidebar-text: #0F1712;        /* réutilise le ton le plus sombre de la palette comme "encre" sur fond blanc */
   --color-sidebar-text-muted: #5B6E60;  /* identique à --color-muted du thème Agent : même contexte (fond clair), AA garanti */
-  --color-sidebar-active-bg: var(--color-green); /* item de nav actif = vert plein, voir D-16 (remplace le fond navy de D-12/Ultraleads) */
-  --color-sidebar-active-text: #FFFFFF;
+  --color-sidebar-active-bg: #E8F3EC;   /* item actif teinté (D-25, remplace le vert plein de D-16) */
+  --color-sidebar-active-text: #0F5F2D;
 
-  --radius-card-lg: 20px; /* rounded-[20px] — cartes vedettes dashboard Admin uniquement, voir §3.6/D-11 (valeur conservée, contexte visuel remplacé par D-14) */
+  --radius-card-lg: 16px; /* rounded-[20px] — cartes vedettes dashboard Admin uniquement, voir §3.6/D-11 (valeur conservée, contexte visuel remplacé par D-14) */
 
   /* Ombres fortes, noir pur — cohérent avec un fond sombre (§4 du doc,
      jamais mis à jour pendant la parenthèse Ultraleads). */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
-  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.32);
-  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.40);
-  --shadow-card-hover: 0 20px 40px rgba(0, 0, 0, 0.48);
+  --shadow-sm: 0 1px 2px rgba(14, 26, 19, 0.05);
+  --shadow-md: 0 4px 12px rgba(14, 26, 19, 0.07);
+  --shadow-lg: 0 12px 24px rgba(14, 26, 19, 0.09);
+  --shadow-card-hover: 0 12px 28px rgba(14, 26, 19, 0.10);
 
-  --focus-ring-alpha: 0.20;
+  --focus-ring-alpha: 0.25;
 
   /* Couleurs de TEXTE accentué : fond de nouveau sombre -> couleurs PLEINES
      de la palette de référence (contraste déjà largement suffisant sur fond
      sombre, voir §4/§4.1 du doc). Les variantes foncées "700" utilisées
      pendant Ultraleads (fond clair) ne s'appliquent plus qu'au thème Agent. */
-  --color-text-green: var(--color-green);
-  --color-text-amber: var(--color-amber);
-  --color-text-red: var(--color-red);
-  --color-text-blue: var(--color-blue);
-  --color-text-purple: var(--color-purple);
+  --color-text-green: #0F5F2D;
+  --color-text-amber: #8A4307;
+  --color-text-red: #9A2A1F;
+  --color-text-blue: #1D4ED8;
+  --color-text-purple: #6D28D9;
 }
 
 /* =============================================================================
    THEME AGENT — clair. Facturation terrain, boutique, extérieur/soleil.
    ============================================================================= */
 [data-theme="agent"] {
-  --color-bg: #FFFFFF;
+  --color-bg: #F4F6F3;
   --color-surface: #FFFFFF;
-  --color-surface-2: #F0F5F1;
-  --color-border: #DCE6DF;
-  --color-text: #10201A;
-  --color-muted: #5B6E60;
+  --color-surface-2: #F1F4F0;
+  --color-border: #E3E8E2;
+  --color-text: #0E1A13;
+  --color-muted: #5B6A60;
 
   --shadow-sm: 0 1px 2px rgba(15, 23, 18, 0.06);
   --shadow-md: 0 4px 12px rgba(15, 23, 18, 0.08);
@@ -214,15 +224,40 @@
      petite taille, jamais aux fonds, bordures ou remplissages qui conservent
      les valeurs exactes de la palette. Décision documentée dans
      docs/design-system.md §10 (journal des décisions). */
-  --color-text-green: var(--color-green-dk); /* #15803D — déjà un token de la palette de référence */
-  --color-text-amber: #B45309;
-  --color-text-red: #B91C1C;
+  --color-text-green: #0F5F2D;
+  --color-text-amber: #8A4307;
+  --color-text-red: #9A2A1F;
   --color-text-blue: #1D4ED8;
   --color-text-purple: #6D28D9;
 }
 
 
-/* Fonds Admin personnalisables depuis le menu de navigation. */
+/* Fonds Admin personnalisables depuis le menu de navigation. « Comptoir »
+   (clair) est le fond par défaut (:root ci-dessus, D-25) ; les fonds sombres
+   reprennent les valeurs de l'ancien thème « neon green » (D-14). */
+:root[data-admin-background="forest"],
+[data-admin-background="forest"] [data-theme="admin"],
+:root[data-admin-background="night"],
+[data-admin-background="night"] [data-theme="admin"] {
+  --color-bg: #0F1712;
+  --color-surface: #16211A;
+  --color-surface-2: #1E2C22;
+  --color-border: #2C3D30;
+  --color-text: #F0F6F2;
+  --color-muted: #8FA294;
+  --color-text-green: var(--color-green);
+  --color-text-amber: var(--color-amber);
+  --color-text-red: var(--color-red);
+  --color-text-blue: #60A5FA;
+  --color-text-purple: #A78BFA;
+  --color-sidebar-active-bg: var(--color-green);
+  --color-sidebar-active-text: #FFFFFF;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.40);
+  --shadow-card-hover: 0 20px 40px rgba(0, 0, 0, 0.48);
+}
+
 :root[data-admin-background="night"],
 [data-admin-background="night"] [data-theme="admin"] {
   --color-bg: #101827;
@@ -231,27 +266,6 @@
   --color-border: #36465F;
   --color-text: #F1F5FB;
   --color-muted: #A5B4CA;
-}
-
-:root[data-admin-background="light"],
-[data-admin-background="light"] [data-theme="admin"],
-:root[data-admin-background="sand"],
-[data-admin-background="sand"] [data-theme="admin"] {
-  --color-bg: #F4F5FA;
-  --color-surface: #FFFFFF;
-  --color-surface-2: #EDEFF5;
-  --color-border: #D7DCE5;
-  --color-text: #182331;
-  --color-muted: #566477;
-  --color-text-green: #15803D;
-  --color-text-amber: #B45309;
-  --color-text-red: #B91C1C;
-  --color-text-blue: #1D4ED8;
-  --color-text-purple: #6D28D9;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 18, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 18, 0.08);
-  --shadow-lg: 0 12px 24px rgba(15, 23, 18, 0.10);
-  --shadow-card-hover: 0 16px 32px rgba(15, 23, 18, 0.14);
 }
 
 :root[data-admin-background="sand"],

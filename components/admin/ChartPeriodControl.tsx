@@ -55,7 +55,7 @@ export function ChartPeriodControl({ valeurActuelle, dateDebut, dateFin }: { val
         <form onSubmit={appliquerDates} className="flex flex-wrap items-end justify-end gap-2 rounded-input border border-border bg-surface-2 p-2">
           <label className="flex flex-col gap-1 text-caption text-muted">Du<input type="date" value={debut} onChange={(event) => setDebut(event.target.value)} className="focus-ring h-10 rounded-input border border-border bg-surface px-2 text-body-sm text-text" required /></label>
           <label className="flex flex-col gap-1 text-caption text-muted">Au<input type="date" value={fin} min={debut || undefined} onChange={(event) => setFin(event.target.value)} className="focus-ring h-10 rounded-input border border-border bg-surface px-2 text-body-sm text-text" required /></label>
-          <button type="submit" disabled={!debut || !fin || plageInvalide || isPending} className="focus-ring h-10 rounded-input bg-green px-3 text-body-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">Afficher</button>
+          <button type="submit" disabled={!debut || !fin || plageInvalide || isPending} className="focus-ring h-10 rounded-input bg-green-dk px-3 text-body-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">Afficher</button>
           <p className={`w-full text-right text-caption ${plageInvalide ? "text-red-text" : "text-muted"}`}>{plageInvalide ? "Choisissez une période de 90 jours maximum." : "90 jours maximum"}</p>
         </form>
       )}

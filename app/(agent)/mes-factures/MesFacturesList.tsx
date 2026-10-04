@@ -93,7 +93,7 @@ export function MesFacturesList({
             onClick={() => setOnglet(tab.value)}
             className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
               onglet === tab.value
-                ? "bg-green text-white"
+                ? "bg-text text-surface"
                 : "bg-surface-2 text-muted hover:text-text"
             }`}
           >

@@ -77,6 +77,10 @@ premier des deux à démarrer) :
 
 ### 3.1 Couleurs de référence (fixes, ne jamais modifier)
 
+> **Mise à jour D-25 (octobre 2026) — direction « Comptoir ».** L'Admin est désormais **clair** par
+> défaut (fond `#F4F6F3`, cartes blanches) ; le thème sombre ci-dessous reste disponible via le
+> sélecteur de fond. Voir §10 D-25 pour les valeurs actuelles.
+
 > **Retour au thème sombre "neon green" (D-14, §10).** L'Espace Admin est repassé à un fond sombre —
 > la parenthèse claire "Ultraleads" (`--color-bg: #F4F5FA`, cartes blanches) est **définitivement
 > abandonnée**, voir historique juste en dessous du tableau. Les valeurs ci-dessous sont les valeurs
@@ -1517,6 +1521,28 @@ lieu à une nouvelle entrée ici avant implémentation, afin que la cohérence s
 sessions.
 
 ---
+
+**D-25 — Direction « Comptoir » (octobre 2026) : Admin clair par défaut, police Geist, rayons 10/14 px.**
+Validée par l'utilisateur à partir de la maquette « GFB-STOCK — Proposition de maquette ». Remplace D-14
+(Admin sombre « neon green ») comme thème **par défaut** ; le sombre reste proposé dans le sélecteur de
+fond (« Vert sombre », « Bleu nuit »), tout comme « Sable ». Changements :
+- **Fond** `--color-bg` `#F4F6F3` (vert-gris très clair), cartes `#FFFFFF`,
+  bordure `#E3E8E2`, encre `#0E1A13`, muted `#5B6A60` (≈ 5:1 sur le fond), identiques Admin et Agent.
+- **Texte accentué** foncé (`--color-text-*` : vert `#0F5F2D`, ambre `#8A4307`, rouge `#9A2A1F`) dans
+  les deux espaces : les fonds sont désormais clairs partout.
+- **Bouton `primary`** en `--color-green-dk` : le blanc sur `#16A34A` n'atteint pas AA (≈ 3.3:1). Les 6
+  couleurs de référence ne changent pas ; seuls leurs usages pour du texte blanc passent au vert foncé.
+- **Sidebar** : item actif teinté (`#E8F3EC` / `#0F5F2D`) au lieu du vert plein de D-16.
+- **Police** Geist / Geist Mono (paquet `geist`, servie par l'application, aucun appel réseau).
+- **Rayons** : `--radius-input` 10 px, `--radius-card` 14 px, `--radius-card-lg` 16 px.
+- **Carte « encre »** (`--color-encre`, `--color-encre-muted`) : seul bloc sombre autorisé sur fond clair
+  (ventes du jour, accueil Agent).
+- **Structure** : tableau de bord Admin avec en-tête sobre, actions en rangée de boutons et carte
+  unique « À traiter aujourd'hui » (livraisons, retards, stock bas, crédits, transferts) ; accueil
+  Agent avec ventes du jour, 4 tuiles et liste « À livrer » (`factures_a_livrer()`, migration 0023) ;
+  indicateur d'étapes en barres de progression (facture, bon de livraison).
+Les valeurs détaillées des §3.1, §3.3 et §3.7 décrivent l'état antérieur ; la source de vérité est
+`design-system/tokens.css` / `app/globals.css`.
 
 ## 11. Handoff
 

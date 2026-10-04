@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { WeeklySalesBarChart, DonutChart } from "@/components/admin/LazyCharts";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faBoxesStacked, faCircleCheck, faFileCirclePlus, faFileInvoice, faHandHoldingDollar, faTriangleExclamation, faTruck, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBoxesStacked, faCircleCheck, faFileCirclePlus, faFileInvoice, faHandHoldingDollar, faRightLeft, faTriangleExclamation, faTruck, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDate, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -155,6 +155,10 @@ export default async function DashboardAdminPage({
       .select("*, client:clients(id, nom, telephone), agent:utilisateurs!credits_agent_id_fkey(id, nom)")
       .eq("statut", "en_cours")
       .order("date_ouverture", { ascending: true }).order("id")),
+    // « À traiter aujourd'hui » : transferts partis, en attente de réception.
+    supabase.from("transferts_stock").select("id", { count: "exact", head: true }).eq("statut", "en_transit"),
+    // Factures validées réellement à livrer (hors sorties de stock historiques, 0023).
+    supabase.rpc("factures_a_livrer"),
   ]);
   if (resultats.some((resultat) => resultat.error)) {
     throw new Error("Le tableau de bord ne peut pas charger toutes les données.");
@@ -171,6 +175,8 @@ export default async function DashboardAdminPage({
     { data: facturesRetard },
     { data: entreprise },
     { data: creditsEnCours },
+    { count: transfertsEnTransit },
+    { data: facturesALivrer },
   ] = resultats;
   const config = entreprise as Pick<EntrepriseConfigRow, "nom" | "logo_url" | "seuil_credit_max"> | null;
   const creditsEnCoursTypes = (creditsEnCours as unknown as CreditAvecClient[]) ?? [];
@@ -278,30 +284,85 @@ export default async function DashboardAdminPage({
 
   if (pageActuelle > totalPagesFactures) redirect(buildHrefDernieresFactures(totalPagesFactures));
 
+  const nbTransferts = transfertsEnTransit ?? 0;
+  const nbALivrer = (facturesALivrer as unknown[] | null)?.length ?? 0;
+  const priorites = [
+    {
+      href: "/admin/bons-livraison/nouveau",
+      actif: nbALivrer > 0,
+      titre: nbALivrer > 0
+        ? `${nbALivrer} facture${nbALivrer > 1 ? "s" : ""} validée${nbALivrer > 1 ? "s" : ""} à livrer`
+        : "Aucune facture à livrer",
+      detail: nbALivrer > 0 ? "Le stock sort à la création du bon de livraison" : "Toutes les ventes sont livrées",
+      icone: faTruck,
+      cadre: "border-[color-mix(in_srgb,var(--color-amber)_35%,var(--color-border))]",
+      pastille: "badge-pastel-amber",
+    },
+    {
+      href: "#retards-paiement",
+      actif: facturesEnRetard.length > 0,
+      titre: facturesEnRetard.length > 0
+        ? `${facturesEnRetard.length} paiement${facturesEnRetard.length > 1 ? "s" : ""} en retard`
+        : "Aucun paiement en retard",
+      detail: facturesEnRetard.length > 0 ? `${formatMontant(soldeTotalRetard)} à relancer` : "Tous les paiements sont à jour",
+      icone: faTriangleExclamation,
+      cadre: "border-[color-mix(in_srgb,var(--color-red)_30%,var(--color-border))]",
+      pastille: "badge-pastel-red",
+    },
+    {
+      href: "/admin/stock?niveau=bas&actif=1",
+      actif: nbProduitsStockBas > 0,
+      titre: nbProduitsStockBas > 0
+        ? `${nbProduitsStockBas} produit${nbProduitsStockBas > 1 ? "s" : ""} sous le seuil`
+        : "Stock au-dessus des seuils",
+      detail: nbProduitsStockBas > 0 ? "Réapprovisionner ou transférer" : "Aucun produit à surveiller",
+      icone: faBoxesStacked,
+      cadre: "border-[color-mix(in_srgb,var(--color-amber)_35%,var(--color-border))]",
+      pastille: "badge-pastel-amber",
+    },
+    {
+      href: "/admin/credits",
+      actif: creditsEnCoursTypes.length > 0,
+      titre: creditsEnCoursTypes.length > 0
+        ? `${creditsEnCoursTypes.length} crédit${creditsEnCoursTypes.length > 1 ? "s" : ""} à recouvrer`
+        : "Aucun crédit en cours",
+      detail: creditsEnCoursTypes.length > 0 ? "Enregistrer les remboursements du jour" : "Rien à recouvrer",
+      icone: faWallet,
+      cadre: "border-border",
+      pastille: "badge-pastel-blue",
+    },
+    {
+      href: "/admin/transferts",
+      actif: nbTransferts > 0,
+      titre: nbTransferts > 0
+        ? `${nbTransferts} transfert${nbTransferts > 1 ? "s" : ""} à réceptionner`
+        : "Aucun transfert en transit",
+      detail: nbTransferts > 0 ? "Confirmer la réception à l'entrepôt d'arrivée" : "Tous les transferts sont réceptionnés",
+      icone: faRightLeft,
+      cadre: "border-border",
+      pastille: "badge-pastel-blue",
+    },
+  ];
+  const nbPrioritesActives = priorites.filter((p) => p.actif).length;
+
   return (
     <div className="flex min-w-0 flex-col gap-6 sm:gap-7">
       <RealtimeRevalidate
         tables={["factures", "lignes_facture", "produits", "categories_produits", "utilisateurs", "entreprise_config", "alertes_factures", "paiements", "credits", "remboursements_credit"]}
       />
 
-      <section className="relative overflow-hidden rounded-card-lg border border-border bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-surface)_94%,var(--color-green)_6%),var(--color-surface))] p-5 shadow-lg sm:p-6">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-green/70 to-transparent" />
-        <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-0 h-56 w-56 rounded-full bg-green/10 blur-3xl" />
-        <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
-        <div className="flex min-w-0 items-center gap-4">
-          <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="md" />
-          <div className="min-w-0">
-            <p className="mb-1 text-caption font-semibold uppercase tracking-[0.18em] text-green-text">Centre de pilotage</p>
-            <h1 className="text-h1 font-semibold tracking-tight text-text sm:text-display">Tableau de bord</h1>
-            <p className="mt-1 text-body-sm text-muted">
-              {config?.nom ?? "GIE FASSO BARA"} · {formatDateLongue(maintenant)}
-            </p>
-          </div>
+      <header className="flex flex-wrap items-center gap-4">
+        <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="md" />
+        <div className="mr-auto min-w-0">
+          <p className="text-body-sm text-muted">
+            {config?.nom ?? "GIE FASSO BARA"} · {formatDateLongue(maintenant)}
+          </p>
+          <h1 className="text-h1 font-semibold tracking-tight text-text">Bonjour, voici votre journée</h1>
         </div>
-        </div>
-      </section>
+        <DashboardRefresh />
+      </header>
 
-      <nav aria-label="Actions du quotidien" className="cascade grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <nav aria-label="Actions du quotidien" className="cascade flex flex-wrap gap-2">
         {[
           { href: "/admin/nouvelle-facture", label: "Créer une facture", icon: faFileCirclePlus, primary: true },
           { href: "/admin/paiements", label: "Paiements", icon: faWallet, primary: false },
@@ -310,15 +371,20 @@ export default async function DashboardAdminPage({
           { href: "/admin/bons-livraison/nouveau", label: "Créer une livraison", icon: faTruck, primary: false },
           { href: "/admin/stock/nouveau", label: "Ajouter un produit", icon: faBoxesStacked, primary: false },
         ].map((action) => (
-          <Link key={action.href} href={action.href} className="focus-ring flex min-h-28 min-w-0 flex-col items-center justify-center gap-3 rounded-card bg-surface p-3 text-center text-body-sm font-semibold text-text transition-colors hover:bg-green/10">
-            <span className={`flex h-14 w-14 items-center justify-center rounded-full ${action.primary ? "bg-green text-white" : "bg-green/10 text-green-text"}`}>
-              <FontAwesomeIcon icon={action.icon} className="h-6 w-6" aria-hidden="true" />
-            </span>
+          <Link
+            key={action.href}
+            href={action.href}
+            className={`focus-ring inline-flex h-tap items-center gap-2 rounded-input border px-4 text-body font-medium transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] ${
+              action.primary
+                ? "border-green-dk bg-green-dk text-white"
+                : "border-border bg-surface text-text hover:bg-surface-2"
+            }`}
+          >
+            <FontAwesomeIcon icon={action.icon} className={`h-4 w-4 ${action.primary ? "" : "text-muted"}`} aria-hidden="true" />
             {action.label}
           </Link>
         ))}
       </nav>
-      <div className="flex justify-end"><DashboardRefresh /></div>
 
       <section aria-labelledby="indicateurs-dashboard">
         <div className="mb-3">
@@ -330,7 +396,6 @@ export default async function DashboardAdminPage({
           label="CA mois"
           value={formatMontant(caduMois)}
           format="montant"
-          hero
           hint={`Du ${formatDate(dateVersISO(debutMois))} au ${formatDate(dateVersISO(maintenant))}`}
           href={`/admin/factures?debut=${dateVersISO(debutMois)}&fin=${dateVersISO(maintenant)}`}
         />
@@ -356,38 +421,31 @@ export default async function DashboardAdminPage({
       </div>
       </section>
 
-      <section aria-labelledby="priorites-dashboard">
-        <div className="mb-3 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-muted">Aujourd&apos;hui</p>
-            <h2 id="priorites-dashboard" className="scroll-mt-24 text-h2 font-semibold text-text">Priorités à traiter</h2>
-          </div>
-          <p className="hidden text-body-sm text-muted sm:block">Situation actuelle, En attente</p>
+      <Card className="!p-0">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3 sm:px-5">
+          <h2 id="priorites-dashboard" className="scroll-mt-24 text-h3 font-semibold text-text">À traiter aujourd&apos;hui</h2>
+          <span className="ml-auto font-mono text-body-sm text-muted">{nbPrioritesActives} action{nbPrioritesActives > 1 ? "s" : ""}</span>
         </div>
-        <div className="cascade grid grid-cols-1 gap-3 lg:grid-cols-3">
-          <a href="#retards-paiement" className="focus-ring group rounded-card">
-            <Card interactive className="flex h-full items-center gap-3 p-3 !border-[color-mix(in_srgb,var(--color-red)_30%,var(--color-border))]">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-red)_14%,var(--color-surface))] text-red-text"><FontAwesomeIcon icon={faTriangleExclamation} className="h-4 w-4" /></span>
-              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Retards de paiement</span><span className="block break-words font-mono text-h3 text-text">{facturesEnRetard.length} · {formatMontant(soldeTotalRetard)}</span></span>
-              <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1" />
-            </Card>
-          </a>
-          <Link href="/admin/stock?niveau=bas&actif=1" className="focus-ring group rounded-card">
-            <Card interactive className="flex h-full items-center gap-3 p-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-amber)_14%,var(--color-surface))] text-amber-text"><FontAwesomeIcon icon={faBoxesStacked} className="h-4 w-4" /></span>
-              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Stock à surveiller</span><span className="block break-words font-mono text-h3 text-text">{nbProduitsStockBas} produit{nbProduitsStockBas > 1 ? "s" : ""}</span></span>
-              <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1" />
-            </Card>
-          </Link>
-          <Link href="/admin/credits" className="focus-ring group rounded-card">
-            <Card interactive className="flex h-full items-center gap-3 p-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-blue)_14%,var(--color-surface))] text-blue-text"><FontAwesomeIcon icon={faWallet} className="h-4 w-4" /></span>
-              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Crédits à recouvrer</span><span className="block break-words font-mono text-h3 text-text">{creditsEnCoursTypes.length} dossier{creditsEnCoursTypes.length > 1 ? "s" : ""} en cours</span></span>
-              <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1" />
-            </Card>
-          </Link>
-        </div>
-      </section>
+        <ul className="cascade grid grid-cols-1 gap-2 p-3 sm:p-4 lg:grid-cols-2">
+          {priorites.map((p) => (
+            <li key={p.href}>
+              <Link
+                href={p.href}
+                className={`focus-ring group flex items-center gap-3 rounded-input border p-3 transition-colors hover:bg-surface-2 ${p.actif ? p.cadre : "border-border"}`}
+              >
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-input ${p.actif ? p.pastille : "badge-pastel-green"}`}>
+                  <FontAwesomeIcon icon={p.actif ? p.icone : faCircleCheck} className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-body font-semibold text-text">{p.titre}</span>
+                  <span className="block text-body-sm text-muted">{p.detail}</span>
+                </span>
+                <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Card>
 
       <Card className="overflow-hidden !p-0">
         <div className="flex flex-col gap-4 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">

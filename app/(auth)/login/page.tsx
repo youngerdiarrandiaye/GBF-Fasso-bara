@@ -18,7 +18,7 @@ export default async function LoginPage() {
       .single();
 
     if (profil?.role === "agent" && profil.actif) {
-      redirect("/nouvelle-facture");
+      redirect("/");
     }
     if (profil?.role === "admin" && profil.actif) {
       redirect("/admin");
@@ -28,7 +28,7 @@ export default async function LoginPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-center gap-2 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-card bg-green text-h2 font-bold text-white">
+        <div className="flex h-14 w-14 items-center justify-center rounded-card bg-green-dk text-h2 font-bold text-white">
           GFB
         </div>
         <h1 className="text-h1 text-text">GIE FASSO BARA</h1>
