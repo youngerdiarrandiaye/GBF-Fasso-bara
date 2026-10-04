@@ -111,3 +111,14 @@ export function construireMessageWhatsapp(numeroFacture: string, montant: number
     `Consulter ou télécharger le PDF : ${pdfUrl}`,
   ].join("\n");
 }
+
+/**
+ * Échéance appliquée quand la facture n'en fixe pas (règle métier 10) :
+ * date de validation + 10 jours, au format AAAA-MM-JJ. Miroir de
+ * `v_factures_retard_paiement` (migration 0020).
+ */
+export function echeanceParDefaut(dateValidation: string): string {
+  const d = new Date(dateValidation);
+  d.setUTCDate(d.getUTCDate() + 10);
+  return d.toISOString().slice(0, 10);
+}

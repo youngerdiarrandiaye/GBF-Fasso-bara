@@ -20,6 +20,9 @@ export default async function LoginPage() {
     if (profil?.role === "agent" && profil.actif) {
       redirect("/nouvelle-facture");
     }
+    if (profil?.role === "admin" && profil.actif) {
+      redirect("/admin");
+    }
   }
 
   return (
@@ -29,7 +32,7 @@ export default async function LoginPage() {
           GFB
         </div>
         <h1 className="text-h1 text-text">GIE FASSO BARA</h1>
-        <p className="text-body text-muted">Connectez-vous à votre espace agent</p>
+        <p className="text-body text-muted">Connectez-vous à votre espace</p>
       </div>
       <LoginForm />
     </div>

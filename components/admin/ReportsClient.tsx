@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -22,17 +22,17 @@ const LIBELLE_FORMAT: Record<"pdf" | "excel", string> = {
 };
 
 /**
- * Ã‰cran Rapports â€” filtres pÃ©riode/agent/catÃ©gorie + export PDF/Excel.
+ * Écran Rapports — filtres période/agent/catégorie + export PDF/Excel.
  *
- * L'export (gÃ©nÃ©ration du fichier) est dÃ©lÃ©guÃ© Ã  l'Edge Function
- * `export-rapport` dÃ©jÃ  livrÃ©e par dev-backend-edge
- * (supabase/functions/export-rapport), appelÃ©e ici via `supabase-js` â€” pas
- * de rÃ©implÃ©mentation de la gÃ©nÃ©ration PDF/Excel cÃ´tÃ© frontend, conformÃ©ment
- * Ã  la consigne de mÃ©thode. Le filtre "catÃ©gorie" n'est PAS supportÃ© par
+ * L'export (génération du fichier) est délégué à l'Edge Function
+ * `export-rapport` déjà livrée par dev-backend-edge
+ * (supabase/functions/export-rapport), appelée ici via `supabase-js` — pas
+ * de réimplémentation de la génération PDF/Excel côté frontend, conformément
+ * à la consigne de méthode. Le filtre "catégorie" n'est PAS supporté par
  * cette Edge Function (cf. son README : type/format/periode/agent_id
  * uniquement) : il s'applique donc uniquement aux graphiques imprimables
- * affichÃ©s Ã  l'Ã©cran (agrÃ©gation dÃ©jÃ  faite cÃ´tÃ© serveur, filtrÃ©e ici
- * cÃ´tÃ© client), jamais Ã  l'export PDF/Excel lui-mÃªme.
+ * affichés à l'écran (agrégation déjà faite côté serveur, filtrée ici
+ * côté client), jamais à l'export PDF/Excel lui-même.
  */
 export function ReportsClient({
   agents,
@@ -70,25 +70,25 @@ export function ReportsClient({
     const { data, error } = await supabase.functions.invoke("export-rapport", { body });
     setEnCours(false);
 
-    // Nom de l'objet Ã  nommer explicitement dans le toast (succÃ¨s ou Ã©chec) â€”
-    // docs/toast-et-coherence-donnees.md Â§1 rÃ¨gle 3 et Â§9 V3.4b.
+    // Nom de l'objet à nommer explicitement dans le toast (succès ou échec) —
+    // docs/toast-et-coherence-donnees.md §1 règle 3 et §9 V3.4b.
     const libelleRapport =
       type === "ventes"
         ? `${LIBELLE_TYPE.ventes} du ${formatDate(dateDebut)} au ${formatDate(dateFin)}`
         : LIBELLE_TYPE.stock;
 
     if (error || !data?.url) {
-      // HarmonisÃ© sur le systÃ¨me de Toast (persistant, fermeture manuelle) au
-      // lieu de l'InlineAlert local prÃ©cÃ©demment utilisÃ© ici â€” cf. Â§9 V3.4b :
-      // c'est le seul Ã©cran de l'app Ã  dÃ©vier de ce patron pour une erreur
+      // Harmonisé sur le système de Toast (persistant, fermeture manuelle) au
+      // lieu de l'InlineAlert local précédemment utilisé ici — cf. §9 V3.4b :
+      // c'est le seul écran de l'app à dévier de ce patron pour une erreur
       // bloquante d'action serveur.
       showToast(`Impossible de générer ce rapport (${libelleRapport}, ${LIBELLE_FORMAT[format]}).`, "error");
       return;
     }
 
-    // MÃªme risque de blocage de popup que pour l'export PDF de facture
+    // Même risque de blocage de popup que pour l'export PDF de facture
     // (handleExport est async, window.open survient hors du tour de boucle
-    // synchrone du clic) : le toast succÃ¨s sert aussi de filet de secours.
+    // synchrone du clic) : le toast succès sert aussi de filet de secours.
     const urlExport = normaliserUrlFichierLocal(data.url);
     const nouvelleFenetre = window.open(urlExport, "_blank");
     if (!nouvelleFenetre) {

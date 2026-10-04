@@ -96,8 +96,17 @@ export async function enregistrerBrouillon(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Session expirée, veuillez vous reconnecter." };
 
-  const { client_id, entrepot_id, remise, forfait_transport, tva_active, tva_taux, notes, lignes } =
-    parsed.data;
+  const {
+    client_id,
+    entrepot_id,
+    remise,
+    forfait_transport,
+    tva_active,
+    tva_taux,
+    date_echeance,
+    notes,
+    lignes,
+  } = parsed.data;
   const tauxEffectif = tva_active ? tva_taux : 0;
 
   let factureId: string;
@@ -112,6 +121,7 @@ export async function enregistrerBrouillon(
         remise_montant: remise,
         forfait_transport,
         tva_taux: tauxEffectif,
+        date_echeance: date_echeance || null,
         notes: notes || null,
       })
       .eq("id", input.factureId)
@@ -156,6 +166,7 @@ export async function enregistrerBrouillon(
         remise_montant: remise,
         forfait_transport,
         tva_taux: tauxEffectif,
+        date_echeance: date_echeance || null,
         notes: notes || null,
       })
       .select("id, numero")

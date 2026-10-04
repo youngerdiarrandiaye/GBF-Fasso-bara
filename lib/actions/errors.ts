@@ -156,6 +156,11 @@ function detecterErreurWhitelistee(messageBrut: string, code?: string): ErreurWh
   // credits_un_seul_en_cours_par_client reste alors seul rempart, et remonte
   // une violation d'unicité Postgres brute (code 23505) plutôt qu'un message
   // métier lisible.
+  // 0020 : échéance de paiement antérieure à la date de la facture.
+  if (code === "23514" && messageBrut.includes("factures_date_echeance_apres_date_facture")) {
+    return { error: "La date d'échéance ne peut pas précéder la date de la facture." };
+  }
+
   if (code === "23505" && messageBrut.includes("credits_un_seul_en_cours_par_client")) {
     return {
       error: "Crédit refusé — ce client a déjà un crédit en cours (contrainte d'unicité base de données).",

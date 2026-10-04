@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -7,33 +7,33 @@ import { formatMontant } from "@/lib/format";
 import { useCountUp } from "@/lib/hooks/useCountUp";
 
 /**
- * Stat card â€” docs/design-system.md Â§6.3 : rounded-xl, fond surface, valeur
- * en text-display monospace, libellÃ© text-body-sm muted au-dessus, variation
- * optionnelle (badge vert/rouge + flÃ¨che) sous la valeur.
+ * Stat card — docs/design-system.md §6.3 : rounded-xl, fond surface, valeur
+ * en text-display monospace, libellé text-body-sm muted au-dessus, variation
+ * optionnelle (badge vert/rouge + flèche) sous la valeur.
  *
- * Si `href` est fourni, la carte entiÃ¨re devient un lien de navigation : elle
- * reprend l'Ã©tat hover/active dÃ©jÃ  dÃ©fini par `Card` (`interactive`) â€” mÃªme
+ * Si `href` est fourni, la carte entière devient un lien de navigation : elle
+ * reprend l'état hover/active déjà défini par `Card` (`interactive`) — même
  * traitement `translateY(-2px)` + `shadow-card-hover` que les autres cartes
- * cliquables du design system, sans style dupliquÃ©.
+ * cliquables du design system, sans style dupliqué.
  *
- * `hero` (docs Â§3.8/D-17) : fond `--gradient-hero` (vert profond â†’ vert nÃ©on)
- * + texte blanc, rÃ©servÃ© Ã  LA stat principale d'un dashboard (une seule carte
- * "hÃ©ro" par Ã©cran) â€” jamais utilisÃ© pour signaler un Ã©tat/statut (ce rÃ´le
+ * `hero` (docs §3.8/D-17) : fond `--gradient-hero` (vert profond → vert néon)
+ * + texte blanc, réservé à LA stat principale d'un dashboard (une seule carte
+ * "héro" par écran) — jamais utilisé pour signaler un état/statut (ce rôle
  * reste aux tons vert/ambre/rouge/bleu existants). Remplace l'ancien fond
  * plein `navy` (devenu quasi invisible sur le fond sombre "neon green", D-18).
  *
- * Compteur animÃ© (`numericValue`/`format`, docs Â§7) : si `numericValue`
+ * Compteur animé (`numericValue`/`format`, docs §7) : si `numericValue`
  * est fourni, la carte anime 0 -> `numericValue` au montage via `useCountUp`
- * et affiche chaque valeur intermÃ©diaire formatÃ©e selon `format` (par
- * dÃ©faut `"entier"`). Sans `numericValue`, `value` est affichÃ©e telle quelle,
- * sans animation â€” comportement inchangÃ© pour les appelants existants qui ne
- * passent qu'une string dÃ©jÃ  formatÃ©e (ex. page Paiements).
+ * et affiche chaque valeur intermédiaire formatée selon `format` (par
+ * défaut `"entier"`). Sans `numericValue`, `value` est affichée telle quelle,
+ * sans animation — comportement inchangé pour les appelants existants qui ne
+ * passent qu'une string déjà formatée (ex. page Paiements).
  *
- * `format` est une chaÃ®ne (pas une fonction) car ce composant est un Client
+ * `format` est une chaîne (pas une fonction) car ce composant est un Client
  * Component : une fonction (ex. `formatMontant`) ne peut pas traverser la
- * frontiÃ¨re serveurâ†’client depuis la page serveur qui l'appelle (Next.js
- * rejette les props-fonctions non `"use server"`) â€” le composant rÃ©sout donc
- * lui-mÃªme le formateur Ã  partir d'un identifiant sÃ©rialisable.
+ * frontière serveur→client depuis la page serveur qui l'appelle (Next.js
+ * rejette les props-fonctions non `"use server"`) — le composant résout donc
+ * lui-même le formateur à partir d'un identifiant sérialisable.
  */
 export function StatCard({
   label,
@@ -51,7 +51,7 @@ export function StatCard({
   hint?: string;
   href?: string;
   hero?: boolean;
-  /** Valeur numÃ©rique brute Ã  animer (0 -> numericValue) au montage. */
+  /** Valeur numérique brute à animer (0 -> numericValue) au montage. */
   numericValue?: number;
   /** Formatte la valeur courante pendant l'animation. */
   format?: "entier" | "montant";
@@ -91,21 +91,21 @@ export function StatCard({
       <div className="flex items-start gap-2">
         <span className={cn("mt-1 h-1.5 w-1.5 shrink-0 rounded-full", signalClass)} aria-hidden="true" />
         <p className={cn("min-w-0 flex-1 text-[0.68rem] font-semibold uppercase leading-4 tracking-[0.16em]", hero ? "text-green-text" : "text-muted")}>{label}</p>
-        {href && <span aria-hidden="true" className={cn("text-body-sm transition-transform group-hover:translate-x-1", hero ? "text-muted" : "text-muted")}>â†’</span>}
+        {href && <span aria-hidden="true" className={cn("text-body-sm transition-transform group-hover:translate-x-1", hero ? "text-muted" : "text-muted")}>→</span>}
       </div>
       <p className={cn("break-words font-mono text-[1.75rem] font-semibold leading-none tracking-[-0.04em] sm:text-[2.05rem]", toneClass)}>{valeurAffichee}</p>
       {hint && <p className={cn("text-[0.72rem] leading-4", hero ? "text-muted" : "text-muted")}>{hint}</p>}
     </div>
   );
 
-  // Rayon Ã©largi (Â§3.6/D-11) : StatCard fait partie de la rangÃ©e "vedette" du
-  // dashboard (rÃ©sumÃ© faÃ§on "Sales Overview"), qu'elle soit hÃ©ro ou non.
-  // `!border-transparent` : `Card` fixe dÃ©jÃ  `border-border` dans ses classes
-  // de base, et `cn()` (lib/cn.ts) est une simple concatÃ©nation SANS
-  // dÃ©duplication (choix assumÃ© du projet) â€” sans le prÃ©fixe `!` les deux
-  // classes de bordure coexistent dans le DOM et laquelle "gagne" dÃ©pend de
-  // l'ordre de gÃ©nÃ©ration Tailwind, pas de l'ordre dans `className`. MÃªme
-  // convention dÃ©jÃ  utilisÃ©e ailleurs pour outrepasser un dÃ©faut de `Card`.
+  // Rayon élargi (§3.6/D-11) : StatCard fait partie de la rangée "vedette" du
+  // dashboard (résumé façon "Sales Overview"), qu'elle soit héro ou non.
+  // `!border-transparent` : `Card` fixe déjà `border-border` dans ses classes
+  // de base, et `cn()` (lib/cn.ts) est une simple concaténation SANS
+  // déduplication (choix assumé du projet) — sans le préfixe `!` les deux
+  // classes de bordure coexistent dans le DOM et laquelle "gagne" dépend de
+  // l'ordre de génération Tailwind, pas de l'ordre dans `className`. Même
+  // convention déjà utilisée ailleurs pour outrepasser un défaut de `Card`.
   if (href) {
     return (
       <Link href={href} className="focus-ring group block h-full rounded-card-lg">

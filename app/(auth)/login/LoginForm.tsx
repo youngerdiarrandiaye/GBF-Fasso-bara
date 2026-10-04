@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,6 +95,9 @@ export function LoginForm() {
       <Button type="submit" size="lg" fullWidth loading={isSubmitting}>
         Se connecter
       </Button>
+      <Link href="/mot-de-passe-oublie" className="text-center text-body text-muted underline">
+        Mot de passe oublié ?
+      </Link>
     </form>
   );
 }

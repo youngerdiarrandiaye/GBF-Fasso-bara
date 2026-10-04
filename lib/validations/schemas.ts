@@ -64,6 +64,13 @@ export const factureSchema = z.object({
     .default(0),
   tva_active: z.boolean().default(false),
   tva_taux: z.coerce.number().min(0).max(1).default(0),
+  // Échéance de paiement facultative (0020) : vide => date de validation +
+  // 10 jours. La base refuse une échéance antérieure à la date de facture.
+  date_echeance: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date d'échéance invalide.")
+    .optional()
+    .or(z.literal("")),
   notes: z.string().trim().optional().or(z.literal("")),
 });
 
@@ -175,6 +182,32 @@ export const nouvelUtilisateurSchema = z.object({
 });
 
 export type NouvelUtilisateurInput = z.infer<typeof nouvelUtilisateurSchema>;
+
+const nouveauMotDePasse = z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères.");
+
+/** Saisie d'un nouveau mot de passe avec confirmation (admin ou utilisateur lui-même). */
+export const nouveauMotDePasseSchema = z
+  .object({
+    password: nouveauMotDePasse,
+    confirmation: z.string(),
+  })
+  .refine((v) => v.password === v.confirmation, {
+    message: "Les deux mots de passe ne correspondent pas.",
+    path: ["confirmation"],
+  });
+
+export type NouveauMotDePasseInput = z.infer<typeof nouveauMotDePasseSchema>;
+
+export const redefinirMotDePasseSchema = z.object({
+  id: z.string().uuid(),
+  password: nouveauMotDePasse,
+});
+
+export const motDePasseOublieSchema = z.object({
+  email: z.string().trim().email("Adresse e-mail invalide."),
+});
+
+export type MotDePasseOublieInput = z.infer<typeof motDePasseOublieSchema>;
 
 export const modifierUtilisateurSchema = z.object({
   id: z.string().uuid(),

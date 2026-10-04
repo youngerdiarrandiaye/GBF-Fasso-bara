@@ -234,7 +234,7 @@ Deno.serve(async (req: Request) => {
       .from("factures")
       .select(
         `
-        id, numero, statut, date_facture, notes,
+        id, numero, statut, date_facture, date_echeance, notes,
         total_ht, forfait_transport, tva_taux, total_general,
         agent_id,
         client:client_id ( nom, type_client, adresse, telephone, email, ninea ),
@@ -753,6 +753,19 @@ function drawHeader(
     size: 10,
     font: fonts.regular,
   });
+
+  // 0020 — échéance de paiement explicite, seulement sur une facture (une
+  // proforma n'appelle pas de paiement).
+  if (facture.date_echeance && facture.statut !== "proforma") {
+    const echeanceTexte = `Échéance : ${formatDateFr(facture.date_echeance)}`;
+    const echeanceWidth = fonts.bold.widthOfTextAtSize(echeanceTexte, 9);
+    page.drawText(echeanceTexte, {
+      x: MARGIN + CONTENT_WIDTH - echeanceWidth,
+      y: y - 83,
+      size: 9,
+      font: fonts.bold,
+    });
+  }
 
   // Filet de séparation : noir 1pt -> vert #15803D 1.5pt (§4.1 v1),
   // repositionné de y0-68 à y0-92 (v2 §1.3, cascade du badge).

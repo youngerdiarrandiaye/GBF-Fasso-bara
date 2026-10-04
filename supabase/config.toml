@@ -10,6 +10,17 @@
 # 54321 est réservé par Windows sur cette machine.
 port = 55321
 
+[auth]
+# URL de l'application : base des liens envoyés par e-mail (modèle recovery
+# ci-dessous). En production, régler la même valeur dans Dashboard >
+# Authentication > URL Configuration, et y coller le modèle recovery.html.
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["http://127.0.0.1:3000/**", "http://localhost:3000/**"]
+
+[auth.email.template.recovery]
+subject = "GFB-STOCK — Réinitialisation de votre mot de passe"
+content_path = "./supabase/templates/recovery.html"
+
 [functions.generer-facture-pdf]
 # JWT utilisateur classique (agent ou admin connecté) : la passerelle
 # Supabase valide le token AVANT d'invoquer la fonction.

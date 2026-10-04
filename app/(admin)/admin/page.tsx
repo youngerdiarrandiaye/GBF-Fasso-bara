@@ -1,4 +1,4 @@
-﻿import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { WeeklySalesBarChart, DonutChart } from "@/components/admin/LazyCharts";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -59,7 +59,7 @@ function dateVersISO(date: Date): string {
 
 function debutSemaine(date: Date): Date {
   const jour = date.getDay(); // 0 = dimanche
-  const decalage = jour === 0 ? 6 : jour - 1; // semaine ISO dÃ©marrant lundi
+  const decalage = jour === 0 ? 6 : jour - 1; // semaine ISO démarrant lundi
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
   d.setDate(d.getDate() - decalage);
@@ -95,11 +95,11 @@ export default async function DashboardAdminPage({
   const offsetFactures = (pageActuelle - 1) * FACTURES_PAGE_SIZE;
 
   const resultats = await Promise.all([
-    // Ã‰tendue avec `agent:utilisateurs!factures_agent_id_fkey(...)` (FK
+    // Étendue avec `agent:utilisateurs!factures_agent_id_fkey(...)` (FK
     // explicite requise par PostgREST, plusieurs FK vers utilisateurs sur
-    // factures) pour rÃ©utiliser cette mÃªme requÃªte Ã  la fois pour le CA du
-    // mois (StatCard) et la rÃ©partition par agent (NestedRadialProgress) â€”
-    // Ã©vite un second aller-retour Supabase redondant.
+    // factures) pour réutiliser cette même requête à la fois pour le CA du
+    // mois (StatCard) et la répartition par agent (NestedRadialProgress) —
+    // évite un second aller-retour Supabase redondant.
     readAll(supabase
       .from("factures")
       .select(
@@ -119,9 +119,9 @@ export default async function DashboardAdminPage({
       .gte("date_facture", dateVersISO(debutPeriodeGraph))
       .lte("date_facture", dateVersISO(finPeriodeGraph))
       .in("statut", STATUTS_CA).order("id")),
-    // CA encaissÃ© (WeeklySalesBarChart, sÃ©rie 2) : paiements rÃ©ellement
-    // enregistrÃ©s sur la mÃªme fenÃªtre de semaines, indÃ©pendamment du statut
-    // courant de la facture concernÃ©e.
+    // CA encaissé (WeeklySalesBarChart, série 2) : paiements réellement
+    // enregistrés sur la même fenêtre de semaines, indépendamment du statut
+    // courant de la facture concernée.
     readAll(supabase
       .from("paiements")
       .select("montant, date_paiement")
@@ -132,8 +132,8 @@ export default async function DashboardAdminPage({
       .select("montant, date_remboursement")
       .gte("date_remboursement", dateVersISO(debutPeriodeGraph))
       .lte("date_remboursement", dateVersISO(finPeriodeGraph)).order("id")),
-    // QuantitÃ©s vendues par catÃ©gorie ce mois-ci (DonutChart "Statistique
-    // Produit") â€” mÃªme schÃ©ma de jointure filtrÃ©e que app/(admin)/admin/rapports/page.tsx.
+    // Quantités vendues par catégorie ce mois-ci (DonutChart "Statistique
+    // Produit") — même schéma de jointure filtrée que app/(admin)/admin/rapports/page.tsx.
     readAll(supabase
       .from("lignes_facture")
       .select(
@@ -151,12 +151,12 @@ export default async function DashboardAdminPage({
       .order("created_at", { ascending: false }).order("id")
       .range(offsetFactures, offsetFactures + FACTURES_PAGE_SIZE - 1),
     readAll(supabase.from("v_factures_retard_paiement").select("*").order("jours_de_retard", { ascending: false }).order("facture_id")),
-    // RÃ¨gle mÃ©tier 12 (0013_avenant_credit_entrepots.sql) : seuil_credit_max
-    // ajoutÃ© Ã  cette mÃªme requÃªte (dÃ©jÃ  utilisÃ©e par le dashboard) pour ne
+    // Règle métier 12 (0013_avenant_credit_entrepots.sql) : seuil_credit_max
+    // ajouté à cette même requête (déjà utilisée par le dashboard) pour ne
     // pas multiplier les allers-retours Supabase.
     supabase.from("entreprise_config").select("nom, logo_url, seuil_credit_max").eq("id", true).single(),
-    // Carte "CrÃ©dit non recouvrÃ©" (Â§5.9) + tableau des crÃ©dits en cours,
-    // triÃ©s par anciennetÃ© (le plus vieux d'abord, mÃªme tri que /admin/credits).
+    // Carte "Crédit non recouvré" (§5.9) + tableau des crédits en cours,
+    // triés par ancienneté (le plus vieux d'abord, même tri que /admin/credits).
     readAll(supabase
       .from("credits")
       .select("*, client:clients(id, nom, telephone), agent:utilisateurs!credits_agent_id_fkey(id, nom)")
@@ -164,7 +164,7 @@ export default async function DashboardAdminPage({
       .order("date_ouverture", { ascending: true }).order("id")),
   ]);
   if (resultats.some((resultat) => resultat.error)) {
-    throw new Error("Le tableau de bord ne peut pas charger toutes les donnÃ©es.");
+    throw new Error("Le tableau de bord ne peut pas charger toutes les données.");
   }
   const [
     { data: facturesMois },
@@ -192,10 +192,10 @@ export default async function DashboardAdminPage({
     0
   );
 
-  // RÃ©partition du CA du mois par agent actif (NestedRadialProgress) â€” les
-  // agents dÃ©sactivÃ©s ou tout autre rÃ´le (ex. admin ayant lui-mÃªme validÃ© une
-  // facture) sont exclus des anneaux, conformÃ©ment Ã  la spec (docs
-  // Â§6.24 : "un anneau par agent actif").
+  // Répartition du CA du mois par agent actif (NestedRadialProgress) — les
+  // agents désactivés ou tout autre rôle (ex. admin ayant lui-même validé une
+  // facture) sont exclus des anneaux, conformément à la spec (docs
+  // §6.24 : "un anneau par agent actif").
   const parAgent = new Map<string, PointAgentCA>();
   (facturesMois ?? []).forEach((f) => {
     const agent = f.agent as unknown as { id: string; nom: string; actif: boolean; role: string } | null;
@@ -209,21 +209,21 @@ export default async function DashboardAdminPage({
   });
   const repartitionAgents: PointAgentCA[] = Array.from(parAgent.values());
 
-  // QuantitÃ©s vendues par catÃ©gorie ce mois-ci (DonutChart).
+  // Quantités vendues par catégorie ce mois-ci (DonutChart).
   const parCategorie = new Map<string, number>();
   (lignesCategorie ?? []).forEach((l) => {
     const produit = l.produit as unknown as { categorie: { nom: string } | null } | null;
-    const nom = produit?.categorie?.nom ?? "Sans catÃ©gorie";
+    const nom = produit?.categorie?.nom ?? "Sans catégorie";
     parCategorie.set(nom, (parCategorie.get(nom) ?? 0) + l.quantite);
   });
   const ventesParCategorie: PointCategorieProduit[] = Array.from(parCategorie.entries()).map(
     ([categorie, quantite]) => ({ categorie, quantite })
   );
 
-  // AgrÃ©gation par semaine (lundi -> dimanche), en JS : pas d'agrÃ©gation SQL
-  // exposÃ©e directement par supabase-js sans fonction RPC dÃ©diÃ©e, et le
+  // Agrégation par semaine (lundi -> dimanche), en JS : pas d'agrégation SQL
+  // exposée directement par supabase-js sans fonction RPC dédiée, et le
   // volume attendu (quelques semaines de factures/paiements) rend ce calcul
-  // trivial cÃ´tÃ© serveur.
+  // trivial côté serveur.
   const semaines: PointVenteSemaine[] = [];
   const nombreTranches = Math.ceil((Math.floor((finPeriodeGraph.getTime() - debutPeriodeGraph.getTime()) / 86_400_000) + 1) / 7);
   for (let i = 0; i < nombreTranches; i++) {
@@ -254,7 +254,7 @@ export default async function DashboardAdminPage({
         })
         .reduce((sum, r) => sum + r.montant, 0);
     semaines.push({
-      semaine: `${String(debut.getDate()).padStart(2, "0")}/${String(debut.getMonth() + 1).padStart(2, "0")}â€“${String(fin.getDate()).padStart(2, "0")}/${String(fin.getMonth() + 1).padStart(2, "0")}`,
+      semaine: `${String(debut.getDate()).padStart(2, "0")}/${String(debut.getMonth() + 1).padStart(2, "0")}–${String(fin.getDate()).padStart(2, "0")}/${String(fin.getMonth() + 1).padStart(2, "0")}`,
       facture: totalFacture,
       encaisse: totalEncaisse,
       debutISO: dateVersISO(debut),
@@ -268,8 +268,8 @@ export default async function DashboardAdminPage({
   const facturesEnRetard = (facturesRetard as FactureRetardPaiementRow[]) ?? [];
   const soldeTotalRetard = facturesEnRetard.reduce((sum, f) => sum + f.solde_restant, 0);
 
-  // PrÃ©serve `semaines` (pÃ©riode du graphique) lors d'un changement de page
-  // des "DerniÃ¨res factures" â€” les deux paramÃ¨tres d'URL sont indÃ©pendants.
+  // Préserve `semaines` (période du graphique) lors d'un changement de page
+  // des "Dernières factures" — les deux paramètres d'URL sont indépendants.
   function buildHrefDernieresFactures(cible: number): string {
     const params = new URLSearchParams();
     if (NB_SEMAINES !== NB_SEMAINES_DEFAUT) params.set("semaines", String(NB_SEMAINES));
@@ -301,7 +301,7 @@ export default async function DashboardAdminPage({
             <p className="mb-1 text-caption font-semibold uppercase tracking-[0.18em] text-green-text">Centre de pilotage</p>
             <h1 className="text-h1 font-semibold tracking-tight text-text sm:text-display">Tableau de bord</h1>
             <p className="mt-1 text-body-sm text-muted">
-              {config?.nom ?? "GIE FASSO BARA"} Â· {formatDateLongue(maintenant)}
+              {config?.nom ?? "GIE FASSO BARA"} · {formatDateLongue(maintenant)}
             </p>
           </div>
         </div>
@@ -367,7 +367,7 @@ export default async function DashboardAdminPage({
         <div className="mb-3 flex items-end justify-between gap-4">
           <div>
             <p className="text-caption font-semibold uppercase tracking-[0.14em] text-muted">Aujourd&apos;hui</p>
-            <h2 id="priorites-dashboard" className="scroll-mt-24 text-h2 font-semibold text-text">PrioritÃ©s Ã  traiter</h2>
+            <h2 id="priorites-dashboard" className="scroll-mt-24 text-h2 font-semibold text-text">Priorités à traiter</h2>
           </div>
           <p className="hidden text-body-sm text-muted sm:block">Situation actuelle, En attente</p>
         </div>
@@ -375,21 +375,21 @@ export default async function DashboardAdminPage({
           <a href="#retards-paiement" className="focus-ring group rounded-card">
             <Card interactive className="flex h-full items-center gap-3 p-3 !border-[color-mix(in_srgb,var(--color-red)_30%,var(--color-border))]">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-red)_14%,var(--color-surface))] text-red-text"><FontAwesomeIcon icon={faTriangleExclamation} className="h-4 w-4" /></span>
-              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Retards de paiement</span><span className="block break-words font-mono text-h3 text-text">{facturesEnRetard.length} Â· {formatMontant(soldeTotalRetard)}</span></span>
+              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Retards de paiement</span><span className="block break-words font-mono text-h3 text-text">{facturesEnRetard.length} · {formatMontant(soldeTotalRetard)}</span></span>
               <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1" />
             </Card>
           </a>
           <Link href="/admin/stock?niveau=bas&actif=1" className="focus-ring group rounded-card">
             <Card interactive className="flex h-full items-center gap-3 p-3">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-amber)_14%,var(--color-surface))] text-amber-text"><FontAwesomeIcon icon={faBoxesStacked} className="h-4 w-4" /></span>
-              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Stock Ã  surveiller</span><span className="block break-words font-mono text-h3 text-text">{nbProduitsStockBas} produit{nbProduitsStockBas > 1 ? "s" : ""}</span></span>
+              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Stock à surveiller</span><span className="block break-words font-mono text-h3 text-text">{nbProduitsStockBas} produit{nbProduitsStockBas > 1 ? "s" : ""}</span></span>
               <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1" />
             </Card>
           </Link>
           <Link href="/admin/credits" className="focus-ring group rounded-card">
             <Card interactive className="flex h-full items-center gap-3 p-3">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-blue)_14%,var(--color-surface))] text-blue-text"><FontAwesomeIcon icon={faWallet} className="h-4 w-4" /></span>
-              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">CrÃ©dits Ã  recouvrer</span><span className="block break-words font-mono text-h3 text-text">{creditsEnCoursTypes.length} dossier{creditsEnCoursTypes.length > 1 ? "s" : ""} en cours</span></span>
+              <span className="min-w-0 flex-1"><span className="block text-body-sm text-muted">Crédits à recouvrer</span><span className="block break-words font-mono text-h3 text-text">{creditsEnCoursTypes.length} dossier{creditsEnCoursTypes.length > 1 ? "s" : ""} en cours</span></span>
               <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1" />
             </Card>
           </Link>
@@ -400,7 +400,7 @@ export default async function DashboardAdminPage({
         <div className="flex flex-col gap-4 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div>
             <div className="flex items-center gap-2">
-              <h2 id="factures-recentes" className="scroll-mt-24 text-h2 font-semibold text-text">Factures rÃ©centes</h2>
+              <h2 id="factures-recentes" className="scroll-mt-24 text-h2 font-semibold text-text">Factures récentes</h2>
               <span className="rounded-badge bg-surface-2 px-2 py-0.5 font-mono text-caption text-muted">{totalCountFactures}</span>
             </div>
             
@@ -408,7 +408,7 @@ export default async function DashboardAdminPage({
           <div className="flex items-center gap-3">
             <Link href="/admin/rapports" className="focus-ring rounded-input text-body-sm text-muted hover:text-text">Exporter</Link>
             <Link href="/admin/factures" className="focus-ring inline-flex h-9 items-center gap-1 rounded-input bg-surface-2 px-3 text-body-sm font-medium text-text hover:bg-[color-mix(in_srgb,var(--color-green)_12%,var(--color-surface))]">
-              Toutes les factures <span aria-hidden="true">â†’</span>
+              Toutes les factures <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
@@ -419,8 +419,8 @@ export default async function DashboardAdminPage({
             <Link key={facture.id} href={`/admin/factures/${facture.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2 active:bg-surface-2">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-body font-semibold text-text">{facture.client?.nom ?? "Client non renseignÃ©"}</p>
-                  <p className="mt-1 font-mono text-caption text-muted">{facture.numero} Â· {formatDate(facture.date_facture)}</p>
+                  <p className="truncate text-body font-semibold text-text">{facture.client?.nom ?? "Client non renseigné"}</p>
+                  <p className="mt-1 font-mono text-caption text-muted">{facture.numero} · {formatDate(facture.date_facture)}</p>
                 </div>
                 <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
               </div>
@@ -461,8 +461,8 @@ export default async function DashboardAdminPage({
                       </Link>
                       <p className="mt-1 text-caption text-muted">{formatDate(facture.date_facture)}</p>
                     </td>
-                    <td className="px-5 py-4 text-body font-medium text-text">{facture.client?.nom ?? "â€”"}</td>
-                    <td className="px-5 py-4 text-body-sm text-muted">{facture.agent?.nom ?? "â€”"}</td>
+                    <td className="px-5 py-4 text-body font-medium text-text">{facture.client?.nom ?? "—"}</td>
+                    <td className="px-5 py-4 text-body-sm text-muted">{facture.agent?.nom ?? "—"}</td>
                     <td className="px-5 py-4">
                       <StatusBadge statut={facture.statut} />
                     </td>
@@ -490,12 +490,12 @@ export default async function DashboardAdminPage({
           <span
             className={`text-body-sm font-medium ${facturesEnRetard.length > 0 ? "text-red-text" : "text-muted"}`}
           >
-            {facturesEnRetard.length} facture{facturesEnRetard.length > 1 ? "s" : ""} Â· {formatMontant(soldeTotalRetard)} dÃ» au total
+            {facturesEnRetard.length} facture{facturesEnRetard.length > 1 ? "s" : ""} · {formatMontant(soldeTotalRetard)} dû au total
           </span>
         </div>
         {facturesEnRetard.length === 0 ? (
           <p className="px-4 pb-6 text-body text-muted">
-            Aucune facture en retard â€” tous les paiements sont Ã  jour.
+            Aucune facture en retard — tous les paiements sont à jour.
           </p>
         ) : (
           <>
@@ -521,9 +521,9 @@ export default async function DashboardAdminPage({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
-                  <th className="px-4 py-2.5 font-medium">NumÃ©ro</th>
+                  <th className="px-4 py-2.5 font-medium">Numéro</th>
                   <th className="px-4 py-2.5 font-medium">Client</th>
-                  <th className="px-4 py-2.5 text-right font-medium">Montant dÃ»</th>
+                  <th className="px-4 py-2.5 text-right font-medium">Montant dû</th>
                   <th className="px-4 py-2.5 font-medium">Jours de retard</th>
                   <th className="px-4 py-2.5 font-medium">Actions</th>
                 </tr>
@@ -570,20 +570,20 @@ export default async function DashboardAdminPage({
         )}
       </Card>
 
-      {/* Avenant CrÃ©dit / BL / Multi-entrepÃ´ts â€” tableau des crÃ©dits en
-          cours (rÃ¨gle mÃ©tier 12), ajoutÃ© aprÃ¨s les sections V1 dÃ©jÃ  livrÃ©es,
-          sans les modifier. MÃªme tri que /admin/credits (le plus vieux
-          d'abord â€” prioritÃ© de recouvrement), limitÃ© aux 8 premiers ici. */}
+      {/* Avenant Crédit / BL / Multi-entrepôts — tableau des crédits en
+          cours (règle métier 12), ajouté après les sections V1 déjà livrées,
+          sans les modifier. Même tri que /admin/credits (le plus vieux
+          d'abord — priorité de recouvrement), limité aux 8 premiers ici. */}
       <Card className="!p-0">
         <div className="flex flex-wrap items-center justify-between gap-2 p-4">
-          <h2 className="text-h2 text-text">CrÃ©dits en cours</h2>
+          <h2 className="text-h2 text-text">Crédits en cours</h2>
           <Link href="/admin/credits" className="focus-ring rounded-input text-body-sm text-text hover:underline">
-            Voir tous les crÃ©dits ({creditsEnCoursTypes.length}) â†’
+            Voir tous les crédits ({creditsEnCoursTypes.length}) →
           </Link>
         </div>
         
         {creditsEnCoursTypes.length === 0 ? (
-          <p className="px-4 pb-6 text-body text-muted">Aucun crÃ©dit en cours pour le moment.</p>
+          <p className="px-4 pb-6 text-body text-muted">Aucun crédit en cours pour le moment.</p>
         ) : (
           <>
           <div className="divide-y divide-border md:hidden">
@@ -645,8 +645,8 @@ export default async function DashboardAdminPage({
             <ChartPeriodControl key={`${NB_SEMAINES}-${ventesDebutParam ?? ""}-${ventesFinParam ?? ""}`} valeurActuelle={NB_SEMAINES} dateDebut={periodePersonnalisee ? dateVersISO(debutPeriodeGraph) : undefined} dateFin={periodePersonnalisee ? dateVersISO(finPeriodeGraph) : undefined} />
           </div>
           <div className="mb-5 grid grid-cols-1 gap-3 border-y border-border py-4 sm:grid-cols-2">
-            <div><p className="text-body-sm text-muted">Ventes facturÃ©es sur la pÃ©riode</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-text">{formatMontant(semaines.reduce((total, semaine) => total + semaine.facture, 0))}</p></div>
-            <div><p className="text-body-sm text-muted">Paiements reÃ§us sur la pÃ©riode</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-green-text">{formatMontant(semaines.reduce((total, semaine) => total + semaine.encaisse, 0))}</p></div>
+            <div><p className="text-body-sm text-muted">Ventes facturées sur la période</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-text">{formatMontant(semaines.reduce((total, semaine) => total + semaine.facture, 0))}</p></div>
+            <div><p className="text-body-sm text-muted">Paiements reçus sur la période</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-green-text">{formatMontant(semaines.reduce((total, semaine) => total + semaine.encaisse, 0))}</p></div>
           </div>
           <WeeklySalesBarChart data={semaines} />
         </Card>

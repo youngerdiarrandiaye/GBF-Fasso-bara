@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -7,12 +7,12 @@ import { normaliserTelephoneSenegal, construireMessageWhatsapp } from "@/lib/for
 import { normaliserUrlFichierLocal } from "./telechargerPdf";
 
 const MESSAGE_TELEPHONE_INVALIDE =
-  "NumÃ©ro de tÃ©lÃ©phone du client manquant ou invalide â€” impossible de prÃ©parer l'envoi";
-const MESSAGE_PARTAGE_OUVERT = "FenÃªtre de partage WhatsApp ouverte";
-const MESSAGE_ECHEC_PDF = "Impossible de gÃ©nÃ©rer le PDF de cette facture.";
+  "Numéro de téléphone du client manquant ou invalide — impossible de préparer l'envoi";
+const MESSAGE_PARTAGE_OUVERT = "Fenêtre de partage WhatsApp ouverte";
+const MESSAGE_ECHEC_PDF = "Impossible de générer le PDF de cette facture.";
 const MESSAGE_ECHEC_PARTAGE = "Impossible de partager la facture.";
 const MESSAGE_POPUP_BLOQUE =
-  "WhatsApp a Ã©tÃ© bloquÃ© par le navigateur. Autorisez les fenÃªtres contextuelles puis rÃ©essayez.";
+  "WhatsApp a été bloqué par le navigateur. Autorisez les fenêtres contextuelles puis réessayez.";
 
 function supportePartageDeFichier(): boolean {
   if (typeof navigator === "undefined" || !navigator.share || !navigator.canShare) return false;
@@ -26,14 +26,14 @@ function supportePartageDeFichier(): boolean {
 }
 
 /**
- * Hook client partagÃ© entre le bouton d'actions du dÃ©tail facture et
- * l'action rapide du dashboard â€” Ã©vite de dupliquer la logique de
- * gÃ©nÃ©ration de PDF + partage WhatsApp (Web Share API si disponible, sinon
- * lien `wa.me`) Ã  plusieurs endroits.
+ * Hook client partagé entre le bouton d'actions du détail facture et
+ * l'action rapide du dashboard — évite de dupliquer la logique de
+ * génération de PDF + partage WhatsApp (Web Share API si disponible, sinon
+ * lien `wa.me`) à plusieurs endroits.
  *
- * L'app ne peut jamais garantir une rÃ©ception rÃ©elle par le client : le
- * toast de succÃ¨s confirme uniquement l'ouverture de la fenÃªtre de partage,
- * jamais "Facture envoyÃ©e au client".
+ * L'app ne peut jamais garantir une réception réelle par le client : le
+ * toast de succès confirme uniquement l'ouverture de la fenêtre de partage,
+ * jamais "Facture envoyée au client".
  */
 export function useFacturePdfShare() {
   const { showToast } = useToast();
@@ -49,17 +49,17 @@ export function useFacturePdfShare() {
     const numeroNormalise = normaliserTelephoneSenegal(clientTelephone);
 
     // Sans partage natif de fichier, WhatsApp exige un destinataire valide.
-    // Cette vÃ©rification prÃ©cÃ¨de la gÃ©nÃ©ration afin de ne pas lancer un job
-    // PDF inutile quand la fiche client doit d'abord Ãªtre corrigÃ©e.
+    // Cette vérification précède la génération afin de ne pas lancer un job
+    // PDF inutile quand la fiche client doit d'abord être corrigée.
     if (!partageNatif && !numeroNormalise) {
       showToast(MESSAGE_TELEPHONE_INVALIDE, "error");
       return;
     }
 
     // L'ouverture doit rester dans le geste synchrone du clic. Si elle avait
-    // lieu aprÃ¨s l'appel rÃ©seau, Safari/Chrome pourraient la bloquer comme
-    // popup. La page WhatsApp est injectÃ©e dans cette fenÃªtre une fois le PDF
-    // prÃªt ; l'utilisateur voit entre-temps un Ã©cran de prÃ©paration neutre.
+    // lieu après l'appel réseau, Safari/Chrome pourraient la bloquer comme
+    // popup. La page WhatsApp est injectée dans cette fenêtre une fois le PDF
+    // prêt ; l'utilisateur voit entre-temps un écran de préparation neutre.
     const fenetreWhatsapp = partageNatif ? null : window.open("about:blank", "partage-facture-whatsapp");
     if (!partageNatif && !fenetreWhatsapp) {
       showToast(MESSAGE_POPUP_BLOQUE, "error");
@@ -67,8 +67,8 @@ export function useFacturePdfShare() {
     }
     if (fenetreWhatsapp) {
       fenetreWhatsapp.opener = null;
-      fenetreWhatsapp.document.title = "PrÃ©paration de la factureâ€¦";
-      fenetreWhatsapp.document.body.textContent = "PrÃ©paration de la facture pour WhatsAppâ€¦";
+      fenetreWhatsapp.document.title = "Préparation de la facture…";
+      fenetreWhatsapp.document.body.textContent = "Préparation de la facture pour WhatsApp…";
     }
 
     setEnCours(true);
@@ -103,8 +103,8 @@ export function useFacturePdfShare() {
               showToast(MESSAGE_PARTAGE_OUVERT, "success");
               return;
             } catch (erreurPartage) {
-              // Annulation silencieuse : l'utilisateur a fermÃ© la feuille de
-              // partage, ce n'est pas un Ã©chec.
+              // Annulation silencieuse : l'utilisateur a fermé la feuille de
+              // partage, ce n'est pas un échec.
               if (erreurPartage instanceof Error && erreurPartage.name === "AbortError") {
                 return;
               }
@@ -113,7 +113,7 @@ export function useFacturePdfShare() {
             }
           }
         } catch {
-          // Ã‰chec de rÃ©cupÃ©ration/construction du fichier Ã  partager : on
+          // Échec de récupération/construction du fichier à partager : on
           // se rabat silencieusement sur le lien wa.me ci-dessous.
         }
       }

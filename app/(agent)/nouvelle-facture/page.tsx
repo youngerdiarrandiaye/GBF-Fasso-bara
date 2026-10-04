@@ -44,7 +44,7 @@ export default async function NouvelleFacturePage({
   const { data: facture } = await supabase
     .from("factures")
     .select(
-      "id, numero, statut, total_ht, remise_montant, forfait_transport, tva_taux, total_general, client_id, agent_id, entrepot_id, date_facture, date_validation, notes, created_at, updated_at"
+      "id, numero, statut, total_ht, remise_montant, forfait_transport, tva_taux, total_general, client_id, agent_id, entrepot_id, date_facture, date_validation, date_echeance, notes, created_at, updated_at"
     )
     .eq("id", id)
     .single();
@@ -134,6 +134,7 @@ export default async function NouvelleFacturePage({
         forfaitTransport: facture.forfait_transport,
         tvaActive: facture.tva_taux > 0,
         notes: facture.notes ?? "",
+        dateEcheance: facture.date_echeance ?? "",
         entrepotId: facture.entrepot_id,
       }}
     />

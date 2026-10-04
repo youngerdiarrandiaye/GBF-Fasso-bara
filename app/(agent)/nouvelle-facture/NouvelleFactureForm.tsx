@@ -41,6 +41,8 @@ interface FactureInitiale {
   forfaitTransport: number;
   tvaActive: boolean;
   notes: string;
+  /** Échéance de paiement (AAAA-MM-JJ) ou "" : règle des 10 jours après validation. */
+  dateEcheance?: string;
   /**
    * Optionnel (pas encore renseigné par app/(admin)/admin/nouvelle-facture/
    * page.tsx, hors périmètre dev-frontend-agent) : quand absent, l'agent/
@@ -147,6 +149,7 @@ export function NouvelleFactureForm({
   // (`initial.tvaActive`, cf. page.tsx : `tva_taux > 0`).
   const [tvaActive, setTvaActive] = useState(initial?.tvaActive ?? true);
   const [notes, setNotes] = useState(initial?.notes ?? "");
+  const [dateEcheance, setDateEcheance] = useState(initial?.dateEcheance ?? "");
 
   // --- Avenant Crédit / Bon de Livraison / Multi-entrepôts (règle 16) -------
   // Entrepôt source, OBLIGATOIRE dès le brouillon (factures.entrepot_id est
@@ -376,6 +379,7 @@ export function NouvelleFactureForm({
       forfait_transport: forfaitTransport,
       tva_active: tvaActive,
       tva_taux: TVA_TAUX_STANDARD,
+      date_echeance: dateEcheance,
       notes,
     };
   }
@@ -695,6 +699,23 @@ export function NouvelleFactureForm({
             {blocageCredit && <InlineAlert tone="red">{blocageCredit}</InlineAlert>}
           </div>
         )}
+      </div>
+
+      <div className="flex flex-col gap-1.5 rounded-card border border-border bg-surface p-4">
+        <label htmlFor="date-echeance" className="text-body font-medium text-text">
+          Échéance de paiement (optionnel)
+        </label>
+        <input
+          id="date-echeance"
+          type="date"
+          value={dateEcheance}
+          min={new Date().toISOString().slice(0, 10)}
+          onChange={(e) => setDateEcheance(e.target.value)}
+          className="focus-ring h-tap w-full rounded-input border border-border bg-surface px-3 text-body text-text sm:w-56"
+        />
+        <p className="text-body-sm text-muted">
+          Sans date, la facture passe en retard 10 jours après sa validation.
+        </p>
       </div>
 
       <details className="rounded-card border border-border bg-surface p-4" open={notes ? true : undefined}>

@@ -90,6 +90,8 @@ export interface FactureRow {
   total_general: number;
   date_facture: string;
   date_validation: string | null;
+  /** Échéance de paiement facultative (0020). NULL => date_validation + 10 jours. */
+  date_echeance: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -223,6 +225,8 @@ export interface FactureRetardPaiementRow {
   date_facture: string;
   date_validation: string;
   jours_de_retard: number;
+  /** date_echeance si renseignée, sinon date_validation + 10 jours (0020). */
+  date_echeance_effective: string;
 }
 
 export interface JournalActiviteRow {

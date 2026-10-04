@@ -12,6 +12,7 @@ utilisez le sommaire pour aller directement à ce qui vous concerne.
 4. [Vendre à crédit](#4-vendre-à-crédit)
 5. [Enregistrer un recouvrement (important — lisez ceci)](#5-enregistrer-un-recouvrement-important--lisez-ceci)
 6. [Créer un bon de livraison](#6-créer-un-bon-de-livraison)
+7. [Envoyer une facture et mot de passe oublié](#7-envoyer-une-facture-et-mot-de-passe-oublié)
 
 ---
 
@@ -26,6 +27,8 @@ Depuis l'espace Agent, ouvrez **Nouvelle facture**.
 3. **Produits** — recherchez chaque article par code ou par nom, il s'ajoute à la liste avec
    le stock disponible **dans l'entrepôt choisi**. Ajustez la quantité et, si besoin, le prix.
 4. **Remise / transport / TVA** — dans le bloc de récapitulatif, en dessous des lignes.
+   **Échéance de paiement** (facultatif) : la date à laquelle le client doit avoir payé. Sans
+   date, la facture passe « en retard » 10 jours après sa validation.
 5. Choisissez une action en bas d'écran :
    - **Enregistrer en brouillon** — sauvegarde sans rien valider, vous pourrez y revenir.
    - **Valider (proforma)** — génère un devis, aucun effet sur le stock.
@@ -140,10 +143,23 @@ marchandise en stock : ce n'est pas un retour physique.
 Vous ne pouvez consulter que vos propres bons de livraison, filtrables par entrepôt dans
 **Mes factures** de la même façon.
 
+## 7. Envoyer une facture et mot de passe oublié
+
+Depuis le détail d'une facture validée ou d'une proforma :
+- **E-mail** envoie le PDF au client, à l'adresse de sa fiche (le bouton est grisé si le
+  client n'a pas d'e-mail). Une confirmation vous est demandée avant l'envoi.
+- **WhatsApp / Partager** reste disponible.
+
+**Mot de passe oublié** : sur l'écran de connexion, cliquez sur « Mot de passe oublié ? »,
+saisissez votre e-mail et suivez le lien reçu (valable une heure, une seule fois). Si vous ne
+recevez rien, votre administrateur peut redéfinir votre mot de passe.
+
 ---
 
 ## Changelog de ce guide
 
+- **4 octobre 2026** — Échéance de paiement facultative, envoi de facture par e-mail, mot de
+  passe oublié (section 7).
 - **4 octobre 2026** — Le stock sort désormais au bon de livraison, plus à la validation de
   la facture (migration 0017). BL lié à une facture : reprise intégrale, une seule fois.
 

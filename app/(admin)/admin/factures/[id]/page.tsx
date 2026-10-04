@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { formatMontant, formatDate, formatDateTime, formatQuantite, libelleUnite } from "@/lib/format";
+import { formatMontant, formatDate, formatDateTime, formatQuantite, libelleUnite, echeanceParDefaut } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -120,6 +120,7 @@ export default async function FactureDetailAdminPage({
             factureNumero={facture.numero}
             statut={facture.statut}
             clientTelephone={client?.telephone ?? null}
+            clientEmail={client?.email ?? null}
             totalGeneral={facture.total_general}
           />
           <CancelInvoiceButton factureId={facture.id} statut={facture.statut} numero={facture.numero} />
@@ -188,6 +189,16 @@ export default async function FactureDetailAdminPage({
             <p className="mt-2 text-body-sm text-muted">
               Date de facture : <span className="text-text">{formatDate(facture.date_facture)}</span>
             </p>
+            {(facture.date_echeance || facture.date_validation) && (
+              <p className="text-body-sm text-muted">
+                Échéance de paiement :{" "}
+                <span className="text-text">
+                  {facture.date_echeance
+                    ? formatDate(facture.date_echeance)
+                    : `${formatDate(echeanceParDefaut(facture.date_validation!))} (10 jours après validation)`}
+                </span>
+              </p>
+            )}
           </div>
         </div>
 
@@ -363,8 +374,8 @@ export default async function FactureDetailAdminPage({
               {remboursementsCredit.map((r) => (
                 <tr key={r.id} className="border-t border-border hover:bg-surface-2">
                   <td className="px-4 py-3 text-body-sm text-muted">{formatDate(r.date_remboursement)}</td>
-                  <td className="px-4 py-3 text-body text-text">Recouvrement crÃ©dit</td>
-                  <td className="px-4 py-3 text-body-sm text-muted">{r.notes ?? "â€”"}</td>
+                  <td className="px-4 py-3 text-body text-text">Recouvrement crédit</td>
+                  <td className="px-4 py-3 text-body-sm text-muted">{r.notes ?? "—"}</td>
                   <td className="px-4 py-3 text-right font-mono text-body text-text">
                     {formatMontant(r.montant)}
                   </td>

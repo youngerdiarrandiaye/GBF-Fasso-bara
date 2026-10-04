@@ -6,12 +6,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   modifierUtilisateurSchema,
+  nouveauMotDePasseSchema,
   type ModifierUtilisateurInput,
+  type NouveauMotDePasseInput,
 } from "@/lib/validations/schemas";
 import {
   desactiverUtilisateur,
   modifierUtilisateur,
   reactiverUtilisateur,
+  redefinirMotDePasse,
 } from "@/lib/actions/utilisateurs";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
@@ -32,6 +35,30 @@ export function UserRowActions({
   const [modalOuvert, setModalOuvert] = useState(false);
   const [erreurServeur, setErreurServeur] = useState<string | null>(null);
   const [enCoursStatut, setEnCoursStatut] = useState(false);
+  const [modalMdpOuvert, setModalMdpOuvert] = useState(false);
+  const [erreurMdp, setErreurMdp] = useState<string | null>(null);
+
+  const formMdp = useForm<NouveauMotDePasseInput>({
+    resolver: zodResolver(nouveauMotDePasseSchema),
+    defaultValues: { password: "", confirmation: "" },
+  });
+
+  function fermerModalMdp() {
+    setModalMdpOuvert(false);
+    setErreurMdp(null);
+    formMdp.reset();
+  }
+
+  async function onSubmitMdp(values: NouveauMotDePasseInput) {
+    setErreurMdp(null);
+    const resultat = await redefinirMotDePasse(utilisateur.id, values.password);
+    if (resultat.error) {
+      setErreurMdp(resultat.error);
+      return;
+    }
+    showToast(`Mot de passe de "${utilisateur.nom}" redéfini. Communiquez-le-lui en main propre.`, "success");
+    fermerModalMdp();
+  }
 
   const {
     register,
@@ -83,6 +110,9 @@ export function UserRowActions({
     <div className="flex items-center justify-end gap-2">
       <Button size="sm" variant="outline" onClick={() => setModalOuvert(true)}>
         Modifier
+      </Button>
+      <Button size="sm" variant="outline" onClick={() => setModalMdpOuvert(true)}>
+        Mot de passe
       </Button>
       <Button
         size="sm"
@@ -139,6 +169,42 @@ export function UserRowActions({
             </Button>
             <Button type="submit" loading={isSubmitting}>
               Enregistrer
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal
+        open={modalMdpOuvert}
+        onClose={fermerModalMdp}
+        title={`Redéfinir le mot de passe — ${utilisateur.nom}`}
+      >
+        <form onSubmit={formMdp.handleSubmit(onSubmitMdp)} className="flex flex-col gap-4" noValidate>
+          {erreurMdp && <InlineAlert tone="red">{erreurMdp}</InlineAlert>}
+          <p className="text-body text-muted">
+            L&apos;ancien mot de passe cesse immédiatement de fonctionner. Transmettez le nouveau à
+            l&apos;utilisateur de vive voix, jamais par écrit.
+          </p>
+          <Input
+            label="Nouveau mot de passe"
+            type="password"
+            autoComplete="new-password"
+            error={formMdp.formState.errors.password?.message}
+            {...formMdp.register("password")}
+          />
+          <Input
+            label="Confirmer le mot de passe"
+            type="password"
+            autoComplete="new-password"
+            error={formMdp.formState.errors.confirmation?.message}
+            {...formMdp.register("confirmation")}
+          />
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={fermerModalMdp}>
+              Annuler
+            </Button>
+            <Button type="submit" loading={formMdp.formState.isSubmitting}>
+              Redéfinir
             </Button>
           </div>
         </form>

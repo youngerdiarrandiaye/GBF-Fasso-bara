@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   modifierUtilisateurSchema,
   nouvelUtilisateurSchema,
+  redefinirMotDePasseSchema,
   type ModifierUtilisateurInput,
   type NouvelUtilisateurInput,
 } from "@/lib/validations/schemas";
@@ -248,4 +249,44 @@ export async function reactiverUtilisateur(id: string): Promise<ActionResult<Uti
 
   revalidatePath("/admin/utilisateurs");
   return { data: data as UtilisateurRow };
+}
+
+/**
+ * Redéfinit le mot de passe d'un compte (agent oublieux, compte compromis).
+ * Troisième usage de `service_role` : seule l'API Admin d'Auth peut modifier
+ * le mot de passe d'un AUTRE utilisateur. Garde admin identique au reste du
+ * fichier ; l'opération est journalisée (sans le mot de passe).
+ */
+export async function redefinirMotDePasse(
+  id: string,
+  password: string
+): Promise<ActionResult<{ id: string }>> {
+  const verif = await verifierAppelantEstAdmin();
+  if (!verif.ok) return { error: verif.error };
+
+  const parsed = redefinirMotDePasseSchema.safeParse({ id, password });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Mot de passe invalide." };
+  }
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.auth.admin.updateUserById(parsed.data.id, {
+    password: parsed.data.password,
+  });
+
+  if (error) {
+    console.error("[utilisateurs.redefinirMotDePasse]", error.message);
+    return { error: "Impossible de redéfinir le mot de passe de ce compte." };
+  }
+
+  const supabase = await createClient();
+  await supabase.from("journal_activites").insert({
+    utilisateur_id: verif.userId,
+    action: "redefinition_mot_de_passe",
+    table_cible: "utilisateurs",
+    avant: null,
+    apres: { utilisateur_id: parsed.data.id },
+  });
+
+  return { data: { id: parsed.data.id } };
 }

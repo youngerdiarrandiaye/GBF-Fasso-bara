@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { formatMontant, formatDate, formatDateTime, formatQuantite, libelleUnite } from "@/lib/format";
+import { formatMontant, formatDate, formatDateTime, formatQuantite, libelleUnite, echeanceParDefaut } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { FactureActions } from "@/components/facture/FactureActions";
@@ -124,6 +124,7 @@ export default async function FactureDetailAgentPage({
           factureNumero={facture.numero}
           statut={facture.statut}
           clientTelephone={client?.telephone ?? null}
+          clientEmail={client?.email ?? null}
           totalGeneral={facture.total_general}
         />
       </section>
@@ -180,6 +181,16 @@ export default async function FactureDetailAgentPage({
             <p className="mt-2 text-body-sm text-muted">
               Date de facture : <span className="text-text">{formatDate(facture.date_facture)}</span>
             </p>
+            {(facture.date_echeance || facture.date_validation) && (
+              <p className="text-body-sm text-muted">
+                Échéance de paiement :{" "}
+                <span className="text-text">
+                  {facture.date_echeance
+                    ? formatDate(facture.date_echeance)
+                    : `${formatDate(echeanceParDefaut(facture.date_validation!))} (10 jours après validation)`}
+                </span>
+              </p>
+            )}
           </div>
         </div>
       </Card>
@@ -320,10 +331,10 @@ export default async function FactureDetailAgentPage({
               {remboursementsCredit.map((r) => (
                 <div key={r.id} className="flex items-center justify-between gap-3 p-4">
                   <div>
-                    <p className="text-body text-text">Recouvrement crÃ©dit</p>
+                    <p className="text-body text-text">Recouvrement crédit</p>
                     <p className="text-body-sm text-muted">
                       {formatDate(r.date_remboursement)}
-                      {r.notes && ` Â· ${r.notes}`}
+                      {r.notes && ` · ${r.notes}`}
                     </p>
                   </div>
                   <p className="shrink-0 font-mono text-body text-text">{formatMontant(r.montant)}</p>
@@ -355,8 +366,8 @@ export default async function FactureDetailAgentPage({
                   {remboursementsCredit.map((r) => (
                     <tr key={r.id} className="border-t border-border">
                       <td className="px-4 py-3 text-body-sm text-muted">{formatDate(r.date_remboursement)}</td>
-                      <td className="px-4 py-3 text-body text-text">Recouvrement crÃ©dit</td>
-                      <td className="px-4 py-3 text-body-sm text-muted">{r.notes ?? "â€”"}</td>
+                      <td className="px-4 py-3 text-body text-text">Recouvrement crédit</td>
+                      <td className="px-4 py-3 text-body-sm text-muted">{r.notes ?? "—"}</td>
                       <td className="px-4 py-3 text-right font-mono text-body text-text">
                         {formatMontant(r.montant)}
                       </td>

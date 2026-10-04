@@ -44,8 +44,16 @@ export async function updateSession(request: NextRequest) {
   // §9 V3.2) comme health-check de connectivité générique — ne doit jamais être
   // redirigée vers /login, sous peine de fausser la détection réseau pour un
   // utilisateur dont la session vient d'expirer.
+  // Parcours « mot de passe oublié » : accessibles sans session ; la page de
+  // saisie du nouveau mot de passe affiche elle-même « lien invalide » si
+  // aucune session de réinitialisation n'a été ouverte.
   const isPublicRoute =
-    pathname === "/" || pathname.startsWith("/login") || pathname.startsWith("/api/health");
+    pathname === "/" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/api/health") ||
+    pathname.startsWith("/mot-de-passe-oublie") ||
+    pathname.startsWith("/reinitialiser-mot-de-passe") ||
+    pathname.startsWith("/auth/confirm");
 
   if (!user && !isPublicRoute) {
     const redirectUrl = new URL("/login", request.url);

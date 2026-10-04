@@ -11,6 +11,7 @@ les modules ajoutés par l'avenant Crédit / Bon de livraison / Multi-entrepôts
 4. [Gestion des ajustements de stock](#4-gestion-des-ajustements-de-stock)
 5. [Crédits & Recouvrement](#5-crédits--recouvrement)
 6. [Bons de livraison](#6-bons-de-livraison)
+7. [Comptes utilisateurs et e-mails](#7-comptes-utilisateurs-et-e-mails)
 
 ---
 
@@ -177,10 +178,31 @@ Cas particulier : une facture validée **avant** ce changement (septembre 2026) 
 son stock. La création d'un BL pour elle est refusée avec un message explicite ; vérifiez ses
 mouvements de stock et régularisez-les avant de livrer. Voir `docs/destockage-livraison.md`.
 
+## 7. Comptes utilisateurs et e-mails
+
+**Redéfinir un mot de passe** : dans **Utilisateurs**, bouton **Mot de passe** sur la ligne du
+compte. L'ancien mot de passe cesse aussitôt de fonctionner ; transmettez le nouveau de vive
+voix. L'opération est inscrite au journal d'activité (sans le mot de passe).
+
+**Mot de passe oublié** (lien sur l'écran de connexion) : l'utilisateur reçoit un lien par
+e-mail. En production, il faut un serveur d'envoi configuré dans Supabase (Authentication >
+SMTP) et, dans Authentication > URL Configuration, l'URL du site ; collez le modèle
+`supabase/templates/recovery.html` dans Authentication > Email Templates > Reset password.
+
+**Envoi des factures par e-mail** : nécessite un compte Resend et les variables serveur
+`RESEND_API_KEY` et `EMAIL_EXPEDITEUR` (voir `.env.local.example`). Sans elles, le bouton
+**E-mail** répond « non configuré ».
+
+**Échéance de paiement** : une facture peut porter une date d'échéance ; elle est alors en
+retard le lendemain de cette date. Sans échéance, la règle des 10 jours après validation
+s'applique. Le tableau de bord, les alertes et les badges de retard suivent cette règle.
+
 ---
 
 ## Changelog de ce guide
 
+- **4 octobre 2026** — Section 7 : redéfinition de mot de passe, mot de passe oublié, envoi
+  des factures par e-mail, échéance de paiement (migration 0020).
 - **4 octobre 2026** — Section Bons de livraison : le stock sort au BL, plus à la validation
   de la facture (migration 0017) ; BL immuable après création ; factures historiques.
 

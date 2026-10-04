@@ -19,11 +19,14 @@ export default async function RootPage() {
     .eq("id", user.id)
     .single();
 
-  if (profil?.role === "agent" && profil.actif) {
+  if (profil?.actif && profil.role === "agent") {
     redirect("/nouvelle-facture");
   }
 
-  // Espace Admin (Phase 4b, dev-frontend-admin) pas encore livré dans cet
-  // écran : on ramène tout autre profil vers l'écran de connexion.
+  if (profil?.actif && profil.role === "admin") {
+    redirect("/admin");
+  }
+
+  // Profil introuvable, inactif ou rôle inconnu : retour à la connexion.
   redirect("/login");
 }

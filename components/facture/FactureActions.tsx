@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -6,16 +6,17 @@ import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useFacturePdfShare } from "./useFacturePdfShare";
 import { declencherTelechargementPdf, normaliserUrlFichierLocal } from "./telechargerPdf";
+import { envoyerFactureParEmail } from "@/lib/actions/email-facture";
 import type { StatutFacture } from "@/lib/supabase/database.types";
 
-const MESSAGE_ECHEC_PDF = "Impossible de gÃ©nÃ©rer le PDF de cette facture.";
+const MESSAGE_ECHEC_PDF = "Impossible de générer le PDF de cette facture.";
 
 /**
- * Barre d'actions du dÃ©tail facture â€” 3 boutons partageant la mÃªme Edge
+ * Barre d'actions du détail facture — 3 boutons partageant la même Edge
  * Function `generer-facture-pdf` (cf. components/admin/GeneratePdfButton.tsx
- * pour le pattern d'appel d'origine) : tÃ©lÃ©chargement, impression, et
+ * pour le pattern d'appel d'origine) : téléchargement, impression, et
  * partage WhatsApp adaptatif (components/facture/useFacturePdfShare.ts).
- * DÃ©sactivÃ©s tant que la facture est un brouillon (le PDF n'existe pas
+ * Désactivés tant que la facture est un brouillon (le PDF n'existe pas
  * encore, l'Edge Function retourne 409 dans ce cas).
  */
 export function FactureActions({
@@ -23,24 +24,27 @@ export function FactureActions({
   factureNumero,
   statut,
   clientTelephone,
+  clientEmail,
   totalGeneral,
 }: {
   factureId: string;
   factureNumero: string;
   statut: StatutFacture;
   clientTelephone: string | null;
+  clientEmail: string | null;
   totalGeneral: number;
 }) {
   const { showToast } = useToast();
   const [enCoursTelechargement, setEnCoursTelechargement] = useState(false);
   const [enCoursImpression, setEnCoursImpression] = useState(false);
   const [pdfUrlImpression, setPdfUrlImpression] = useState<string | null>(null);
+  const [enCoursEmail, setEnCoursEmail] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { partager, enCours: enCoursPartage } = useFacturePdfShare();
 
   const desactive = statut === "brouillon";
-  // DÃ©tection synchrone au render â€” le libellÃ© ne doit pas attendre un appel
-  // rÃ©seau pour Ãªtre dÃ©cidÃ©.
+  // Détection synchrone au render — le libellé ne doit pas attendre un appel
+  // réseau pour être décidé.
   const supportePartageNatif = typeof navigator !== "undefined" && !!navigator.canShare;
   const libelleWhatsapp = supportePartageNatif ? "Partager" : "WhatsApp";
 
@@ -58,7 +62,7 @@ export function FactureActions({
     }
 
     declencherTelechargementPdf(data.pdf_url, factureNumero);
-    showToast(`Facture ${factureNumero} tÃ©lÃ©chargÃ©e.`, "success");
+    showToast(`Facture ${factureNumero} téléchargée.`, "success");
   }
 
   async function imprimer() {
@@ -77,6 +81,19 @@ export function FactureActions({
     setPdfUrlImpression(normaliserUrlFichierLocal(data.pdf_url));
   }
 
+  async function envoyerEmail() {
+    if (!clientEmail) return;
+    if (!window.confirm(`Envoyer ${factureNumero} par e-mail à ${clientEmail} ?`)) return;
+    setEnCoursEmail(true);
+    const resultat = await envoyerFactureParEmail(factureId);
+    setEnCoursEmail(false);
+    if (resultat.error || !resultat.data) {
+      showToast(resultat.error ?? "L'e-mail n'a pas pu être envoyé.", "error");
+      return;
+    }
+    showToast(`${factureNumero} envoyée à ${resultat.data.destinataire}.`, "success");
+  }
+
   function handleIframeLoad() {
     if (!pdfUrlImpression) return;
     iframeRef.current?.contentWindow?.print();
@@ -91,7 +108,7 @@ export function FactureActions({
         loading={enCoursTelechargement}
         disabled={desactive}
       >
-        TÃ©lÃ©charger
+        Télécharger
       </Button>
       <Button
         variant="secondary"
@@ -110,6 +127,16 @@ export function FactureActions({
         disabled={desactive}
       >
         {libelleWhatsapp}
+      </Button>
+      <Button
+        variant="secondary"
+        className="w-full sm:w-auto"
+        onClick={envoyerEmail}
+        loading={enCoursEmail}
+        disabled={desactive || statut === "annulee" || !clientEmail}
+        title={clientEmail ? undefined : "Ajoutez l'e-mail du client sur sa fiche pour l'envoyer."}
+      >
+        E-mail
       </Button>
 
       {pdfUrlImpression && (
