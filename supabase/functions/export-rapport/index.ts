@@ -27,7 +27,7 @@ import {
   resolveCallerId,
   toPublicUrl,
 } from "../_shared/clients.ts";
-import { handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
+import { avecCors, handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
 import { formatDateFr, formatFcfa, sanitizeForPdf } from "../_shared/pdf.ts";
 
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -68,7 +68,7 @@ const SIGNED_URL_TTL_SECONDS = parseInt(
 
 const BUCKET = "rapports";
 
-Deno.serve(async (req: Request) => {
+Deno.serve(avecCors(async (req: Request) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
@@ -179,7 +179,7 @@ Deno.serve(async (req: Request) => {
     console.error("export-rapport: erreur inattendue", err);
     return jsonResponse({ error: "Erreur interne lors de la génération du rapport." }, 500);
   }
-});
+}));
 
 // =============================================================================
 // Chargement des données (lecture seule, pas de recalcul métier)

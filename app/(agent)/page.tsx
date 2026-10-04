@@ -40,7 +40,7 @@ export default async function AccueilAgentPage() {
         <h1 className="text-h1 text-text">Votre activité</h1>
       </div>
 
-      <nav aria-label="Actions du quotidien" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <nav aria-label="Actions du quotidien" className="cascade grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { href: "/nouvelle-facture", label: "Créer une facture", icon: faFileCirclePlus, primary: true },
           { href: "/mes-factures", label: "Mes factures", icon: faFileLines, primary: false },
@@ -56,7 +56,7 @@ export default async function AccueilAgentPage() {
         ))}
       </nav>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="cascade grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-body text-muted">Total du jour</p>
           <p className="mt-1 break-words font-mono text-[1.6rem] font-semibold leading-tight text-text">{formatMontant(totalDuJour)}</p>

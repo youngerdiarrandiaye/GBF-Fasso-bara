@@ -15,6 +15,7 @@ import type {
   StatutBonLivraison,
 } from "@/lib/supabase/database.types";
 import { faFileInvoice, faMoneyBillWave, faPlus, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -121,7 +122,7 @@ export default async function BonsLivraisonPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {bonsLivraison.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucun bon de livraison pour ces filtres.</p>
+              <EmptyState icone={faTruck} titre="Aucun bon de livraison pour ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/bons-livraison", label: "Effacer les filtres", variante: "outline" }} />
             ) : bonsLivraison.map((bl) => (
               <Link key={bl.id} href={`/admin/bons-livraison/${bl.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
                 <div className="flex items-start justify-between gap-3"><div><p className="font-mono text-body-sm font-semibold text-text">{bl.numero}</p><p className="mt-1 text-body font-medium text-text">{bl.client?.nom}</p></div><BonLivraisonStatusBadge statut={bl.statut} /></div>
@@ -144,9 +145,7 @@ export default async function BonsLivraisonPage({
               <tbody>
                 {bonsLivraison.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-6 text-center text-body text-muted">
-                      Aucun bon de livraison pour ces filtres.
-                    </td>
+                    <td colSpan={6}><EmptyState icone={faTruck} titre="Aucun bon de livraison pour ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/bons-livraison", label: "Effacer les filtres", variante: "outline" }} /></td>
                   </tr>
                 ) : (
                   bonsLivraison.map((bl) => (

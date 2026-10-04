@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { OverdueBadge } from "@/components/facture/OverdueBadge";
 import { useToast } from "@/components/ui/Toast";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { faFileInvoice } from "@fortawesome/free-solid-svg-icons";
 
 const ONGLETS: { value: StatutFacture | "toutes"; label: string }[] = [
   { value: "toutes", label: "Toutes" },
@@ -131,9 +133,7 @@ export function MesFacturesList({
       )}
 
       {facturesFiltrees.length === 0 ? (
-        <p className="rounded-card border border-dashed border-border bg-surface-2 p-4 text-center text-body text-muted">
-          Aucune facture ne correspond à ces critères.
-        </p>
+        <EmptyState icone={faFileInvoice} titre="Aucune facture ne correspond à ces critères." description="Changez de filtre ou créez une nouvelle facture." action={{ href: "/nouvelle-facture", label: "Créer une facture" }} className="rounded-card border border-dashed border-border bg-surface-2" />
       ) : (
         <div className="flex flex-col gap-3">
           {facturesFiltrees.map((facture) => (

@@ -279,6 +279,31 @@
   }
 }
 
+/* Apparition échelonnée des cartes d'un tableau de bord (.cascade) :
+   fade + translateY(8px)->0, 200ms ease-standard, +80ms par carte (max 8).
+   Annulée par la règle prefers-reduced-motion ci-dessous. */
+@keyframes cascade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cascade > * {
+  animation: cascade-in var(--duration-card) var(--ease-standard) both;
+}
+.cascade > :nth-child(2) { animation-delay: 80ms; }
+.cascade > :nth-child(3) { animation-delay: 160ms; }
+.cascade > :nth-child(4) { animation-delay: 240ms; }
+.cascade > :nth-child(5) { animation-delay: 320ms; }
+.cascade > :nth-child(6) { animation-delay: 400ms; }
+.cascade > :nth-child(7) { animation-delay: 480ms; }
+.cascade > :nth-child(n + 8) { animation-delay: 560ms; }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

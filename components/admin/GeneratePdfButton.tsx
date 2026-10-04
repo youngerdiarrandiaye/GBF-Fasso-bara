@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { declencherTelechargementPdf } from "@/components/facture/telechargerPdf";
+import { declencherTelechargementPdf, messageErreurPdf } from "@/components/facture/telechargerPdf";
 
 /**
  * Appelle l'Edge Function `generer-facture-pdf` (déjà livrée par
@@ -32,7 +32,7 @@ export function GeneratePdfButton({
     setEnCours(false);
 
     if (error || !data?.pdf_url) {
-      showToast("Impossible de générer le PDF de cette facture.", "error");
+      showToast(messageErreurPdf(error, "Impossible de générer le PDF de cette facture."), "error");
       return;
     }
 

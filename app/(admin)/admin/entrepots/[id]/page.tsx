@@ -9,6 +9,8 @@ import { RealtimeRevalidate } from "@/components/admin/RealtimeRevalidate";
 import { StockEntrepotRowActions } from "@/components/admin/StockEntrepotRowActions";
 import { AddProductToEntrepotButton } from "@/components/admin/AddProductToEntrepotButton";
 import type { EntrepotRow, StockEntrepotAvecProduit } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { faBoxesStacked } from "@fortawesome/free-solid-svg-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -91,9 +93,7 @@ export default async function EntrepotDetailPage({ params }: { params: Promise<{
             <tbody>
               {lignesStock.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-body text-muted">
-                    Aucun produit en stock dans cet entrepôt pour le moment.
-                  </td>
+                  <td colSpan={5}><EmptyState icone={faBoxesStacked} titre="Aucun produit en stock dans cet entrepôt pour le moment." /></td>
                 </tr>
               ) : (
                 lignesStock.map((l) => (

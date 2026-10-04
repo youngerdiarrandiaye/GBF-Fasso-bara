@@ -36,7 +36,7 @@ import {
   getAuthHeader,
   toPublicUrl,
 } from "../_shared/clients.ts";
-import { handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
+import { avecCors, handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
 import { fetchImageBytes, formatDateFr, sanitizeForPdf, wrapText } from "../_shared/pdf.ts";
 
 const bodySchema = z.object({
@@ -105,7 +105,7 @@ interface Fonts {
   courier: PDFFont;
 }
 
-Deno.serve(async (req: Request) => {
+Deno.serve(avecCors(async (req: Request) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
@@ -153,6 +153,21 @@ Deno.serve(async (req: Request) => {
     }
     if (!blAcces) {
       return jsonResponse({ error: "Bon de livraison introuvable ou accès refusé." }, 404);
+    }
+
+    // --- Limitation de débit (0022) : 60 PDF par heure et par utilisateur --
+    const { data: autorise, error: limiteError } = await userClient.rpc("consommer_limite_action", {
+      p_action: "pdf_document",
+    });
+    if (limiteError) {
+      console.error("generer-bon-livraison-pdf: erreur limitation de débit", limiteError);
+      return jsonResponse({ error: "Erreur lors de la vérification des limites d'usage." }, 500);
+    }
+    if (autorise === false) {
+      return jsonResponse(
+        { error: "Trop de PDF générés en une heure. Réessayez dans quelques minutes.", code: "LIMITE_ATTEINTE" },
+        429,
+      );
     }
 
     // --- Récupération du détail complet via service_role --------------------
@@ -236,7 +251,7 @@ Deno.serve(async (req: Request) => {
     console.error("generer-bon-livraison-pdf: erreur inattendue", err);
     return jsonResponse({ error: "Erreur interne lors de la génération du PDF." }, 500);
   }
-});
+}));
 
 // =============================================================================
 // Construction du document PDF (pdf-lib)

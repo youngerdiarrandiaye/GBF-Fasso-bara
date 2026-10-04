@@ -9,6 +9,8 @@ import { Breadcrumbs } from "@/components/admin/Breadcrumbs";
 import { RealtimeRevalidate } from "@/components/admin/RealtimeRevalidate";
 import { NewRecouvrementButton } from "@/components/admin/NewRecouvrementButton";
 import type { CreditAvecClient, RemboursementCreditRow } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -163,9 +165,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
             <tbody>
               {remboursements.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-body text-muted">
-                    Aucun remboursement enregistré pour ce crédit.
-                  </td>
+                  <td colSpan={4}><EmptyState icone={faHandHoldingDollar} titre="Aucun remboursement enregistré pour ce crédit." /></td>
                 </tr>
               ) : (
                 remboursements.map((r) => (

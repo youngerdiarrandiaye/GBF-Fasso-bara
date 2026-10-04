@@ -46,12 +46,12 @@ import {
   getEnv,
   resolveCallerId,
 } from "../_shared/clients.ts";
-import { handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
+import { avecCors, handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
 
 const REALTIME_BROADCAST_TOPIC = "alertes_stock";
 const REALTIME_BROADCAST_EVENT = "stock_bas_quotidien";
 
-Deno.serve(async (req: Request) => {
+Deno.serve(avecCors(async (req: Request) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
@@ -160,7 +160,7 @@ Deno.serve(async (req: Request) => {
     console.error("alerte-stock-bas: erreur inattendue", err);
     return jsonResponse({ error: "Erreur interne lors du scan des alertes de stock." }, 500);
   }
-});
+}));
 
 /**
  * Autorise soit un appel serveur-à-serveur (pg_cron via pg_net, ou tout

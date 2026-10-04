@@ -10,8 +10,9 @@ import { NewClientButton } from "@/components/admin/NewClientButton";
 import { BrandedListPanel } from "@/components/admin/BrandedListPanel";
 import { ClickableTableRow } from "@/components/admin/ClickableTableRow";
 import { Pagination } from "@/components/admin/Pagination";
-import { faFileCirclePlus, faMoneyBillWave, faUserPlus, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faFileCirclePlus, faMoneyBillWave, faUserPlus, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
 import type { ClientRow, EntrepriseConfigRow } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +126,7 @@ export default async function ClientsAdminPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {clients.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucun client trouvé.</p>
+              <EmptyState icone={faUsers} titre="Aucun client trouvé." description="Modifiez la recherche ou ajoutez un nouveau client." />
             ) : clients.map((client) => {
               const solde = soldeParClient.get(client.id) ?? 0;
               return (
@@ -153,9 +154,7 @@ export default async function ClientsAdminPage({
               <tbody>
                 {clients.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-6 text-center text-body text-muted">
-                      Aucun client trouvé.
-                    </td>
+                    <td colSpan={5}><EmptyState icone={faUsers} titre="Aucun client trouvé." description="Modifiez la recherche ou ajoutez un nouveau client." /></td>
                   </tr>
                 ) : (
                   clients.map((client) => {

@@ -1,4 +1,4 @@
-﻿/** Corrige les anciennes URLs signées locales quand Supabase expose un port différent. */
+/** Corrige les anciennes URLs signées locales quand Supabase expose un port différent. */
 export function normaliserUrlFichierLocal(url: string): string {
   const basePublique = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!basePublique) return url;
@@ -31,4 +31,13 @@ export function declencherTelechargementPdf(pdfUrl: string, nomFacture: string):
   document.body.appendChild(lien);
   lien.click();
   lien.remove();
+}
+
+/**
+ * Message d'erreur d'un appel à une Edge Function PDF : explicite quand la
+ * limite d'usage est atteinte (HTTP 429, migration 0022), sinon `defaut`.
+ */
+export function messageErreurPdf(error: unknown, defaut: string): string {
+  const status = (error as { context?: { status?: number } } | null)?.context?.status;
+  return status === 429 ? "Trop de PDF générés en une heure. Réessayez dans quelques minutes." : defaut;
 }

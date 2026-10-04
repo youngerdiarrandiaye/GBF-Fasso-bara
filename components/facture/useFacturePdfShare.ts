@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/Toast";
 import { normaliserTelephoneSenegal, construireMessageWhatsapp } from "@/lib/format";
-import { normaliserUrlFichierLocal } from "./telechargerPdf";
+import { messageErreurPdf, normaliserUrlFichierLocal } from "./telechargerPdf";
 
 const MESSAGE_TELEPHONE_INVALIDE =
   "Numéro de téléphone du client manquant ou invalide — impossible de préparer l'envoi";
@@ -80,7 +80,7 @@ export function useFacturePdfShare() {
 
       if (error || !data?.pdf_url) {
         fenetreWhatsapp?.close();
-        showToast(MESSAGE_ECHEC_PDF, "error");
+        showToast(messageErreurPdf(error, MESSAGE_ECHEC_PDF), "error");
         return;
       }
 

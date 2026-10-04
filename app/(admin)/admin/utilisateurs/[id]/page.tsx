@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserShield, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faFileInvoice, faUser, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDate, formatDateTime } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -18,6 +18,7 @@ import type {
   StatutFacture,
   UtilisateurRow,
 } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 type FactureAvecClient = FactureRow & { client: Pick<ClientRow, "id" | "nom" | "telephone" | "type_client"> };
 
@@ -173,9 +174,7 @@ export default async function UtilisateurDetailPage({
                 <tbody>
                   {factures.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-6 text-center text-body text-muted">
-                        Aucune facture créée par cet agent.
-                      </td>
+                      <td colSpan={5}><EmptyState icone={faFileInvoice} titre="Aucune facture créée par cet agent." /></td>
                     </tr>
                   ) : (
                     factures.map((facture) => (

@@ -14,6 +14,7 @@ import type {
   EntrepriseConfigRow,
   StockEntrepotAvecProduit,
 } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -90,9 +91,7 @@ export default async function EntrepotsPage({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tousLesEntrepots.length === 0 ? (
             <Card className="sm:col-span-2 lg:col-span-3">
-              <p className="text-body text-muted">
-                Aucun entrepôt configuré. Créez le premier avec le bouton « + Nouvel entrepôt ».
-              </p>
+              <EmptyState icone={faWarehouse} titre="Aucun entrepôt configuré" description="Créez le premier avec le bouton « + Nouvel entrepôt »." />
             </Card>
           ) : (
             tousLesEntrepots.map((e) => (
@@ -142,7 +141,7 @@ export default async function EntrepotsPage({
           </div>
           <div className="divide-y divide-border md:hidden">
             {lignesStock.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucune ligne de stock pour ces filtres.</p>
+              <EmptyState icone={faWarehouse} titre="Aucune ligne de stock pour ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/entrepots", label: "Effacer les filtres", variante: "outline" }} />
             ) : lignesStock.map((l) => {
               const entrepotLigne = entrepotParId.get(l.entrepot_id);
               return (
@@ -174,9 +173,7 @@ export default async function EntrepotsPage({
               <tbody>
                 {lignesStock.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-6 text-center text-body text-muted">
-                      Aucune ligne de stock pour ces filtres.
-                    </td>
+                    <td colSpan={5}><EmptyState icone={faWarehouse} titre="Aucune ligne de stock pour ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/entrepots", label: "Effacer les filtres", variante: "outline" }} /></td>
                   </tr>
                 ) : (
                   lignesStock.map((l) => {

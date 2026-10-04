@@ -15,6 +15,8 @@ import type {
   FactureRetardPaiementRow,
   FactureRow,
 } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { faFileInvoice } from "@fortawesome/free-solid-svg-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -150,9 +152,7 @@ export default async function ClientDetailPage({
             <tbody>
               {factures.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-body text-muted">
-                    Aucune facture pour ce client.
-                  </td>
+                  <td colSpan={4}><EmptyState icone={faFileInvoice} titre="Aucune facture pour ce client." /></td>
                 </tr>
               ) : (
                 factures.map((facture) => (

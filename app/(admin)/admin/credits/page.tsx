@@ -9,8 +9,9 @@ import { BrandedListPanel } from "@/components/admin/BrandedListPanel";
 import { RealtimeRevalidate } from "@/components/admin/RealtimeRevalidate";
 import { ClickableTableRow } from "@/components/admin/ClickableTableRow";
 import { NewRecouvrementButton } from "@/components/admin/NewRecouvrementButton";
-import { faClockRotateLeft, faFileCirclePlus, faMoneyBillWave, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faClockRotateLeft, faFileCirclePlus, faHandHoldingDollar, faMoneyBillWave, faWallet } from "@fortawesome/free-solid-svg-icons";
 import type { CreditAvecClient, EntrepriseConfigRow, StatutCredit } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -110,7 +111,7 @@ export default async function CreditsPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {credits.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">{vueStatut === "en_cours" ? "Aucun crédit en cours." : "Aucun crédit soldé pour le moment."}</p>
+              <EmptyState icone={faHandHoldingDollar} titre={vueStatut === "en_cours" ? "Aucun crédit en cours." : "Aucun crédit soldé pour le moment."} />
             ) : credits.map((c) => (
               <Link key={c.id} href={`/admin/credits/${c.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
                 <div className="flex items-start justify-between gap-3">
@@ -139,9 +140,7 @@ export default async function CreditsPage({
               <tbody>
                 {credits.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-6 text-center text-body text-muted">
-                      {vueStatut === "en_cours" ? "Aucun crédit en cours." : "Aucun crédit soldé pour le moment."}
-                    </td>
+                    <td colSpan={6}><EmptyState icone={faHandHoldingDollar} titre={vueStatut === "en_cours" ? "Aucun crédit en cours." : "Aucun crédit soldé pour le moment."} /></td>
                   </tr>
                 ) : (
                   credits.map((c) => (

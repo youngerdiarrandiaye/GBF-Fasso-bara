@@ -10,7 +10,7 @@ import { InvoicesFilters } from "@/components/admin/InvoicesFilters";
 import { Pagination } from "@/components/admin/Pagination";
 import { RealtimeRevalidate } from "@/components/admin/RealtimeRevalidate";
 import { BrandedListPanel } from "@/components/admin/BrandedListPanel";
-import { faFileCirclePlus, faMoneyBillWave, faTruck, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faFileCirclePlus, faFileInvoice, faMoneyBillWave, faTruck, faUsers } from "@fortawesome/free-solid-svg-icons";
 import type {
   ClientRow,
   EntrepriseConfigRow,
@@ -19,6 +19,7 @@ import type {
   StatutFacture,
   UtilisateurRow,
 } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -132,7 +133,7 @@ export default async function FacturesAdminPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {factures.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucune facture ne correspond à ces filtres.</p>
+              <EmptyState icone={faFileInvoice} titre="Aucune facture ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/factures", label: "Effacer les filtres", variante: "outline" }} />
             ) : factures.map((facture) => (
               <Link key={facture.id} href={`/admin/factures/${facture.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
                 <div className="flex items-start justify-between gap-3">
@@ -165,9 +166,7 @@ export default async function FacturesAdminPage({
               <tbody>
                 {factures.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-6 text-center text-body text-muted">
-                      Aucune facture ne correspond à ces filtres.
-                    </td>
+                    <td colSpan={6}><EmptyState icone={faFileInvoice} titre="Aucune facture ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/factures", label: "Effacer les filtres", variante: "outline" }} /></td>
                   </tr>
                 ) : (
                   factures.map((facture) => (

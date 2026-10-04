@@ -24,6 +24,15 @@ import { useToast } from "@/components/ui/Toast";
  * reste dans le bucket, cohérent avec l'absence d'opération de nettoyage
  * Storage ailleurs dans le projet, ex. LogoUploader/TamponUploader).
  */
+// Miroir des limites du bucket `produits-photos` (migration 0021) : le
+// serveur refuse de toute façon le reste ; ce contrôle donne un message clair.
+const TYPES_ACCEPTES: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+};
+const TAILLE_MAX_OCTETS = 5 * 1024 * 1024;
+
 export function ProductPhotosUploader({
   photosUrls,
   onChange,
@@ -42,7 +51,17 @@ export function ProductPhotosUploader({
 
     for (let i = 0; i < fichiers.length; i++) {
       const fichier = fichiers[i];
-      const chemin = `produits/photo-${Date.now()}-${i}.${fichier.name.split(".").pop()}`;
+      const extension = TYPES_ACCEPTES[fichier.type];
+      if (!extension) {
+        showToast(`"${fichier.name}" : format refusé. Utilisez une image PNG, JPEG ou WebP.`, "error");
+        continue;
+      }
+      if (fichier.size > TAILLE_MAX_OCTETS) {
+        showToast(`"${fichier.name}" dépasse 5 Mo. Réduisez l'image puis réessayez.`, "error");
+        continue;
+      }
+      // Extension déduite du type réel, jamais du nom de fichier fourni.
+      const chemin = `produits/photo-${Date.now()}-${i}.${extension}`;
 
       const { error } = await supabase.storage.from("produits-photos").upload(chemin, fichier, {
         upsert: true,
@@ -95,7 +114,7 @@ export function ProductPhotosUploader({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/webp"
         multiple
         className="hidden"
         onChange={(e) => {

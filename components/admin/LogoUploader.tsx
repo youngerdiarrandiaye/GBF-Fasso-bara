@@ -67,7 +67,7 @@ export function LogoUploader({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/webp"
         className="hidden"
         onChange={(e) => {
           const fichier = e.target.files?.[0];

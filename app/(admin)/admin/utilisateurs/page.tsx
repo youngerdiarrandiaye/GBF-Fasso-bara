@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserShield, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faUserGroup, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -16,6 +16,7 @@ import { StopClickPropagation } from "@/components/admin/StopClickPropagation";
 import { Pagination } from "@/components/admin/Pagination";
 import { obtenirDernieresConnexions } from "@/lib/actions/utilisateurs";
 import type { EntrepriseConfigRow, UtilisateurRow } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -96,7 +97,7 @@ export default async function UtilisateursAdminPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {utilisateurs.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucun utilisateur trouvé.</p>
+              <EmptyState icone={faUserGroup} titre="Aucun utilisateur trouvé." />
             ) : utilisateurs.map((u) => {
               const derniereConnexion = dernieresConnexions.get(u.id) ?? null;
               return (
@@ -123,9 +124,7 @@ export default async function UtilisateursAdminPage({
               <tbody>
                 {utilisateurs.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-6 text-center text-body text-muted">
-                      Aucun utilisateur trouvé.
-                    </td>
+                    <td colSpan={6}><EmptyState icone={faUserGroup} titre="Aucun utilisateur trouvé." /></td>
                   </tr>
                 ) : (
                   utilisateurs.map((u) => {

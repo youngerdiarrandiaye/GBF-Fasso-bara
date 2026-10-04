@@ -8,6 +8,8 @@ import { Breadcrumbs } from "@/components/admin/Breadcrumbs";
 import { RealtimeRevalidate } from "@/components/admin/RealtimeRevalidate";
 import { BonLivraisonStatusToggle } from "@/components/admin/BonLivraisonStatusToggle";
 import type { BonLivraisonAvecDetails, LigneBonLivraisonAvecProduit } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -116,9 +118,7 @@ export default async function BonLivraisonDetailPage({ params }: { params: Promi
             <tbody>
               {lignes.length === 0 ? (
                 <tr>
-                  <td colSpan={2} className="px-4 py-6 text-center text-body text-muted">
-                    Aucune ligne enregistrée.
-                  </td>
+                  <td colSpan={2}><EmptyState icone={faBoxOpen} titre="Aucune ligne enregistrée." /></td>
                 </tr>
               ) : (
                 lignes.map((l) => (

@@ -35,9 +35,9 @@ import {
   getEnv,
   resolveCallerId,
 } from "../_shared/clients.ts";
-import { handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
+import { avecCors, handleCorsPreflight, jsonResponse } from "../_shared/cors.ts";
 
-Deno.serve(async (req: Request) => {
+Deno.serve(avecCors(async (req: Request) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
@@ -95,7 +95,7 @@ Deno.serve(async (req: Request) => {
       500,
     );
   }
-});
+}));
 
 /**
  * Autorise soit un appel serveur-à-serveur (pg_cron via pg_net, ou tout

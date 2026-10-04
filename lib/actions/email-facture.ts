@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseServerFetch } from "@/lib/supabase/server-fetch";
 import { formatDate, formatMontant } from "@/lib/format";
-import { normaliserUrlFichierLocal } from "@/components/facture/telechargerPdf";
+import { messageErreurPdf, normaliserUrlFichierLocal } from "@/components/facture/telechargerPdf";
 
 /**
  * Envoi d'une facture (ou proforma) au client par e-mail, PDF en pièce jointe.
@@ -62,6 +62,18 @@ export async function envoyerFactureParEmail(
     .single();
 
   if (!facture) return { error: "Facture introuvable ou accès refusé." };
+
+  // Limitation de débit (0022) : 10 e-mails par heure et par utilisateur.
+  const { data: autorise, error: erreurLimite } = await supabase.rpc("consommer_limite_action", {
+    p_action: "email_facture",
+  });
+  if (erreurLimite) {
+    console.error("[email-facture.limite]", erreurLimite.message);
+    return { error: "L'e-mail n'a pas pu être envoyé. Réessayez dans un instant." };
+  }
+  if (autorise === false) {
+    return { error: "Limite atteinte : 10 e-mails par heure. Réessayez plus tard." };
+  }
   if (facture.statut === "brouillon" || facture.statut === "annulee") {
     return { error: "Seule une facture validée ou une proforma peut être envoyée." };
   }
@@ -85,7 +97,7 @@ export async function envoyerFactureParEmail(
   });
   if (erreurPdf || !pdf?.pdf_url) {
     console.error("[email-facture.pdf]", erreurPdf?.message);
-    return { error: "Impossible de générer le PDF de cette facture." };
+    return { error: messageErreurPdf(erreurPdf, "Impossible de générer le PDF de cette facture.") };
   }
 
   // Même correction de port local que le téléchargement côté navigateur.

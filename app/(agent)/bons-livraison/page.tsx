@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { faClockRotateLeft, faFileInvoice, faPlus, faTruckFast } from "@fortawesome/free-solid-svg-icons";
+import { faClockRotateLeft, faFileInvoice, faPlus, faTruck, faTruckFast } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { QuickActionGrid } from "@/components/ui/QuickActionGrid";
 import { BonLivraisonStatusBadge } from "@/components/ui/BonLivraisonStatusBadge";
 import type { BonLivraisonAvecDetails } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -52,9 +53,7 @@ export default async function BonsLivraisonPage() {
       />
 
       {bonsLivraison.length === 0 ? (
-        <p className="rounded-card border border-dashed border-border bg-surface-2 p-4 text-center text-body text-muted">
-          Aucun bon de livraison créé pour le moment.
-        </p>
+        <EmptyState icone={faTruck} titre="Aucun bon de livraison créé pour le moment." action={{ href: "/bons-livraison/nouveau", label: "Créer un bon de livraison" }} className="rounded-card border border-dashed border-border bg-surface-2" />
       ) : (
         <div className="flex flex-col gap-3">
           {bonsLivraison.map((bl) => (

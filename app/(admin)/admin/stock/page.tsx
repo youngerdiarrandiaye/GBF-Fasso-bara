@@ -14,6 +14,7 @@ import { ClickableTableRow } from "@/components/admin/ClickableTableRow";
 import { Pagination } from "@/components/admin/Pagination";
 import { faBoxesStacked, faPlus, faRightLeft, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import type { CategorieProduitRow, EntrepriseConfigRow, ProduitAvecCategorie } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -124,7 +125,7 @@ export default async function StockPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {produits.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucun produit ne correspond à ces filtres.</p>
+              <EmptyState icone={faBoxesStacked} titre="Aucun produit ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/stock", label: "Effacer les filtres", variante: "outline" }} />
             ) : produits.map((produit) => (
               <Link key={produit.id} href={`/admin/stock/${produit.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
                 <div className="flex items-start justify-between gap-3">
@@ -156,9 +157,7 @@ export default async function StockPage({
               <tbody>
                 {produits.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-6 text-center text-body text-muted">
-                      Aucun produit ne correspond à ces filtres.
-                    </td>
+                    <td colSpan={5}><EmptyState icone={faBoxesStacked} titre="Aucun produit ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/stock", label: "Effacer les filtres", variante: "outline" }} /></td>
                   </tr>
                 ) : (
                   produits.map((produit) => (

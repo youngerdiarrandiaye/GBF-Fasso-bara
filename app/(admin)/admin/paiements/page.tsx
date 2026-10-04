@@ -13,8 +13,9 @@ import { BrandedListPanel } from "@/components/admin/BrandedListPanel";
 import { ClickableTableRow } from "@/components/admin/ClickableTableRow";
 import { StopClickPropagation } from "@/components/admin/StopClickPropagation";
 import { Pagination } from "@/components/admin/Pagination";
-import { faFileInvoice, faMagnifyingGlass, faMoneyBillWave, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faFileInvoice, faMagnifyingGlass, faMoneyBillWave, faWallet } from "@fortawesome/free-solid-svg-icons";
 import type { EntrepriseConfigRow, FactureAvecClientEtAgent } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -130,7 +131,7 @@ export default async function PaiementsAdminPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {lignes.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucune facture impayée pour le moment.</p>
+              <EmptyState icone={faCircleCheck} titre="Aucune facture impayée pour le moment." description="Tous les paiements sont à jour." ton="succes" />
             ) : lignes.map(({ facture, paye, reste }) => (
               <div key={facture.id} className="p-4">
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><Link href={`/admin/factures/${facture.id}`} className="focus-ring font-mono text-body-sm font-semibold text-text hover:underline">{facture.numero}</Link><p className="mt-1 truncate text-body text-text">{facture.client?.nom}</p></div><StatusBadge statut={facture.statut} /></div>
@@ -156,9 +157,7 @@ export default async function PaiementsAdminPage({
               <tbody>
                 {lignes.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-6 text-center text-body text-muted">
-                      Aucune facture impayée pour le moment.
-                    </td>
+                    <td colSpan={8}><EmptyState icone={faCircleCheck} titre="Aucune facture impayée pour le moment." description="Tous les paiements sont à jour." ton="succes" /></td>
                   </tr>
                 ) : (
                   lignes.map(({ facture, paye, reste }) => (

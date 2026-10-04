@@ -16,6 +16,7 @@ import type {
   TransfertAvecDetails,
 } from "@/lib/supabase/database.types";
 import { faBoxesStacked, faCheck, faClock, faRightLeft } from "@fortawesome/free-solid-svg-icons";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -139,7 +140,7 @@ export default async function TransfertsPage({
         <Card className="!p-0">
           <div className="divide-y divide-border md:hidden">
             {transferts.length === 0 ? (
-              <p className="p-6 text-center text-body text-muted">Aucun transfert pour ces filtres.</p>
+              <EmptyState icone={faRightLeft} titre="Aucun transfert pour ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/transferts", label: "Effacer les filtres", variante: "outline" }} />
             ) : transferts.map((t) => (
               <div key={t.id} className="p-4">
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="truncate text-body font-semibold text-text">{t.produit.nom}</p><p className="font-mono text-body-sm text-muted">{t.produit.code}</p></div><TransfertStatusBadge statut={t.statut} /></div>
@@ -164,9 +165,7 @@ export default async function TransfertsPage({
               <tbody>
                 {transferts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-6 text-center text-body text-muted">
-                      Aucun transfert pour ces filtres.
-                    </td>
+                    <td colSpan={7}><EmptyState icone={faRightLeft} titre="Aucun transfert pour ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/transferts", label: "Effacer les filtres", variante: "outline" }} /></td>
                   </tr>
                 ) : (
                   transferts.map((t) => (

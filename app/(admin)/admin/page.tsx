@@ -2,15 +2,7 @@ import { redirect } from "next/navigation";
 import { WeeklySalesBarChart, DonutChart } from "@/components/admin/LazyCharts";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight,
-  faBoxesStacked,
-  faFileCirclePlus,
-  faTriangleExclamation,
-  faWallet,
-  faTruck,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBoxesStacked, faCircleCheck, faFileCirclePlus, faFileInvoice, faHandHoldingDollar, faTriangleExclamation, faTruck, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDate, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -37,6 +29,7 @@ import type {
   FactureRetardPaiementRow,
   StatutFacture,
 } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -308,7 +301,7 @@ export default async function DashboardAdminPage({
         </div>
       </section>
 
-      <nav aria-label="Actions du quotidien" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <nav aria-label="Actions du quotidien" className="cascade grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {[
           { href: "/admin/nouvelle-facture", label: "Créer une facture", icon: faFileCirclePlus, primary: true },
           { href: "/admin/paiements", label: "Paiements", icon: faWallet, primary: false },
@@ -331,7 +324,7 @@ export default async function DashboardAdminPage({
         <div className="mb-3">
           <h2 id="indicateurs-dashboard" className="scroll-mt-24 text-h2 font-semibold text-text">Vue globale</h2>
         </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="cascade grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div>
         <StatCard
           label="CA mois"
@@ -371,7 +364,7 @@ export default async function DashboardAdminPage({
           </div>
           <p className="hidden text-body-sm text-muted sm:block">Situation actuelle, En attente</p>
         </div>
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+        <div className="cascade grid grid-cols-1 gap-3 lg:grid-cols-3">
           <a href="#retards-paiement" className="focus-ring group rounded-card">
             <Card interactive className="flex h-full items-center gap-3 p-3 !border-[color-mix(in_srgb,var(--color-red)_30%,var(--color-border))]">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input bg-[color-mix(in_srgb,var(--color-red)_14%,var(--color-surface))] text-red-text"><FontAwesomeIcon icon={faTriangleExclamation} className="h-4 w-4" /></span>
@@ -414,7 +407,7 @@ export default async function DashboardAdminPage({
         </div>
         <div className="divide-y divide-border md:hidden">
           {factures.length === 0 ? (
-            <p className="px-4 py-8 text-center text-body text-muted">Aucune facture pour le moment.</p>
+            <EmptyState icone={faFileInvoice} titre="Aucune facture pour le moment." action={{ href: "/admin/nouvelle-facture", label: "Créer une facture" }} />
           ) : factures.map((facture) => (
             <Link key={facture.id} href={`/admin/factures/${facture.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2 active:bg-surface-2">
               <div className="flex items-start justify-between gap-3">
@@ -445,9 +438,7 @@ export default async function DashboardAdminPage({
             <tbody>
               {factures.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-body text-muted">
-                    Aucune facture pour le moment.
-                  </td>
+                  <td colSpan={5}><EmptyState icone={faFileInvoice} titre="Aucune facture pour le moment." action={{ href: "/admin/nouvelle-facture", label: "Créer une facture" }} /></td>
                 </tr>
               ) : (
                 factures.map((facture) => (
@@ -494,9 +485,7 @@ export default async function DashboardAdminPage({
           </span>
         </div>
         {facturesEnRetard.length === 0 ? (
-          <p className="px-4 pb-6 text-body text-muted">
-            Aucune facture en retard — tous les paiements sont à jour.
-          </p>
+          <EmptyState icone={faCircleCheck} titre="Aucune facture en retard" description="Tous les paiements sont à jour." ton="succes" />
         ) : (
           <>
           <div className="divide-y divide-border md:hidden">
@@ -583,7 +572,7 @@ export default async function DashboardAdminPage({
         </div>
         
         {creditsEnCoursTypes.length === 0 ? (
-          <p className="px-4 pb-6 text-body text-muted">Aucun crédit en cours pour le moment.</p>
+          <EmptyState icone={faHandHoldingDollar} titre="Aucun crédit en cours pour le moment." />
         ) : (
           <>
           <div className="divide-y divide-border md:hidden">

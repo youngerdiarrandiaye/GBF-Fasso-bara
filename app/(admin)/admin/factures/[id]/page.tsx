@@ -20,6 +20,8 @@ import type {
   PaiementRow,
   RemboursementCreditRow,
 } from "@/lib/supabase/database.types";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -355,9 +357,7 @@ export default async function FactureDetailAdminPage({
             <tbody>
               {paiements.length === 0 && remboursementsCredit.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-body text-muted">
-                    Aucun paiement enregistré pour cette facture.
-                  </td>
+                  <td colSpan={4}><EmptyState icone={faMoneyBillWave} titre="Aucun paiement enregistré pour cette facture." /></td>
                 </tr>
               ) : (
                 paiements.map((p) => (

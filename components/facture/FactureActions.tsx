@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useFacturePdfShare } from "./useFacturePdfShare";
-import { declencherTelechargementPdf, normaliserUrlFichierLocal } from "./telechargerPdf";
+import { declencherTelechargementPdf, messageErreurPdf, normaliserUrlFichierLocal } from "./telechargerPdf";
 import { envoyerFactureParEmail } from "@/lib/actions/email-facture";
 import type { StatutFacture } from "@/lib/supabase/database.types";
 
@@ -57,7 +57,7 @@ export function FactureActions({
     setEnCoursTelechargement(false);
 
     if (error || !data?.pdf_url) {
-      showToast(MESSAGE_ECHEC_PDF, "error");
+      showToast(messageErreurPdf(error, MESSAGE_ECHEC_PDF), "error");
       return;
     }
 
@@ -74,7 +74,7 @@ export function FactureActions({
     setEnCoursImpression(false);
 
     if (error || !data?.pdf_url) {
-      showToast(MESSAGE_ECHEC_PDF, "error");
+      showToast(messageErreurPdf(error, MESSAGE_ECHEC_PDF), "error");
       return;
     }
 
