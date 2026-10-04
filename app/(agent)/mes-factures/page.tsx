@@ -64,7 +64,7 @@ export default async function MesFacturesPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
         <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="sm" />
-        <h1 className="text-h1 text-text">Mes factures</h1>
+        <h1 className="text-h1 font-semibold tracking-tight text-text">Mes factures</h1>
       </div>
       <QuickActionGrid
         actions={[

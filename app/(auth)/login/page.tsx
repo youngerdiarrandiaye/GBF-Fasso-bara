@@ -31,7 +31,7 @@ export default async function LoginPage() {
         <div className="flex h-14 w-14 items-center justify-center rounded-card bg-green-dk text-h2 font-bold text-white">
           GFB
         </div>
-        <h1 className="text-h1 text-text">GIE FASSO BARA</h1>
+        <h1 className="text-h1 font-semibold tracking-tight text-text">GIE FASSO BARA</h1>
         <p className="text-body text-muted">Connectez-vous à votre espace</p>
       </div>
       <LoginForm />

@@ -115,7 +115,7 @@ export default async function ProduitDetailPage({
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="sm" />
-              <h1 className="text-h1 text-text">{produitTyped.nom}</h1>
+              <h1 className="text-h1 font-semibold tracking-tight text-text">{produitTyped.nom}</h1>
               <StockLevelBadge
                 quantiteStock={produitTyped.quantite_stock}
                 seuilAlerte={produitTyped.seuil_alerte}

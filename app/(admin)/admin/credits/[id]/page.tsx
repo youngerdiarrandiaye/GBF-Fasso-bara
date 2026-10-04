@@ -74,7 +74,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-h1 text-text">{creditTyped.client?.nom}</h1>
+            <h1 className="text-h1 font-semibold tracking-tight text-text">{creditTyped.client?.nom}</h1>
             <CreditStatusBadge statut={creditTyped.statut} />
           </div>
           <p className="mt-1 text-body-sm text-muted">
@@ -155,7 +155,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
         <div className="overflow-x-auto">
           <table className="min-w-[600px] w-full border-collapse">
             <thead>
-              <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Date</th>
                 <th className="px-4 py-2.5 text-right font-medium">Montant</th>
                 <th className="px-4 py-2.5 font-medium">Enregistré par</th>

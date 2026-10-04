@@ -27,7 +27,7 @@ export default async function NouveauProduitPage() {
       <div className="flex items-center gap-3">
         <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="sm" />
         <div>
-          <h1 className="text-h1 text-text">Nouveau produit</h1>
+          <h1 className="text-h1 font-semibold tracking-tight text-text">Nouveau produit</h1>
           <p className="text-body text-muted">Ajouter un produit au catalogue.</p>
         </div>
       </div>

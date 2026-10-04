@@ -39,7 +39,7 @@ export function CreditGaugeCard({
   // contextuel vers Paramètres reste disponible depuis l'écran Crédits lui-même.
   return (
     <Link href="/admin/credits" className="focus-ring group block h-full rounded-card-lg">
-      <Card interactive className="flex h-full min-h-[132px] flex-col rounded-card-lg bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-surface)_94%,white_6%),var(--color-surface))] p-5 shadow-md">
+      <Card interactive className="flex h-full min-h-[132px] flex-col rounded-card-lg p-5">
         <div className="flex items-start gap-2">
           <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${signalClass}`} aria-hidden="true" />
           <p className="min-w-0 flex-1 text-[0.68rem] font-semibold uppercase leading-4 tracking-[0.16em] text-muted">Credit client</p>

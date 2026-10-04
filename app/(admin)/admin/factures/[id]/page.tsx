@@ -207,7 +207,7 @@ export default async function FactureDetailAdminPage({
         <div className="overflow-x-auto border-t border-border">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="hidden bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted sm:table-row">
+              <tr className="hidden border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted sm:table-row">
                 <th className="px-4 py-2.5 font-medium">Produit</th>
                 <th className="px-4 py-2.5 text-right font-medium">Quantité</th>
                 <th className="px-4 py-2.5 text-right font-medium">Prix unitaire</th>
@@ -347,7 +347,7 @@ export default async function FactureDetailAdminPage({
         <div className="overflow-x-auto">
           <table className="min-w-[560px] w-full border-collapse">
             <thead>
-              <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Date</th>
                 <th className="px-4 py-2.5 font-medium">Mode</th>
                 <th className="px-4 py-2.5 font-medium">Référence</th>

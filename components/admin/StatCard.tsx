@@ -111,7 +111,7 @@ export function StatCard({
       <Link href={href} className="focus-ring group block h-full rounded-card-lg">
         <Card
           interactive
-          className={cn("h-full cursor-pointer rounded-card-lg bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-surface)_94%,white_6%),var(--color-surface))] p-5 shadow-md", hero && "!border-[color-mix(in_srgb,var(--color-green)_34%,var(--color-border))] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-surface)_86%,var(--color-green)_14%),var(--color-surface))] shadow-lg")}
+          className={cn("h-full cursor-pointer rounded-card-lg p-5", hero && "!border-[color-mix(in_srgb,var(--color-green)_34%,var(--color-border))]")}
         >
           {content}
         </Card>
@@ -120,10 +120,10 @@ export function StatCard({
   }
 
   if (hero) {
-    return <Card className="rounded-card-lg !border-[color-mix(in_srgb,var(--color-green)_34%,var(--color-border))] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-surface)_88%,var(--color-green)_12%),var(--color-surface))] p-5 shadow-lg">{content}</Card>;
+    return <Card className="rounded-card-lg !border-[color-mix(in_srgb,var(--color-green)_34%,var(--color-border))] p-5">{content}</Card>;
   }
 
-  return <Card className="rounded-card-lg bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-surface)_94%,white_6%),var(--color-surface))] p-5 shadow-md">{content}</Card>;
+  return <Card className="rounded-card-lg p-5">{content}</Card>;
 }
 
 

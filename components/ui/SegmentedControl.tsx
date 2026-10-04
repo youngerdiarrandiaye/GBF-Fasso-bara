@@ -44,11 +44,9 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(option.value)}
             className={cn(
               "focus-ring rounded-input px-4 py-2 text-body-sm transition-colors duration-btn ease-standard",
-              // Fond `--color-green-dk` (au lieu de `navy` plein) sur le
-              // fond sombre "neon green" — voir docs/design-system.md §3.7
-              // D-18 (navy quasi invisible, contraste ≈ 1.2:1 sur le fond
-              // sombre du dashboard).
-              actif ? "bg-green-dk font-semibold text-white" : "font-medium text-muted hover:text-text"
+              // « Comptoir » (D-25) : pastille blanche surélevée sur la piste
+              // surface-2, comme le sélecteur de période de la maquette.
+              actif ? "bg-surface font-semibold text-text shadow-sm" : "font-medium text-muted hover:text-text"
             )}
           >
             {option.label}

@@ -229,7 +229,7 @@ export default async function FactureDetailAgentPage({
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Produit</th>
                 <th className="px-4 py-2.5 text-right font-medium">Quantité</th>
                 <th className="px-4 py-2.5 text-right font-medium">Prix unitaire</th>
@@ -345,7 +345,7 @@ export default async function FactureDetailAgentPage({
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="text-left text-caption uppercase tracking-wide text-muted">
+                  <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                     <th className="px-4 py-2.5 font-medium">Date</th>
                     <th className="px-4 py-2.5 font-medium">Mode</th>
                     <th className="px-4 py-2.5 font-medium">Référence</th>

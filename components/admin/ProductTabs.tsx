@@ -86,7 +86,7 @@ export function ProductTabs({
         <div className="overflow-x-auto">
           <table className="min-w-[820px] w-full border-collapse">
             <thead>
-              <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Type</th>
                 <th className="px-4 py-2.5 text-right font-medium">Quantité</th>
                 <th className="px-4 py-2.5 font-medium">Motif</th>
@@ -142,7 +142,7 @@ export function ProductTabs({
         <div className="overflow-x-auto">
           <table className="min-w-[640px] w-full border-collapse">
             <thead>
-              <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Facture</th>
                 <th className="px-4 py-2.5 font-medium">Client</th>
                 <th className="px-4 py-2.5 font-medium">Date</th>

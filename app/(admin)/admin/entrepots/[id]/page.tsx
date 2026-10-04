@@ -58,7 +58,7 @@ export default async function EntrepotDetailPage({ params }: { params: Promise<{
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-h1 text-text">{entrepotTyped.nom}</h1>
+            <h1 className="text-h1 font-semibold tracking-tight text-text">{entrepotTyped.nom}</h1>
             <Badge tone={entrepotTyped.actif ? "green" : "red"}>
               {entrepotTyped.actif ? "Actif" : "Inactif"}
             </Badge>
@@ -82,7 +82,7 @@ export default async function EntrepotDetailPage({ params }: { params: Promise<{
         <div className="overflow-x-auto">
           <table className="min-w-[700px] w-full border-collapse">
             <thead>
-              <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Produit</th>
                 <th className="px-4 py-2.5 text-right font-medium">Quantité</th>
                 <th className="px-4 py-2.5 text-right font-medium">Seuil d&apos;alerte</th>

@@ -19,7 +19,7 @@ export default async function ReinitialiserMotDePassePage({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-h1 text-text">Nouveau mot de passe</h1>
+        <h1 className="text-h1 font-semibold tracking-tight text-text">Nouveau mot de passe</h1>
         {user && <p className="text-body text-muted">{user.email}</p>}
       </div>
       {user && lien !== "invalide" ? (

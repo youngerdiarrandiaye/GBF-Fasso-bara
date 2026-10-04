@@ -37,7 +37,7 @@ export default async function BonsLivraisonPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-h1 text-text">Mes bons de livraison</h1>
+        <h1 className="text-h1 font-semibold tracking-tight text-text">Mes bons de livraison</h1>
         <Link href="/bons-livraison/nouveau">
           <Button>+ Nouveau bon de livraison</Button>
         </Link>

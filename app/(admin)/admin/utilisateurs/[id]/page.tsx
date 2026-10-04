@@ -101,7 +101,7 @@ export default async function UtilisateurDetailPage({
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-h1 text-text">
+          <h1 className="text-h1 font-semibold tracking-tight text-text">
             {utilisateur.nom} {utilisateur.id === appelant?.id && <span className="text-body-sm text-muted">(vous)</span>}
           </h1>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -163,7 +163,7 @@ export default async function UtilisateurDetailPage({
             <div className="overflow-x-auto">
               <table className="min-w-[680px] w-full border-collapse">
                 <thead>
-                  <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+                  <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                     <th className="px-4 py-2.5 font-medium">Numéro</th>
                     <th className="px-4 py-2.5 font-medium">Client</th>
                     <th className="px-4 py-2.5 font-medium">Date</th>

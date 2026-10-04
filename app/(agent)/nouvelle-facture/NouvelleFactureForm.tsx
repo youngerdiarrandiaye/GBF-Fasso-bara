@@ -514,7 +514,7 @@ export function NouvelleFactureForm({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           {brand && <CompanyBrandMark nom={brand.nom} logoUrl={brand.logoUrl} size="sm" />}
-          <h1 className="text-h1 text-text">
+          <h1 className="text-h1 font-semibold tracking-tight text-text">
             {statutInitial ? "Modifier la facture" : "Nouvelle facture"}
           </h1>
         </div>

@@ -104,7 +104,7 @@ export default async function ClientDetailPage({
         <div className="flex flex-wrap items-start gap-3">
           <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} />
           <div>
-            <h1 className="text-h1 text-text">{clientTyped.nom}</h1>
+            <h1 className="text-h1 font-semibold tracking-tight text-text">{clientTyped.nom}</h1>
             <div className="mt-2 flex flex-wrap gap-2">
               <Badge>{LIBELLES_TYPE[clientTyped.type_client]}</Badge>
             </div>
@@ -142,7 +142,7 @@ export default async function ClientDetailPage({
         <div className="overflow-x-auto">
           <table className="min-w-[600px] w-full border-collapse">
             <thead>
-              <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-4 py-2.5 font-medium">Numéro</th>
                 <th className="px-4 py-2.5 font-medium">Date</th>
                 <th className="px-4 py-2.5 font-medium">Statut</th>

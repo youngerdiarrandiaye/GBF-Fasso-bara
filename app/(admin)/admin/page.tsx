@@ -485,7 +485,7 @@ export default async function DashboardAdminPage({
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                 <th className="px-5 py-3 font-semibold">Facture</th>
                 <th className="px-5 py-3 font-semibold">Client</th>
                 <th className="px-5 py-3 font-semibold">Agent</th>
@@ -567,7 +567,7 @@ export default async function DashboardAdminPage({
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+                <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                   <th className="px-4 py-2.5 font-medium">Numéro</th>
                   <th className="px-4 py-2.5 font-medium">Client</th>
                   <th className="px-4 py-2.5 text-right font-medium">Montant dû</th>
@@ -647,7 +647,7 @@ export default async function DashboardAdminPage({
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+                <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                   <th className="px-4 py-2.5 font-medium">Client</th>
                   <th className="px-4 py-2.5 font-medium">Ouvert le</th>
                   <th className="px-4 py-2.5 text-right font-medium">Solde restant</th>

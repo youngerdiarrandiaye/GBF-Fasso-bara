@@ -320,7 +320,7 @@ export function NouveauBonLivraisonForm({
 
   return (
     <div className="flex flex-col gap-6 pb-8">
-      <h1 className="text-h1 text-text">Nouveau bon de livraison</h1>
+      <h1 className="text-h1 font-semibold tracking-tight text-text">Nouveau bon de livraison</h1>
       <ol aria-label="Étapes de la livraison" className="grid grid-cols-3 gap-2">
         {["Client", "Produits", "Confirmation"].map((label, index) => (
           <li key={label} aria-current={etape === index + 1 ? "step" : undefined} className="flex flex-col gap-1.5 pt-1 text-body">

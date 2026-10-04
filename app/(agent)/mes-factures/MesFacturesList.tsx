@@ -94,7 +94,7 @@ export function MesFacturesList({
             className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
               onglet === tab.value
                 ? "bg-text text-surface"
-                : "bg-surface-2 text-muted hover:text-text"
+                : "border border-border bg-surface text-muted hover:text-text"
             }`}
           >
             {tab.label}
@@ -109,8 +109,8 @@ export function MesFacturesList({
             onClick={() => setEntrepotFiltre(TOUS_LES_ENTREPOTS)}
             className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
               entrepotFiltre === TOUS_LES_ENTREPOTS
-                ? "bg-surface-2 text-text ring-1 ring-border"
-                : "bg-surface-2 text-muted hover:text-text"
+                ? "badge-pastel-green font-semibold ring-1 ring-green-dk"
+                : "border border-border bg-surface text-muted hover:text-text"
             }`}
           >
             Tous les entrepôts
@@ -122,8 +122,8 @@ export function MesFacturesList({
               onClick={() => setEntrepotFiltre(entrepot.id)}
               className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
                 entrepotFiltre === entrepot.id
-                  ? "bg-surface-2 text-text ring-1 ring-border"
-                  : "bg-surface-2 text-muted hover:text-text"
+                  ? "badge-pastel-green font-semibold ring-1 ring-green-dk"
+                  : "border border-border bg-surface text-muted hover:text-text"
               }`}
             >
               {entrepot.nom}

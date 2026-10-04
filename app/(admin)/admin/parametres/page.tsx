@@ -28,7 +28,7 @@ export default async function ParametresAdminPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-h1 text-text">Paramètres</h1>
+        <h1 className="text-h1 font-semibold tracking-tight text-text">Paramètres</h1>
         <p className="text-body text-muted">
           Informations entreprise, mentions légales de facture et catégories de produits.
         </p>

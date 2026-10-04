@@ -154,7 +154,7 @@ export default async function FacturesAdminPage({
           <div className="hidden overflow-x-auto md:block">
             <table className="min-w-[800px] w-full border-collapse">
               <thead>
-                <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+                <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                   <th className="px-4 py-2.5 font-medium">Numéro</th>
                   <th className="px-4 py-2.5 font-medium">Client</th>
                   <th className="px-4 py-2.5 font-medium">Agent</th>

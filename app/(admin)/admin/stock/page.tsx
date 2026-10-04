@@ -146,7 +146,7 @@ export default async function StockPage({
           <div className="hidden overflow-x-auto md:block">
             <table className="min-w-[760px] w-full border-collapse">
               <thead>
-                <tr className="bg-surface-2 text-left text-caption uppercase tracking-[0.1em] text-muted">
+                <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                   <th className="px-4 py-2.5 font-medium">Produit</th>
                   <th className="px-4 py-2.5 font-medium">Catégorie</th>
                   <th className="px-4 py-2.5 font-medium">Niveau de stock</th>

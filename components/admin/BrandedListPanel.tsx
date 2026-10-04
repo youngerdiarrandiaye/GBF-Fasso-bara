@@ -35,7 +35,7 @@ export function BrandedListPanel({
         <div className="flex items-center gap-3">
           <CompanyBrandMark nom={nom} logoUrl={logoUrl} size="lg" />
           <div className="min-w-0">
-            <h1 className="text-h1 text-text">{title}</h1>
+            <h1 className="text-h1 font-semibold tracking-tight text-text">{title}</h1>
             <p className="mt-1 text-body-sm text-muted">{subtitle}</p>
           </div>
         </div>

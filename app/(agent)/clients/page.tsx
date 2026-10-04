@@ -17,7 +17,7 @@ export default async function ClientsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-h1 text-text">Clients</h1>
+      <h1 className="text-h1 font-semibold tracking-tight text-text">Clients</h1>
       <QuickActionGrid
         actions={[
           { href: "/clients", label: "Chercher", description: "Nom ou téléphone", icon: faMagnifyingGlass, tone: "blue" },
