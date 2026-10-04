@@ -234,7 +234,7 @@ export default async function FactureDetailAdminPage({
                       </div>
                     </div>
                   </td>
-                  <td className="text-left font-mono text-body-sm text-muted before:mr-1 before:content-['Qté'] sm:px-4 sm:py-3 sm:text-right sm:text-body sm:text-text sm:before:content-none">
+                  <td className="text-left font-mono text-body text-muted before:mr-1 before:content-['Qté'] sm:px-4 sm:py-3 sm:text-right sm:text-body sm:text-text sm:before:content-none">
                     {formatQuantite(ligne.quantite, libelleUnite(ligne.produit?.unite ?? "piece", ligne.quantite))}
                   </td>
                   <td className="hidden px-4 py-3 text-right font-mono text-body text-text sm:table-cell">

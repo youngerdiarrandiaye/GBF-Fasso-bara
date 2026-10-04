@@ -203,7 +203,7 @@ export default async function EntrepotsPage({
                         <td className="px-4 py-3 text-right font-mono text-body text-text">
                           {formatQuantite(l.quantite_stock, libelleUnite(l.produit.unite, l.quantite_stock))}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono text-body-sm text-muted">
+                        <td className="px-4 py-3 text-right font-mono text-body text-muted">
                           {formatQuantite(l.seuil_alerte)}
                         </td>
                         <td className="px-4 py-3">

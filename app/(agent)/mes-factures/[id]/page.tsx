@@ -104,7 +104,7 @@ export default async function FactureDetailAgentPage({
 
   return (
     <div className="flex flex-col gap-4 pb-8">
-      <Link href="/mes-factures" className="focus-ring w-fit rounded-input text-body-sm text-muted hover:text-text">
+      <Link href="/mes-factures" className="focus-ring w-fit rounded-input text-body text-muted hover:text-text">
         ← Mes factures
       </Link>
 
@@ -117,7 +117,7 @@ export default async function FactureDetailAgentPage({
             <StatusBadge statut={facture.statut} />
             {joursDeRetard !== null && <OverdueBadge joursDeRetard={joursDeRetard} />}
           </div>
-          <p className="mt-1 text-body-sm text-muted">Créée le {formatDateTime(facture.created_at)}</p>
+          <p className="mt-1 text-body text-muted">Créée le {formatDateTime(facture.created_at)}</p>
         </div>
         <FactureActions
           factureId={facture.id}
@@ -159,30 +159,30 @@ export default async function FactureDetailAgentPage({
               />
               <div>
                 <p className="text-h3 text-text">{entreprise?.nom ?? "GIE FASSO BARA"}</p>
-                {entreprise?.ninea && <p className="text-body-sm text-muted">NINEA {entreprise.ninea}</p>}
-                {entreprise?.rc && <p className="text-body-sm text-muted">RC {entreprise.rc}</p>}
+                {entreprise?.ninea && <p className="text-body text-muted">NINEA {entreprise.ninea}</p>}
+                {entreprise?.rc && <p className="text-body text-muted">RC {entreprise.rc}</p>}
               </div>
             </div>
             {entreprise?.adresses && entreprise.adresses.length > 0 && (
-              <p className="text-body-sm text-muted">{entreprise.adresses.join(" · ")}</p>
+              <p className="text-body text-muted">{entreprise.adresses.join(" · ")}</p>
             )}
             {entreprise?.telephones && entreprise.telephones.length > 0 && (
-              <p className="text-body-sm text-muted">Tél : {entreprise.telephones.join(" / ")}</p>
+              <p className="text-body text-muted">Tél : {entreprise.telephones.join(" / ")}</p>
             )}
-            {entreprise?.email && <p className="text-body-sm text-muted">{entreprise.email}</p>}
+            {entreprise?.email && <p className="text-body text-muted">{entreprise.email}</p>}
           </div>
 
           <div className="flex flex-col gap-1 p-4 sm:p-5">
             <p className="text-caption uppercase tracking-wide text-muted">Facturé à</p>
             <p className="text-h3 text-text">{client?.nom}</p>
-            {client?.adresse && <p className="text-body-sm text-muted">{client.adresse}</p>}
-            {client?.telephone && <p className="text-body-sm text-muted">{client.telephone}</p>}
-            {client?.email && <p className="text-body-sm text-muted">{client.email}</p>}
-            <p className="mt-2 text-body-sm text-muted">
+            {client?.adresse && <p className="text-body text-muted">{client.adresse}</p>}
+            {client?.telephone && <p className="text-body text-muted">{client.telephone}</p>}
+            {client?.email && <p className="text-body text-muted">{client.email}</p>}
+            <p className="mt-2 text-body text-muted">
               Date de facture : <span className="text-text">{formatDate(facture.date_facture)}</span>
             </p>
             {(facture.date_echeance || facture.date_validation) && (
-              <p className="text-body-sm text-muted">
+              <p className="text-body text-muted">
                 Échéance de paiement :{" "}
                 <span className="text-text">
                   {facture.date_echeance
@@ -207,7 +207,7 @@ export default async function FactureDetailAgentPage({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-body text-text">{ligne.produit?.nom}</p>
-                  <p className="font-mono text-body-sm text-muted">{ligne.produit?.code}</p>
+                  <p className="font-mono text-body text-muted">{ligne.produit?.code}</p>
                 </div>
                 <p className="shrink-0 font-mono text-body font-medium text-text">
                   {ligne.produit?.type_ligne_produit === "inclus_dans_kit" ? (
@@ -217,7 +217,7 @@ export default async function FactureDetailAgentPage({
                   )}
                 </p>
               </div>
-              <p className="text-body-sm text-muted">
+              <p className="text-body text-muted">
                 {formatQuantite(ligne.quantite, libelleUnite(ligne.produit?.unite ?? "piece", ligne.quantite))}
                 {ligne.produit?.type_ligne_produit !== "inclus_dans_kit" &&
                   ` · ${formatMontant(ligne.prix_unitaire)} / unité`}
@@ -241,7 +241,7 @@ export default async function FactureDetailAgentPage({
                 <tr key={ligne.id} className="border-t border-border">
                   <td className="px-4 py-3">
                     <p className="text-body text-text">{ligne.produit?.nom}</p>
-                    <p className="font-mono text-body-sm text-muted">{ligne.produit?.code}</p>
+                    <p className="font-mono text-body text-muted">{ligne.produit?.code}</p>
                   </td>
                   <td className="px-4 py-3 text-right font-mono text-body text-text">
                     {formatQuantite(ligne.quantite, libelleUnite(ligne.produit?.unite ?? "piece", ligne.quantite))}
@@ -320,7 +320,7 @@ export default async function FactureDetailAgentPage({
                 <div key={p.id} className="flex items-center justify-between gap-3 p-4">
                   <div>
                     <p className="text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</p>
-                    <p className="text-body-sm text-muted">
+                    <p className="text-body text-muted">
                       {formatDate(p.date_paiement)}
                       {p.reference && ` · ${p.reference}`}
                     </p>
@@ -332,7 +332,7 @@ export default async function FactureDetailAgentPage({
                 <div key={r.id} className="flex items-center justify-between gap-3 p-4">
                   <div>
                     <p className="text-body text-text">Recouvrement crédit</p>
-                    <p className="text-body-sm text-muted">
+                    <p className="text-body text-muted">
                       {formatDate(r.date_remboursement)}
                       {r.notes && ` · ${r.notes}`}
                     </p>
@@ -345,7 +345,7 @@ export default async function FactureDetailAgentPage({
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="text-left text-body-sm uppercase tracking-wide text-muted">
+                  <tr className="text-left text-caption uppercase tracking-wide text-muted">
                     <th className="px-4 py-2.5 font-medium">Date</th>
                     <th className="px-4 py-2.5 font-medium">Mode</th>
                     <th className="px-4 py-2.5 font-medium">Référence</th>
@@ -355,9 +355,9 @@ export default async function FactureDetailAgentPage({
                 <tbody>
                   {paiements.map((p) => (
                     <tr key={p.id} className="border-t border-border">
-                      <td className="px-4 py-3 text-body-sm text-muted">{formatDate(p.date_paiement)}</td>
+                      <td className="px-4 py-3 text-body text-muted">{formatDate(p.date_paiement)}</td>
                       <td className="px-4 py-3 text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</td>
-                      <td className="px-4 py-3 text-body-sm text-muted">{p.reference ?? "—"}</td>
+                      <td className="px-4 py-3 text-body text-muted">{p.reference ?? "—"}</td>
                       <td className="px-4 py-3 text-right font-mono text-body text-text">
                         {formatMontant(p.montant)}
                       </td>
@@ -365,9 +365,9 @@ export default async function FactureDetailAgentPage({
                   ))}
                   {remboursementsCredit.map((r) => (
                     <tr key={r.id} className="border-t border-border">
-                      <td className="px-4 py-3 text-body-sm text-muted">{formatDate(r.date_remboursement)}</td>
+                      <td className="px-4 py-3 text-body text-muted">{formatDate(r.date_remboursement)}</td>
                       <td className="px-4 py-3 text-body text-text">Recouvrement crédit</td>
-                      <td className="px-4 py-3 text-body-sm text-muted">{r.notes ?? "—"}</td>
+                      <td className="px-4 py-3 text-body text-muted">{r.notes ?? "—"}</td>
                       <td className="px-4 py-3 text-right font-mono text-body text-text">
                         {formatMontant(r.montant)}
                       </td>
@@ -382,7 +382,7 @@ export default async function FactureDetailAgentPage({
 
       {facture.notes && (
         <Card>
-          <p className="text-body-sm text-muted">Notes</p>
+          <p className="text-body text-muted">Notes</p>
           <p className="mt-1 text-body text-text">{facture.notes}</p>
         </Card>
       )}

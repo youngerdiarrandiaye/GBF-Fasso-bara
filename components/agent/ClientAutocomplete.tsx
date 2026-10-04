@@ -77,7 +77,7 @@ export function ClientAutocomplete({
         <div className="flex items-center justify-between gap-3 rounded-input border border-border bg-surface-2 px-3 py-2.5">
           <div className="min-w-0">
             <p className="truncate text-body font-medium text-text">{value.nom}</p>
-            <p className="truncate text-body-sm text-muted">
+            <p className="truncate text-body text-muted">
               {value.telephone || "Sans téléphone"} · {LIBELLE_TYPE[value.type_client]}
             </p>
           </div>
@@ -118,21 +118,21 @@ export function ClientAutocomplete({
           autoComplete="off"
         />
       </div>
-      {error && <p className="text-body-sm text-red-text">{error}</p>}
+      {error && <p className="text-body text-red-text">{error}</p>}
       <Button type="button" variant="outline" onClick={() => setModalOuvert(true)}>
         + Nouveau client
       </Button>
 
       {(ouvert || !query.trim()) && (
         <div className="mt-1 w-full overflow-hidden rounded-input border border-border bg-surface" aria-live="polite" aria-busy={chargement || requeteChargee !== query}>
-          {!query.trim() && <p className="px-3 pt-3 text-body-sm font-medium text-muted">Clients récemment ajoutés · touchez un nom</p>}
+          {!query.trim() && <p className="px-3 pt-3 text-body font-medium text-muted">Clients récemment ajoutés · touchez un nom</p>}
           {(chargement || requeteChargee !== query) && (
-            <p className="px-3 py-3 text-body-sm text-muted">Recherche...</p>
+            <p className="px-3 py-3 text-body text-muted">Recherche...</p>
           )}
-          {!chargement && requeteChargee === query && erreurRecherche && <p className="px-3 py-3 text-body-sm text-red-text">Impossible de charger les clients. Réessayez en recherchant un nom.</p>}
+          {!chargement && requeteChargee === query && erreurRecherche && <p className="px-3 py-3 text-body text-red-text">Impossible de charger les clients. Réessayez en recherchant un nom.</p>}
           {!chargement && requeteChargee === query && !erreurRecherche && resultats.length === 0 && (
             <div className="flex flex-col gap-2 p-3">
-              <p className="text-body-sm text-muted">{query.trim() ? `Aucun client trouvé pour « ${query} ».` : "Ajoutez votre premier client pour commencer."}</p>
+              <p className="text-body text-muted">{query.trim() ? `Aucun client trouvé pour « ${query} ».` : "Ajoutez votre premier client pour commencer."}</p>
             </div>
           )}
           {!chargement && requeteChargee === query &&
@@ -149,7 +149,7 @@ export function ClientAutocomplete({
               >
                 <div className="min-w-0">
                   <p className="truncate text-body text-text">{client.nom}</p>
-                  <p className="truncate text-body-sm text-muted">
+                  <p className="truncate text-body text-muted">
                     {client.telephone || "Sans téléphone"}
                   </p>
                 </div>

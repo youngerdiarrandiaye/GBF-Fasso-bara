@@ -118,11 +118,11 @@ export function ProduitAutocomplete({
 
       {(ouvert || !query.trim()) && entrepotId && (
         <div className="mt-1 w-full overflow-hidden rounded-input border border-border bg-surface" aria-live="polite" aria-busy={chargement || rechercheChargee !== cleRecherche}>
-          {!query.trim() && <p className="px-3 pt-3 text-body-sm font-medium text-muted">Touchez un produit pour l’ajouter · recherchez pour en voir d’autres</p>}
-          {(chargement || rechercheChargee !== cleRecherche) && <p className="px-3 py-3 text-body-sm text-muted">Recherche...</p>}
-          {!chargement && rechercheChargee === cleRecherche && erreurRecherche && <p className="px-3 py-3 text-body-sm text-red-text">Impossible de charger les produits. Réessayez en recherchant un nom.</p>}
+          {!query.trim() && <p className="px-3 pt-3 text-body font-medium text-muted">Touchez un produit pour l’ajouter · recherchez pour en voir d’autres</p>}
+          {(chargement || rechercheChargee !== cleRecherche) && <p className="px-3 py-3 text-body text-muted">Recherche...</p>}
+          {!chargement && rechercheChargee === cleRecherche && erreurRecherche && <p className="px-3 py-3 text-body text-red-text">Impossible de charger les produits. Réessayez en recherchant un nom.</p>}
           {!chargement && rechercheChargee === cleRecherche && !erreurRecherche && resultats.length === 0 && (
-            <p className="px-3 py-3 text-body-sm text-muted">{query.trim() ? `Aucun produit trouvé pour « ${query} ».` : "Aucun produit disponible."}</p>
+            <p className="px-3 py-3 text-body text-muted">{query.trim() ? `Aucun produit trouvé pour « ${query} ».` : "Aucun produit disponible."}</p>
           )}
           {!chargement && rechercheChargee === cleRecherche &&
             resultats.map((produit) => {
@@ -141,7 +141,7 @@ export function ProduitAutocomplete({
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-body text-text">
                       {produit.nom}{" "}
-                      <span className="font-mono text-body-sm text-muted">({produit.code})</span>
+                      <span className="font-mono text-body text-muted">({produit.code})</span>
                     </p>
                     <div className="mt-1 max-w-[160px]">
                       <StockGauge

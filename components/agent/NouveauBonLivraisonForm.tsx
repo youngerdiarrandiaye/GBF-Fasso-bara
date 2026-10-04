@@ -9,6 +9,7 @@ import { bonLivraisonSchema } from "@/lib/validations/schemas";
 import { creerBonLivraison, rechercherFacturesLivraison, chargerFactureLivraison, type FactureLivraisonOption } from "@/lib/actions/bons-livraison";
 import { Button } from "@/components/ui/Button";
 import { InlineAlert } from "@/components/ui/InlineAlert";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EntrepotSelector } from "@/components/ui/EntrepotSelector";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
@@ -71,7 +72,7 @@ function FactureLinkPicker({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <span className="text-body font-medium text-text">Facture liée (optionnel)</span>
-            <p className="mt-1 text-body-sm text-muted">
+            <p className="mt-1 text-body text-muted">
               Les informations du bon seront reprises depuis cette facture.
             </p>
           </div>
@@ -81,7 +82,7 @@ function FactureLinkPicker({
         </div>
         <div className="mt-3 rounded-input border border-border bg-surface-2 px-3 py-2.5">
           <p className="truncate font-mono text-body text-text">{value.numero} — {value.client?.nom}</p>
-          <p className="mt-1 text-body-sm text-muted">Client, entrepôt et quantités verrouillés par la facture.</p>
+          <p className="mt-1 text-body text-muted">Client, entrepôt et quantités verrouillés par la facture.</p>
         </div>
       </section>
     );
@@ -93,7 +94,7 @@ function FactureLinkPicker({
         <label htmlFor="recherche-facture-bl" className="text-body font-medium text-text">
           Facture liée (optionnel)
         </label>
-        <p className="mt-1 text-body-sm text-muted">
+        <p className="mt-1 text-body text-muted">
           Recherchez par numéro de facture ou par nom du client.
         </p>
       </div>
@@ -113,10 +114,10 @@ function FactureLinkPicker({
         />
         {ouvert && (
           <div className="mt-2 max-h-80 overflow-y-auto rounded-input border border-border bg-surface">
-            {chargement && <p className="px-3 py-3 text-body-sm text-muted">Recherche...</p>}
+            {chargement && <p className="px-3 py-3 text-body text-muted">Recherche...</p>}
             {erreur && <p role="alert" className="px-3 py-3 text-red-text">{erreur}</p>}
             {!chargement && !erreur && resultats.length === 0 && (
-              <p className="px-3 py-3 text-body-sm text-muted">Aucune facture validée à livrer pour « {query} ».</p>
+              <p className="px-3 py-3 text-body text-muted">Aucune facture validée à livrer pour « {query} ».</p>
             )}
             {!chargement &&
               resultats.map((facture) => (
@@ -131,7 +132,7 @@ function FactureLinkPicker({
                   className="focus-ring flex min-h-tap w-full items-center justify-between gap-3 border-b border-border px-3 py-2 text-left last:border-b-0 hover:bg-surface-2"
                 >
                   <span className="min-w-0 truncate font-mono text-body text-text">{facture.numero} — {facture.client?.nom}</span>
-                  <span className="shrink-0 rounded-full bg-surface-2 px-2 py-1 text-body-sm text-muted">{facture.statut}</span>
+                  <StatusBadge statut={facture.statut} className="shrink-0" />
                 </button>
               ))}
           </div>
@@ -306,7 +307,7 @@ export function NouveauBonLivraisonForm({ espaceAdmin = false }: { espaceAdmin?:
       <h1 className="text-h1 text-text">Nouveau bon de livraison</h1>
       <ol aria-label="Étapes de la livraison" className="grid grid-cols-3 gap-2">
         {["Client", "Produits", "Confirmation"].map((label, index) => (
-          <li key={label} aria-current={etape === index + 1 ? "step" : undefined} className={`rounded-input border px-2 py-3 text-center text-body-sm ${etape === index + 1 ? "border-green bg-surface-2 font-semibold text-text" : "border-border text-muted"}`}>
+          <li key={label} aria-current={etape === index + 1 ? "step" : undefined} className={`rounded-input border px-2 py-3 text-center text-body ${etape === index + 1 ? "border-green bg-surface-2 font-semibold text-text" : "border-border text-muted"}`}>
             {index + 1}. {label}
           </li>
         ))}
@@ -348,7 +349,7 @@ export function NouveauBonLivraisonForm({ espaceAdmin = false }: { espaceAdmin?:
 
       {factureLiee ? (
         <p className="rounded-input border border-border bg-surface-2 p-3">Client : <strong>{client?.nom ?? "Chargement…"}</strong></p>
-      ) : <><p className="text-body-sm text-muted">Sans facture ? Choisissez directement votre client.</p><ClientAutocomplete value={client} onChange={setClient} /></>}
+      ) : <><p className="text-body text-muted">Sans facture ? Choisissez directement votre client.</p><ClientAutocomplete value={client} onChange={setClient} /></>}
       </div>
 
       <div hidden={etape !== 3} className="space-y-4">

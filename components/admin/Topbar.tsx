@@ -39,7 +39,7 @@ export function Topbar({
       <button
         type="button"
         onClick={openMobile}
-        className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface-2 text-text transition-colors hover:border-green hover:text-green-text active:scale-95 lg:hidden"
+        className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-input border border-border bg-surface-2 text-text transition-colors hover:border-green hover:text-green-text active:scale-95 lg:hidden"
         aria-label="Ouvrir le menu"
         aria-controls="admin-navigation"
         aria-expanded={mobileOpen}

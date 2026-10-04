@@ -37,7 +37,7 @@ export function ThemePicker({ collapsed }: { collapsed: boolean }) {
       <div className="grid grid-cols-4 gap-2">
         {THEMES.map((item) => (
           <label key={item.id} className={cn(
-            "relative flex min-h-16 min-w-0 cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-1 py-2 text-center text-caption text-sidebar-text transition-colors hover:border-green",
+            "relative flex min-h-16 min-w-0 cursor-pointer flex-col items-center gap-1.5 rounded-input border px-1 py-2 text-center text-caption text-sidebar-text transition-colors hover:border-green",
             theme === item.id ? "border-green bg-green/10 font-semibold" : "border-sidebar-text-muted/20"
           )}>
             <input type="radio" name="admin-background" value={item.id} checked={theme === item.id}

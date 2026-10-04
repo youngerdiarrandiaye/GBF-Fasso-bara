@@ -41,7 +41,7 @@ export function DonutChart({ data }: { data: PointCategorieProduit[] }) {
                   <span className="mr-2 font-mono text-caption text-muted">{String(index + 1).padStart(2, "0")}</span>
                   {entree.categorie}
                 </p>
-                <p className="shrink-0 font-mono text-body-sm text-muted">{formatQuantite(entree.quantite)}</p>
+                <p className="shrink-0 font-mono text-body text-muted">{formatQuantite(entree.quantite)}</p>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-surface-2">
                 <div className="h-full rounded-full bg-green" style={{ width: `${ratio}%` }} />

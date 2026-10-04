@@ -89,7 +89,7 @@ export function MesFacturesList({
             key={tab.value}
             type="button"
             onClick={() => setOnglet(tab.value)}
-            className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body-sm font-medium ${
+            className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
               onglet === tab.value
                 ? "bg-green text-white"
                 : "bg-surface-2 text-muted hover:text-text"
@@ -105,7 +105,7 @@ export function MesFacturesList({
           <button
             type="button"
             onClick={() => setEntrepotFiltre(TOUS_LES_ENTREPOTS)}
-            className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body-sm font-medium ${
+            className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
               entrepotFiltre === TOUS_LES_ENTREPOTS
                 ? "bg-surface-2 text-text ring-1 ring-border"
                 : "bg-surface-2 text-muted hover:text-text"
@@ -118,7 +118,7 @@ export function MesFacturesList({
               key={entrepot.id}
               type="button"
               onClick={() => setEntrepotFiltre(entrepot.id)}
-              className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body-sm font-medium ${
+              className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
                 entrepotFiltre === entrepot.id
                   ? "bg-surface-2 text-text ring-1 ring-border"
                   : "bg-surface-2 text-muted hover:text-text"
@@ -144,7 +144,7 @@ export function MesFacturesList({
               >
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{facture.client?.nom}</p>
-                  <p className="font-mono text-body-sm text-muted">
+                  <p className="font-mono text-body text-muted">
                     {facture.numero} · {formatDate(facture.date_facture)}
                     {facture.entrepot?.nom ? ` · ${facture.entrepot.nom}` : ""}
                   </p>

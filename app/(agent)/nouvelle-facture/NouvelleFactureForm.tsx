@@ -521,7 +521,7 @@ export function NouvelleFactureForm({
         <div className="flex items-center gap-2">
           {statutInitial && <StatusBadge statut={statutInitial} />}
           {numeroFacture && (
-            <span className="rounded-input bg-surface-2 px-3 py-1.5 font-mono text-body-sm text-muted">
+            <span className="rounded-input bg-surface-2 px-3 py-1.5 font-mono text-body text-muted">
               {numeroFacture}
             </span>
           )}
@@ -536,7 +536,7 @@ export function NouvelleFactureForm({
             onClick={() => changerEtape(index + 1)}
             disabled={actionEnCours !== null || (index > 0 && (!client || !entrepotId)) || (index === 2 && lignes.length === 0)}
             aria-current={etape === index + 1 ? "step" : undefined}
-            className={`focus-ring min-h-14 rounded-card border px-2 py-3 text-body-sm font-medium disabled:opacity-40 ${etape === index + 1 ? "border-green bg-green/10 text-text" : "border-border bg-surface text-muted"}`}
+            className={`focus-ring min-h-14 rounded-card border px-2 py-3 text-body font-medium disabled:opacity-40 ${etape === index + 1 ? "border-green bg-green/10 text-text" : "border-border bg-surface text-muted"}`}
           >
             <span className="mr-1">{index + 1}.</span> {libelle}
           </button>
@@ -621,9 +621,9 @@ export function NouvelleFactureForm({
       {etape === 3 && <>
       <div className="rounded-card border border-border bg-surface p-4">
         <p className="font-medium text-text">{client?.nom}</p>
-        <p className="text-body-sm text-muted">Entrepôt : {entrepotSelectionne?.nom}</p>
+        <p className="text-body text-muted">Entrepôt : {entrepotSelectionne?.nom}</p>
         <ul className="mt-3 divide-y divide-border">
-          {lignes.map((ligne) => <li key={ligne.produit_id} className="flex justify-between gap-3 py-3 text-body-sm">
+          {lignes.map((ligne) => <li key={ligne.produit_id} className="flex justify-between gap-3 py-3 text-body">
             <span>{ligne.nom} <span className="text-muted">× {ligne.quantite}</span></span>
             <span className="shrink-0 font-mono">{ligne.type_ligne_produit === "inclus_dans_kit" ? "Inclus" : formatMontant(ligne.quantite * ligne.prix_unitaire)}</span>
           </li>)}
@@ -650,7 +650,7 @@ export function NouvelleFactureForm({
         <label className="flex items-center justify-between gap-3">
           <span className="flex flex-col">
             <span className="text-body font-medium text-text">Vendre à crédit</span>
-            <span className="text-body-sm text-muted">
+            <span className="text-body text-muted">
               {client
                 ? "Le crédit sera ouvert lorsque vous cliquerez sur « Créer la facture »."
                 : "Sélectionnez d'abord un client."}
@@ -685,7 +685,7 @@ export function NouvelleFactureForm({
 
             {creditGaugeInfo && (
               <div className="flex flex-col gap-1.5">
-                <span className="text-body-sm text-muted">
+                <span className="text-body text-muted">
                   Encours de crédit projeté si cette facture est validée à crédit
                 </span>
                 <CreditGauge
@@ -737,13 +737,13 @@ export function NouvelleFactureForm({
 
       <details className="rounded-card border border-border bg-surface p-4">
         <summary className="focus-ring cursor-pointer text-body font-medium text-text">Enregistrer un brouillon ou un devis</summary>
-        <p className="my-3 text-body-sm text-muted">Le brouillon reste modifiable. Le devis (proforma) peut être partagé avant de créer la facture définitive.</p>
+        <p className="my-3 text-body text-muted">Le brouillon reste modifiable. Le devis (proforma) peut être partagé avant de créer la facture définitive.</p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button type="button" variant="outline" loading={actionEnCours === "brouillon"} disabled={soumissionBloquee} onClick={handleEnregistrerBrouillon}>Enregistrer en brouillon</Button>
           <Button type="button" variant="outline" loading={actionEnCours === "proforma"} disabled={soumissionBloquee} onClick={() => handleValider("proforma")}>Créer un devis (proforma)</Button>
         </div>
       </details>
-      <p className="text-body-sm text-muted">La facture ne modifie pas le stock. Créez ensuite un bon de livraison pour enregistrer la sortie des produits.</p>
+      <p className="text-body text-muted">La facture ne modifie pas le stock. Créez ensuite un bon de livraison pour enregistrer la sortie des produits.</p>
       </>}
 
       <div
@@ -753,7 +753,7 @@ export function NouvelleFactureForm({
       >
         <div className="flex items-center justify-between gap-3 sm:mr-auto">
           {etape > 1 && <Button type="button" variant="outline" disabled={actionEnCours !== null} onClick={() => changerEtape(etape - 1)}>Retour</Button>}
-          <span className="text-body-sm text-muted">Total <strong className="font-mono text-text">{formatMontant(totalGeneral)}</strong></span>
+          <span className="text-body text-muted">Total <strong className="font-mono text-text">{formatMontant(totalGeneral)}</strong></span>
         </div>
         <Button
           type="button"

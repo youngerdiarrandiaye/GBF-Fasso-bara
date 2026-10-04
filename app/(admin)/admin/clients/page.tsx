@@ -178,7 +178,7 @@ export default async function ClientsAdminPage({
                           <Badge>{LIBELLES_TYPE[client.type_client]}</Badge>
                         </td>
                         <td className="px-4 py-3 text-body-sm text-muted">{client.telephone ?? "—"}</td>
-                        <td className="px-4 py-3 text-right font-mono text-body-sm text-muted">
+                        <td className="px-4 py-3 text-right font-mono text-body text-muted">
                           {nbFacturesParClient.get(client.id) ?? 0}
                         </td>
                         <td className="px-4 py-3 text-right font-mono text-body text-text">

@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { bonLivraisonSchema, type BonLivraisonInput, type LigneBonLivraisonInput } from "@/lib/validations/schemas";
 import { traiterErreurAction } from "@/lib/actions/errors";
-import type { ClientRow, BonLivraisonRow, StatutBonLivraison } from "@/lib/supabase/database.types";
+import type { ClientRow, BonLivraisonRow, StatutBonLivraison, StatutFacture } from "@/lib/supabase/database.types";
 
 type ActionResult<T> = { data: T; error?: undefined } | { data?: undefined; error: string };
 
@@ -79,7 +79,7 @@ export async function changerStatutBonLivraison(
 export interface FactureLivraisonOption {
   id: string;
   numero: string;
-  statut: string;
+  statut: StatutFacture;
   client: { nom: string };
 }
 

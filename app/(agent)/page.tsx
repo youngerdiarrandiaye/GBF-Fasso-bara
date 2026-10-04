@@ -47,7 +47,7 @@ export default async function AccueilAgentPage() {
           { href: "/bons-livraison/nouveau", label: "Créer une livraison", icon: faTruck, primary: false },
           { href: "/clients", label: "Mes clients", icon: faUsers, primary: false },
         ].map((action) => (
-          <Link key={action.href} href={action.href} className="focus-ring flex min-h-28 min-w-0 flex-col items-center justify-center gap-3 rounded-card bg-surface-2 p-3 text-center text-body-sm font-semibold text-text transition-colors hover:bg-green/10">
+          <Link key={action.href} href={action.href} className="focus-ring flex min-h-28 min-w-0 flex-col items-center justify-center gap-3 rounded-card bg-surface-2 p-3 text-center text-body font-semibold text-text transition-colors hover:bg-green/10">
             <span className={`flex h-14 w-14 items-center justify-center rounded-full ${action.primary ? "bg-green text-white" : "bg-green/10 text-green-text"}`}>
               <FontAwesomeIcon icon={action.icon} className="h-6 w-6" aria-hidden="true" />
             </span>
@@ -58,15 +58,15 @@ export default async function AccueilAgentPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Card className="p-4">
-          <p className="text-body-sm text-muted">Total du jour</p>
+          <p className="text-body text-muted">Total du jour</p>
           <p className="mt-1 break-words font-mono text-[1.6rem] font-semibold leading-tight text-text">{formatMontant(totalDuJour)}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-body-sm text-muted">Ventes conclues</p>
+          <p className="text-body text-muted">Ventes conclues</p>
           <p className="mt-1 break-words font-mono text-[1.6rem] font-semibold leading-tight text-text">{nombreVentes}</p>
         </Card>
         <Card className="col-span-2 p-4 sm:col-span-1">
-          <p className="text-body-sm text-muted">Brouillons</p>
+          <p className="text-body text-muted">Brouillons</p>
           <p className="mt-1 break-words font-mono text-[1.6rem] font-semibold leading-tight text-text">{nombreBrouillons}</p>
         </Card>
       </div>
@@ -84,7 +84,7 @@ export default async function AccueilAgentPage() {
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{facture.client?.nom}</p>
-                  <p className="font-mono text-body-sm text-muted">{facture.numero}</p>
+                  <p className="font-mono text-body text-muted">{facture.numero}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1.5">
                   <span className="font-mono text-body text-text">

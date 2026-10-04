@@ -134,7 +134,7 @@ export default async function PaiementsAdminPage({
             ) : lignes.map(({ facture, paye, reste }) => (
               <div key={facture.id} className="p-4">
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><Link href={`/admin/factures/${facture.id}`} className="focus-ring font-mono text-body-sm font-semibold text-text hover:underline">{facture.numero}</Link><p className="mt-1 truncate text-body text-text">{facture.client?.nom}</p></div><StatusBadge statut={facture.statut} /></div>
-                <div className="mt-3 grid grid-cols-3 gap-2 rounded-input bg-surface-2 p-3 text-right"><div><p className="text-caption text-muted">Total</p><p className="font-mono text-body-sm text-text">{formatMontant(facture.total_general)}</p></div><div><p className="text-caption text-muted">Payé</p><p className="font-mono text-body-sm text-green-text">{formatMontant(paye)}</p></div><div><p className="text-caption text-muted">Reste</p><p className="font-mono text-body-sm font-semibold text-red-text">{formatMontant(reste)}</p></div></div>
+                <div className="mt-3 grid grid-cols-3 gap-2 rounded-input bg-surface-2 p-3 text-right"><div><p className="text-caption text-muted">Total</p><p className="font-mono text-body text-text">{formatMontant(facture.total_general)}</p></div><div><p className="text-caption text-muted">Payé</p><p className="font-mono text-body text-green-text">{formatMontant(paye)}</p></div><div><p className="text-caption text-muted">Reste</p><p className="font-mono text-body font-semibold text-red-text">{formatMontant(reste)}</p></div></div>
                 <div className="mt-3"><RegisterPaymentButton factureId={facture.id} factureNumero={facture.numero} resteAPayer={reste} /></div>
               </div>
             ))}
@@ -183,7 +183,7 @@ export default async function PaiementsAdminPage({
                       <td className="px-4 py-3 text-right font-mono text-body text-text">
                         {formatMontant(facture.total_general)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-body-sm text-green-text">
+                      <td className="px-4 py-3 text-right font-mono text-body text-green-text">
                         {formatMontant(paye)}
                       </td>
                       <td className="px-4 py-3 text-right font-mono text-body font-medium text-red-text">

@@ -80,7 +80,7 @@ export function NavBar({ nom }: { nom: string }) {
               className="absolute right-0 z-dropdown mt-2 w-56 rounded-card border border-border bg-surface p-2 shadow-lg"
             >
               <p className="px-3 py-2 text-body font-medium text-text">{nom}</p>
-              <p className="mb-1 px-3 text-body-sm text-muted">Agent</p>
+              <p className="mb-1 px-3 text-body text-muted">Agent</p>
               <Link
                 href="/bons-livraison"
                 onClick={() => setMenuOuvert(false)}

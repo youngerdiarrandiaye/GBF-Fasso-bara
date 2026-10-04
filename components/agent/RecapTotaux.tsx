@@ -40,8 +40,8 @@ export function RecapTotaux({
         <span className="font-mono text-text">{formatMontant(totalHT)}</span>
       </div>
 
-      {remise > 0 && <p className="flex justify-between gap-3 text-body-sm"><span>Remise</span><span>{formatMontant(remise)}</span></p>}
-      {forfaitTransport > 0 && <p className="flex justify-between gap-3 text-body-sm"><span>Transport</span><span>{formatMontant(forfaitTransport)}</span></p>}
+      {remise > 0 && <p className="flex justify-between gap-3 text-body"><span>Remise</span><span>{formatMontant(remise)}</span></p>}
+      {forfaitTransport > 0 && <p className="flex justify-between gap-3 text-body"><span>Transport</span><span>{formatMontant(forfaitTransport)}</span></p>}
       <details className="rounded-input border border-border p-3">
         <summary className="focus-ring min-h-11 cursor-pointer py-2 text-body font-medium text-text">Modifier la remise ou le transport</summary>
       <div className="mt-3 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">

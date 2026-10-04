@@ -62,7 +62,7 @@ export default async function BonsLivraisonPage() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{bl.client?.nom}</p>
-                  <p className="font-mono text-body-sm text-muted">
+                  <p className="font-mono text-body text-muted">
                     {bl.numero} · {formatDate(bl.date_livraison)}
                     {bl.entrepot?.nom ? ` · ${bl.entrepot.nom}` : ""}
                   </p>

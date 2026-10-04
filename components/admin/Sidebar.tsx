@@ -214,7 +214,7 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
         </div>
 
         <div className={cn("px-4 py-4", collapsed && "lg:hidden")}>
-          <label className="flex min-h-11 items-center gap-2 rounded-xl border border-sidebar-text-muted/20 bg-sidebar-text-muted/5 px-3 focus-within:border-green">
+          <label className="flex min-h-11 items-center gap-2 rounded-input border border-sidebar-text-muted/20 bg-sidebar-text-muted/5 px-3 focus-within:border-green">
             <FontAwesomeIcon icon={faMagnifyingGlass} className="h-4 w-4 text-sidebar-text-muted" aria-hidden="true" />
             <input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Rechercher dans le menu" placeholder="Rechercher une rubrique…" className="min-w-0 flex-1 bg-transparent py-2 text-body-sm text-sidebar-text outline-none placeholder:text-sidebar-text-muted" />
             {search && <button type="button" onClick={() => setSearch("")} aria-label="Effacer la recherche" className="focus-ring flex h-9 w-9 items-center justify-center rounded-input"><FontAwesomeIcon icon={faXmark} className="h-3 w-3" /></button>}
@@ -240,7 +240,7 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
                     onClick={closeMobile}
                     title={collapsed ? lien.label : undefined}
                     className={cn(
-                      "focus-ring flex min-h-12 items-center gap-3 rounded-xl px-3 py-2.5 text-body-sm transition-colors",
+                      "focus-ring flex min-h-12 items-center gap-3 rounded-input px-3 py-2.5 text-body-sm transition-colors",
                       collapsed && "lg:justify-center lg:px-2",
                       actif
                         ? "bg-sidebar-active font-semibold text-sidebar-active-text shadow-sm"

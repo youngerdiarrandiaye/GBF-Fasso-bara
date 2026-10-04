@@ -26,7 +26,7 @@ export function TransfertStatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-pill px-3 py-1.5 text-body-sm font-medium",
+        "inline-flex items-center gap-2 rounded-pill px-3 py-1.5 text-body font-medium",
         config.pastel,
         className
       )}

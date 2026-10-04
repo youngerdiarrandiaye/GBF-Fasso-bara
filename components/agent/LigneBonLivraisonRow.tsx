@@ -36,7 +36,7 @@ export function LigneBonLivraisonRow({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-body font-medium text-text">{ligne.nom}</p>
-          <p className="font-mono text-body-sm text-muted">
+          <p className="font-mono text-body text-muted">
             {ligne.code} · {ligne.stock_disponible} {ligne.unite} en stock
           </p>
         </div>

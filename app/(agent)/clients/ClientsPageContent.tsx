@@ -72,7 +72,7 @@ export function ClientsPageContent({ clientsInitiaux }: { clientsInitiaux: Clien
         </Button>
       </div>
 
-      <p className="text-body-sm text-muted">
+      <p className="text-body text-muted">
         {chargement ? "Recherche..." : `${compteur} client${compteur > 1 ? "s" : ""}`}
       </p>
 
@@ -87,11 +87,11 @@ export function ClientsPageContent({ clientsInitiaux }: { clientsInitiaux: Clien
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{client.nom}</p>
-                  <p className="truncate text-body-sm text-muted">
+                  <p className="truncate text-body text-muted">
                     {client.telephone || "Sans téléphone"}
                   </p>
                   {client.adresse && (
-                    <p className="truncate text-body-sm text-muted">{client.adresse}</p>
+                    <p className="truncate text-body text-muted">{client.adresse}</p>
                   )}
                 </div>
                 <Badge tone="neutral">{LIBELLE_TYPE[client.type_client]}</Badge>
