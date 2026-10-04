@@ -1,0 +1,47 @@
+-- =============================================================================
+-- GFB-STOCK — Correctif GRANT service_role (paiements)
+-- Fichier : supabase/migrations/0011_grant_service_role_paiements.sql
+-- Objet   : accorder à `service_role` le SELECT sur `paiements`, devenu
+--           nécessaire suite à l'ajout de l'affichage "Déjà payé"/"Reste à
+--           payer" sur le PDF de facture, sans toucher à 0001-0010 déjà
+--           livrées.
+--
+-- =============================================================================
+-- BUG CONFIRMÉ EN CONDITIONS RÉELLES (stack Supabase local, test direct de
+-- generer-facture-pdf sur une facture 'payee_partielle')
+-- =============================================================================
+-- Log Edge Function `generer-facture-pdf` :
+--   code: "42501", message: "permission denied for table paiements",
+--   hint: "Grant the required privileges to the current role with:
+--          GRANT SELECT ON public.paiements TO service_role;"
+--
+-- Cause racine : `0005_grant_service_role.sql` avait délibérément exclu
+-- `paiements` du GRANT service_role, documenté explicitement comme "table
+-- volontairement NON accordée (aucune des Edge Functions de l'époque ne la
+-- lisait via ce rôle)" — avec la consigne d'ajouter le GRANT dans une
+-- NOUVELLE migration documentée le jour où un besoin réel apparaît. C'est le
+-- cas maintenant : `generer-facture-pdf/index.ts` interroge désormais
+-- `serviceClient.from("paiements").select("montant").eq("facture_id", ...)`
+-- pour calculer le total déjà payé et le reste à payer, affichés sur le PDF
+-- d'une facture 'payee_partielle' (au même titre que l'écran de détail
+-- facture, qui les affichait déjà).
+--
+-- Choix délibéré SELECT uniquement (cohérent avec 0005) : `service_role`
+-- bypass RLS, donc aucun GRANT d'écriture n'est accordé ici — la seule
+-- écriture sur `paiements` reste la Server Action `enregistrerPaiement()`
+-- (client `authenticated`, filtrée par RLS `paiements_admin_all`), inchangée.
+--
+-- =============================================================================
+
+GRANT SELECT ON paiements TO service_role;
+
+-- =============================================================================
+-- VÉRIFICATION MANUELLE POST-MIGRATION
+-- =============================================================================
+-- SELECT grantee, privilege_type FROM information_schema.role_table_grants
+--   WHERE table_name = 'paiements' AND grantee = 'service_role';
+-- Doit renvoyer exactement : service_role | SELECT (une seule ligne).
+
+-- =============================================================================
+-- FIN DU CORRECTIF
+-- =============================================================================

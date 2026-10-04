@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:\\\\Users\\\\YOUSSOU DIARA\\\\Desktop\\\\Facture-Fasso\\\\supabase\\\\migrations\" && ls \"c:\\\\Users\\\\YOUSSOU DIARA\\\\Desktop\\\\Facture-Fasso\\\\supabase\")",
+      "Bash(grep -c '\\\\$\\\\$' supabase/migrations/0001_schema_initial.sql)",
+      "Bash(grep -c '\\\\$\\\\$\\\\|\\\\$code\\\\$\\\\|\\\\$cron\\\\$' supabase/seed.sql)",
+      "Bash(grep -o '\\\\$cron\\\\$' supabase/migrations/0001_schema_initial.sql)",
+      "Bash(grep -o '\\\\$code\\\\$' supabase/seed.sql)",
+      "Bash(grep -o '\\\\$\\\\$' supabase/seed.sql)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\YOUSSOU DIARA\\Desktop\\Facture-Fasso\\supabase"
+    ]
+  }
+}

@@ -1,0 +1,349 @@
+/* =============================================================================
+   GFB-STOCK — Design tokens (CSS variables)
+   Source de vérité : design-system/tokens.css (agent designer-ui-ux).
+   Copié tel quel ici, avant les directives Tailwind, conformément à
+   docs/design-system.md §1. Ne jamais modifier ces valeurs localement : toute
+   évolution doit passer par l'agent designer-ui-ux et design-system/tokens.css.
+   ============================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------------
+     Palette d'accent — IDENTIQUE dans les deux thèmes, valeurs figées par le
+     cahier des charges. Ne jamais modifier ces 6 valeurs.
+     --------------------------------------------------------------------------- */
+  --color-green: #16A34A;
+  --color-green-dk: #15803D;
+  --color-amber: #F59E0B;
+  --color-red: #EF4444;
+  --color-blue: #2563EB;
+  --color-purple: #7C3AED;
+
+  /* ---------------------------------------------------------------------------
+     Dégradé accent — DÉCORATIF UNIQUEMENT (jauges/graphiques/barres de
+     progression non liées à un statut). Ne jamais utiliser sur un badge de
+     statut de facture ni redéfinir la signification des 6 couleurs
+     ci-dessus. Voir docs/design-system.md §3.5 et décision D-09 (§10) pour le
+     rationale du décalage volontaire vs la référence "Ultraleads" (évite la
+     collision avec --color-blue, couleur du statut "validee").
+     --------------------------------------------------------------------------- */
+  --color-accent-start: #2DD4BF; /* turquoise */
+  --color-accent-end: #38BDF8;   /* bleu ciel/cyan — volontairement != #3B82F6 (réf.) */
+  --gradient-accent: linear-gradient(90deg, var(--color-accent-start) 0%, var(--color-accent-end) 100%);
+  --gradient-accent-y: linear-gradient(180deg, var(--color-accent-end) 0%, var(--color-accent-start) 100%);
+
+  /* ---------------------------------------------------------------------------
+     Dégradé HÉRO — DISTINCT de --gradient-accent ci-dessus. Réservé aux
+     cartes vedettes du dashboard Admin (stat héro, futures cartes "Statistique
+     Produit"/"Répartition par Agent") depuis le retour au thème sombre "neon
+     green" (voir docs/design-system.md §10 D-14/D-17). --gradient-accent reste
+     turquoise/cyan et purement décoratif (graphiques secondaires, jamais de
+     charge symbolique) ; --gradient-hero est volontairement dans la famille du
+     vert de marque et porte au contraire un sens fort : "ceci est l'élément
+     phare de l'écran". Ne jamais utiliser --gradient-hero sur un graphique
+     décoratif secondaire, ni --gradient-accent sur une carte héro — la
+     distinction des deux tokens sert précisément à ne pas confondre ces deux
+     rôles.
+     --------------------------------------------------------------------------- */
+  --color-hero-start: #0D3320; /* vert profond */
+  --color-hero-end: #4ADE80;   /* vert néon */
+  --gradient-hero: linear-gradient(135deg, var(--color-hero-start) 0%, var(--color-hero-end) 100%);
+
+  /* ---------------------------------------------------------------------------
+     Séries de graphiques dérivées de la palette — voir docs/design-system.md
+     §3.9 (WeeklySalesBarChart, NestedRadialProgress "Répartition par Agent").
+     Aucune couleur hors palette : tout est réutilisé/dérivé des tokens vert,
+     vert foncé, vert néon (--color-hero-end) et turquoise (--color-accent-start).
+     --------------------------------------------------------------------------- */
+  --color-chart-serie-1: var(--color-green);    /* vert clair — CA facturé */
+  --color-chart-serie-2: var(--color-green-dk); /* vert foncé — CA encaissé */
+
+  --color-agent-ring-1: var(--color-green);        /* #16A34A */
+  --color-agent-ring-2: var(--color-hero-end);     /* #4ADE80 */
+  --color-agent-ring-3: var(--color-green-dk);     /* #15803D */
+  --color-agent-ring-4: var(--color-accent-start); /* #2DD4BF turquoise */
+  --color-agent-ring-5: var(--color-hero-start);   /* #0D3320 */
+
+  /* ---------------------------------------------------------------------------
+     Rayons (voir règle absolue : inputs/badges génériques = rounded-lg,
+     cartes = rounded-xl, modals = rounded-2xl ; les badges de STATUT dérogent
+     et utilisent rounded-full, voir --radius-badge-pill)
+     --------------------------------------------------------------------------- */
+  --radius-input: 8px;          /* rounded-lg */
+  --radius-badge: 8px;          /* rounded-lg — badges génériques (rôle, catégorie, kit) */
+  --radius-badge-pill: 9999px;  /* rounded-full — badges de STATUT uniquement */
+  --radius-card: 12px;          /* rounded-xl */
+  --radius-card-lg: var(--radius-card); /* 12px de secours — voir override [data-theme="admin"] et §3.6/D-11 */
+  --radius-modal: 16px;         /* rounded-2xl */
+
+  /* ---------------------------------------------------------------------------
+     Motion — règles absolues de micro-interactions (docs/design-system.md §7)
+     --------------------------------------------------------------------------- */
+  --ease-standard: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-btn: 150ms;
+  --duration-card: 200ms;
+  --ease-card: ease-out;
+
+  /* "Back ease-out" avec dépassement (overshoot) — simule un ressort/bounce en
+     CSS pur (le projet n'a pas framer-motion). Réservé à l'animation d'entrée
+     du Toast (docs/design-system.md §6.7 / §10 D-20) : la courbe dépasse
+     temporairement 100% avant de se stabiliser, ce qui donne l'impression d'un
+     léger rebond sans keyframes multi-étapes ni JS. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-toast: 380ms;
+
+  /* ---------------------------------------------------------------------------
+     Typographie
+     --------------------------------------------------------------------------- */
+  /* Pile locale uniquement : aucun téléchargement de police ne bloque le
+     build ou le premier affichage, et la police native évite les décalages. */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Roboto Mono', monospace;
+
+  --text-display: 2rem;      /* 32px — valeurs clés dashboard */
+  --text-display-lg: 2.5rem; /* 40px — valeur centrale de la jauge radiale (RadialGauge), emphase exceptionnelle */
+  --text-h1: 1.75rem;        /* 28px */
+  --text-h2: 1.375rem;       /* 22px */
+  --text-h3: 1.125rem;       /* 18px */
+  --text-body: 1rem;         /* 16px — corps de texte par défaut, jamais en dessous sur Espace Agent */
+  --text-body-sm: 0.875rem;  /* 14px — usage restreint, voir docs §8 */
+  --text-caption: 0.75rem;   /* 12px — libellés/eyebrows uniquement, jamais de contenu métier primaire */
+
+  /* ---------------------------------------------------------------------------
+     Espacement (échelle Tailwind standard, rappelée ici pour référence)
+     --------------------------------------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --tap-target-min: 44px; /* cible tactile minimale, usage terrain */
+
+  /* ---------------------------------------------------------------------------
+     Z-index
+     --------------------------------------------------------------------------- */
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-modal-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+/* =============================================================================
+   THEME ADMIN — sombre "neon green" (voir docs/design-system.md §10 D-14).
+   ATTENTION HISTORIQUE : entre les décisions D-11/D-12/D-13 et D-14, l'Espace
+   Admin est passé par une refonte claire "Ultraleads" (fond gris-lavande
+   #F4F5FA, cartes blanches, ton --color-navy comme accent héro). Cette
+   direction claire est définitivement ABANDONNÉE : l'Admin repasse à un fond
+   sombre vert très désaturé (valeurs alignées sur l'ancien thème sombre
+   d'origine du projet, antérieur à Ultraleads), avec un dégradé vert néon
+   (--gradient-hero, voir plus haut) réservé aux cartes vedettes. Seule la
+   SIDEBAR déroge à ce fond sombre et reste blanche (--color-sidebar-*
+   ci-dessous) — rupture volontaire et documentée du principe "un seul jeu de
+   tokens partagé sidebar/contenu" (D-15). --color-navy/--color-navy-dk sont
+   conservés tels quels : ils ne servent plus d'accent héro du contenu sombre
+   mais restent utilisés pour la carte CTA "Besoin d'aide ?" en bas de la
+   sidebar blanche, où leur contraste reste excellent (D-15).
+   ============================================================================= */
+:root,
+[data-theme="admin"] {
+  --color-bg: #0F1712;
+  --color-surface: #16211A;
+  --color-surface-2: #1E2C22;
+  --color-border: #2C3D30;
+  --color-text: #F0F6F2;
+  --color-muted: #8FA294;
+
+  --color-navy: #1E2A45;
+  --color-navy-dk: #141C30;
+
+  /* Sidebar Admin — SEULE zone claire de l'écran (D-15). Tokens dédiés, non
+     réutilisés ailleurs : ne jamais appliquer --color-sidebar-* en dehors du
+     composant Sidebar. */
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-text: #0F1712;        /* réutilise le ton le plus sombre de la palette comme "encre" sur fond blanc */
+  --color-sidebar-text-muted: #5B6E60;  /* identique à --color-muted du thème Agent : même contexte (fond clair), AA garanti */
+  --color-sidebar-active-bg: var(--color-green); /* item de nav actif = vert plein, voir D-16 (remplace le fond navy de D-12/Ultraleads) */
+  --color-sidebar-active-text: #FFFFFF;
+
+  --radius-card-lg: 20px; /* rounded-[20px] — cartes vedettes dashboard Admin uniquement, voir §3.6/D-11 (valeur conservée, contexte visuel remplacé par D-14) */
+
+  /* Ombres fortes, noir pur — cohérent avec un fond sombre (§4 du doc,
+     jamais mis à jour pendant la parenthèse Ultraleads). */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.40);
+  --shadow-card-hover: 0 20px 40px rgba(0, 0, 0, 0.48);
+
+  --focus-ring-alpha: 0.20;
+
+  /* Couleurs de TEXTE accentué : fond de nouveau sombre -> couleurs PLEINES
+     de la palette de référence (contraste déjà largement suffisant sur fond
+     sombre, voir §4/§4.1 du doc). Les variantes foncées "700" utilisées
+     pendant Ultraleads (fond clair) ne s'appliquent plus qu'au thème Agent. */
+  --color-text-green: var(--color-green);
+  --color-text-amber: var(--color-amber);
+  --color-text-red: var(--color-red);
+  --color-text-blue: var(--color-blue);
+  --color-text-purple: var(--color-purple);
+}
+
+/* =============================================================================
+   THEME AGENT — clair. Facturation terrain, boutique, extérieur/soleil.
+   ============================================================================= */
+[data-theme="agent"] {
+  --color-bg: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F0F5F1;
+  --color-border: #DCE6DF;
+  --color-text: #10201A;
+  --color-muted: #5B6E60;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 18, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 18, 0.08);
+  --shadow-lg: 0 12px 24px rgba(15, 23, 18, 0.10);
+  --shadow-card-hover: 0 16px 32px rgba(15, 23, 18, 0.14);
+
+  --focus-ring-alpha: 0.25;
+
+  /* Couleurs de TEXTE accentué : variantes foncées (équivalent "700") imposées
+     pour atteindre un contraste AA (>= 4.5:1) sur fond blanc — indispensable en
+     usage extérieur/plein soleil. Ces variantes ne remplacent JAMAIS les 6
+     couleurs de référence : elles s'appliquent uniquement au texte/icônes de
+     petite taille, jamais aux fonds, bordures ou remplissages qui conservent
+     les valeurs exactes de la palette. Décision documentée dans
+     docs/design-system.md §10 (journal des décisions). */
+  --color-text-green: var(--color-green-dk); /* #15803D — déjà un token de la palette de référence */
+  --color-text-amber: #B45309;
+  --color-text-red: #B91C1C;
+  --color-text-blue: #1D4ED8;
+  --color-text-purple: #6D28D9;
+}
+
+
+/* Fonds Admin personnalisables depuis le menu de navigation. */
+:root[data-admin-background="night"],
+[data-admin-background="night"] [data-theme="admin"] {
+  --color-bg: #101827;
+  --color-surface: #182338;
+  --color-surface-2: #223049;
+  --color-border: #36465F;
+  --color-text: #F1F5FB;
+  --color-muted: #A5B4CA;
+}
+
+:root[data-admin-background="light"],
+[data-admin-background="light"] [data-theme="admin"],
+:root[data-admin-background="sand"],
+[data-admin-background="sand"] [data-theme="admin"] {
+  --color-bg: #F4F5FA;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #EDEFF5;
+  --color-border: #D7DCE5;
+  --color-text: #182331;
+  --color-muted: #566477;
+  --color-text-green: #15803D;
+  --color-text-amber: #B45309;
+  --color-text-red: #B91C1C;
+  --color-text-blue: #1D4ED8;
+  --color-text-purple: #6D28D9;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 18, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 18, 0.08);
+  --shadow-lg: 0 12px 24px rgba(15, 23, 18, 0.10);
+  --shadow-card-hover: 0 16px 32px rgba(15, 23, 18, 0.14);
+}
+
+:root[data-admin-background="sand"],
+[data-admin-background="sand"] [data-theme="admin"] {
+  --color-bg: #F5EFE4;
+  --color-surface: #FFFCF6;
+  --color-surface-2: #EEE5D6;
+  --color-border: #DBCEBA;
+  --color-text: #30291F;
+  --color-muted: #72634F;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.5;
+  }
+
+  h1, h2, h3 {
+    line-height: 1.2;
+  }
+}
+
+@layer utilities {
+  /* Cible tactile minimale (44px) — usage terrain Espace Agent (docs §8). */
+  .tap-target {
+    min-height: var(--tap-target-min);
+    min-width: var(--tap-target-min);
+  }
+
+  /* Anneau de focus vert — règle absolue docs/design-system.md §7, appliqué à
+     tout input/bouton interactif. --focus-ring-alpha varie déjà par thème
+     (0.20 Admin / 0.25 Agent, tokens.css) : jamais recréé à la main ailleurs. */
+  .focus-ring:focus-visible {
+    outline: none;
+    border-color: var(--color-green);
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--color-green) calc(var(--focus-ring-alpha) * 100%), transparent);
+  }
+
+  /* Fond pastel des badges (§6.3) : color-mix 15% de l'accent sur la surface. */
+  .badge-pastel-green {
+    background: color-mix(in srgb, var(--color-green) 15%, var(--color-surface));
+    color: var(--color-text-green);
+  }
+  .badge-pastel-amber {
+    background: color-mix(in srgb, var(--color-amber) 15%, var(--color-surface));
+    color: var(--color-text-amber);
+  }
+  .badge-pastel-red {
+    background: color-mix(in srgb, var(--color-red) 15%, var(--color-surface));
+    color: var(--color-text-red);
+  }
+  .badge-pastel-blue {
+    background: color-mix(in srgb, var(--color-blue) 15%, var(--color-surface));
+    color: var(--color-text-blue);
+  }
+  .badge-pastel-purple {
+    background: color-mix(in srgb, var(--color-purple) 15%, var(--color-surface));
+    color: var(--color-text-purple);
+  }
+  .badge-pastel-neutral {
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+  }
+}

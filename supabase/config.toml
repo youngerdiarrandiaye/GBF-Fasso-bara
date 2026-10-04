@@ -1,0 +1,38 @@
+# supabase/config.toml
+#
+# Configuration minimale ajoutée par dev-backend-edge pour les 3 Edge
+# Functions livrées en Phase 3. Si un `supabase/config.toml` plus complet
+# existe déjà côté devops/architecte-bdd (project_id, ports locaux, etc.),
+# fusionner les sections [functions.*] ci-dessous plutôt qu'écraser le
+# fichier existant.
+
+[api]
+# 54321 est réservé par Windows sur cette machine.
+port = 55321
+
+[functions.generer-facture-pdf]
+# JWT utilisateur classique (agent ou admin connecté) : la passerelle
+# Supabase valide le token AVANT d'invoquer la fonction.
+verify_jwt = true
+
+[functions.export-rapport]
+verify_jwt = true
+
+[functions.generer-bon-livraison-pdf]
+# JWT utilisateur classique (agent ou admin connecté), même raisonnement que
+# generer-facture-pdf : la passerelle Supabase valide le token AVANT
+# d'invoquer la fonction ; RLS sert ensuite de portail d'autorisation.
+verify_jwt = true
+
+[functions.alerte-stock-bas]
+# Appelée par pg_cron/pg_net (service_role) ou par un secret partagé
+# (x-cron-secret), pas systématiquement par un JWT utilisateur : la
+# vérification est faite manuellement dans index.ts (voir README.md).
+verify_jwt = false
+
+[functions.alerte-facture-impayee]
+# Même raisonnement que alerte-stock-bas : appelée par pg_cron/pg_net
+# (service_role) ou par un secret partagé (x-cron-secret), pas
+# systématiquement par un JWT utilisateur : la vérification est faite
+# manuellement dans index.ts (voir README.md).
+verify_jwt = false

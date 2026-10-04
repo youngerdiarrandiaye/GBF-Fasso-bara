@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.tmp
+.env*
+*.log
+*.tsbuildinfo
+supabase/.temp
+supabase/.branches
+.codex
+.agents

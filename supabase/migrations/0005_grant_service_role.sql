@@ -1,0 +1,196 @@
+-- =============================================================================
+-- GFB-STOCK — Correctif GRANT service_role
+-- Fichier : supabase/migrations/0005_grant_service_role.sql
+-- Auteur  : architecte-bdd (agent)
+-- Objet   : accorder à `service_role` les privilèges SQL table-level
+--           strictement nécessaires aux Edge Functions qui l'utilisent,
+--           sans toucher à 0001-0004 déjà livrées.
+--
+-- =============================================================================
+-- BUG CONFIRMÉ EN CONDITIONS RÉELLES (stack Supabase local complet, agent
+-- qa-testeur, 2026-08-02/03)
+-- =============================================================================
+-- Log Edge Function `generer-facture-pdf` :
+--   code: "42501", message: "permission denied for table factures",
+--   hint: "Grant the required privileges to the current role with:
+--          GRANT SELECT ON public.factures TO service_role;"
+--
+-- Cause racine : la section 17 de 0001_schema_initial.sql accorde
+-- SELECT/INSERT/UPDATE/DELETE sur les 11 tables métier + SELECT sur
+-- facture_sequences UNIQUEMENT au rôle `authenticated`. Aucun GRANT
+-- équivalent n'a jamais été écrit pour `service_role`, alors que trois Edge
+-- Functions (generer-facture-pdf, export-rapport, alerte-stock-bas)
+-- interrogent directement plusieurs de ces tables via un client
+-- `service_role` (cf. supabase/functions/_shared/clients.ts,
+-- createServiceClient()).
+--
+-- =============================================================================
+-- POURQUOI service_role A BESOIN D'UN GRANT SQL EXPLICITE MALGRÉ BYPASSRLS
+-- =============================================================================
+-- `service_role` a l'attribut BYPASSRLS (confirmé : role_bypassrls=true dans
+-- pg_authid) — cela dispense ce rôle de l'évaluation des policies RLS
+-- (USING/WITH CHECK), mais BYPASSRLS n'est PAS un raccourci vers "tous les
+-- droits SQL". RLS et GRANT sont deux mécanismes de contrôle d'accès
+-- Postgres indépendants et cumulatifs :
+--   1. GRANT (table-level) répond à la question "ce rôle a-t-il seulement le
+--      droit de faire un SELECT/INSERT/UPDATE/DELETE sur cette table ?" —
+--      c'est le premier filtre, vérifié AVANT toute évaluation RLS.
+--   2. RLS (policies) répond ensuite à la question "sur QUELLES LIGNES ce
+--      rôle a-t-il ce droit ?" — filtre appliqué APRÈS le filtre GRANT, sauf
+--      justement pour un rôle BYPASSRLS qui saute cette étape 2.
+-- Un rôle BYPASSRLS qui échoue au filtre 1 (GRANT) est donc rejeté par
+-- Postgres AVANT même d'arriver à l'étape où BYPASSRLS aurait fait une
+-- différence — d'où l'erreur "permission denied for table factures" (42501,
+-- erreur de privilège SQL standard, jamais levée par RLS qui renverrait un
+-- résultat vide, pas une erreur).
+--
+-- Vérification faite en base sur ce projet (requête directe, cf. session de
+-- diagnostic) : la default ACL du schéma `public` pour les objets futurs
+-- créés par le rôle `postgres` (celui qui exécute les migrations) est
+-- `anon=Dxtm / authenticated=Dxtm / service_role=Dxtm` — c'est-à-dire
+-- TRUNCATE/REFERENCES/TRIGGER/MAINTAIN seulement, JAMAIS SELECT/INSERT/
+-- UPDATE/DELETE. Ce triplet n'est donc favorisé pour AUCUN des trois rôles :
+-- chaque GRANT table-level doit être écrit explicitement dans les
+-- migrations, table par table, rôle par rôle. C'est ce qui a été fait en
+-- 0001 section 17 pour `authenticated`, mais pas pour `service_role`.
+--
+-- =============================================================================
+-- POURQUOI CE N'ÉTAIT PAS NÉCESSAIRE POUR authenticated/anon MAIS L'ÉTAIT
+-- POUR service_role
+-- =============================================================================
+-- - `anon` : n'a jamais eu besoin d'accéder à ces tables (règle métier 8 :
+--   toute l'application exige une authentification) — 0001 section 17 le
+--   documente déjà explicitement ("Aucun droit accordé au rôle anon").
+-- - `authenticated` : couvert dès 0001 section 17. C'est le rôle Postgres
+--   utilisé par PostgREST/Supabase pour TOUTE requête faite avec le JWT d'un
+--   utilisateur connecté (agent ou admin) depuis le frontend — y compris les
+--   clients "utilisateur" (`createUserClient()`) utilisés par les Edge
+--   Functions elles-mêmes pour vérifier l'accès via RLS. Ce chemin a donc été
+--   exercé dès les premiers tests (qa-testeur, expert-securite) et le trou
+--   n'existait pas là.
+-- - `service_role` : introduit uniquement à l'intérieur des Edge Functions
+--   (`createServiceClient()`), jamais utilisé par le frontend ni par une
+--   session utilisateur normale. Tant que les tests précédents se limitaient
+--   à une lecture de code statique ou à un Postgres nu connecté en tant que
+--   superuser `postgres` (qui bypass tout, GRANT compris), ce chemin n'était
+--   jamais réellement exercé. Le premier test via le vrai flux Kong ->
+--   PostgREST/Edge Runtime -> Postgres (rôle `service_role` effectif, pas
+--   `postgres`) est celui qui a révélé le trou.
+--
+-- =============================================================================
+-- TABLES CONCERNÉES — VÉRIFIÉES PAR RELECTURE DU CODE (pas supposées)
+-- =============================================================================
+-- Relecture ligne à ligne des 3 Edge Functions utilisant service_role
+-- (grep "serviceClient.from(" / "serviceClient.rpc(" dans supabase/functions/),
+-- pour n'accorder QUE ce qui est effectivement lu/écrit — ni plus (surface
+-- d'attaque inutile pour un rôle qui bypass RLS), ni moins (règle 8 ne doit
+-- pas être appliquée au prix de la disponibilité du service) :
+--
+-- generer-facture-pdf/index.ts :
+--   - serviceClient.from("factures").select(...) avec jointures
+--     client:client_id, agent:agent_id, lignes:lignes_facture,
+--     produit:produit_id  => SELECT factures, clients, utilisateurs,
+--     lignes_facture, produits.
+--   - serviceClient.from("entreprise_config").select("*") => SELECT
+--     entreprise_config.
+--   - Storage (bucket privé "factures") : upload()/createSignedUrl() =>
+--     storage.objects/storage.buckets, déjà couverts nativement (voir
+--     section STORAGE ci-dessous, aucun GRANT à ajouter ici).
+--
+-- export-rapport/index.ts :
+--   - chargerRapportVentes() : serviceClient.from("factures").select(...)
+--     avec jointures client:client_id, agent:agent_id => SELECT factures,
+--     clients, utilisateurs (déjà couvert ci-dessus).
+--   - chargerRapportStock() : serviceClient.from("produits").select(...)
+--     avec jointure categorie:categorie_id => SELECT produits (déjà couvert)
+--     + SELECT categories_produits (nouveau, absent de generer-facture-pdf).
+--   - Storage (bucket privé "rapports") : listBuckets()/createBucket()/
+--     upload()/createSignedUrl() => storage.buckets/storage.objects, déjà
+--     couverts nativement (voir section STORAGE).
+--   - Le profil de l'appelant (rôle agent/admin) est lu via un client
+--     UTILISATEUR (createUserClient), donc via RLS + le GRANT authenticated
+--     déjà en place : aucun besoin de service_role sur `utilisateurs` pour
+--     cette partie précise, mais le besoin existe déjà via la jointure
+--     agent:agent_id du rapport ventes ci-dessus.
+--
+-- alerte-stock-bas/index.ts :
+--   - serviceClient.rpc("scanner_alertes_stock_quotidien") : cette fonction
+--     SQL est SECURITY DEFINER (propriétaire = postgres), donc ses écritures
+--     internes (INSERT alertes_stock, SELECT produits) s'exécutent avec les
+--     droits du PROPRIÉTAIRE de la fonction, PAS ceux de service_role — aucun
+--     GRANT table-level n'est requis pour ces opérations internes. Seul le
+--     droit d'EXÉCUTER la fonction elle-même compte, et EXECUTE est déjà
+--     accordé à PUBLIC par défaut sur les fonctions Postgres (comportement
+--     par défaut, jamais révoqué dans 0001-0004 : vérifié, `proacl` de
+--     scanner_alertes_stock_quotidien() est vide = ACL par défaut = EXECUTE
+--     PUBLIC) => aucun GRANT EXECUTE à ajouter ici.
+--   - serviceClient.from("alertes_stock").select(...) avec jointure
+--     produit:produit_id, exécuté APRÈS le RPC pour construire le payload de
+--     diffusion Realtime => SELECT alertes_stock (nouveau) + SELECT produits
+--     (déjà couvert).
+--
+-- => Ensemble minimal et suffisant, uniquement en LECTURE (SELECT), pour
+--    service_role : entreprise_config, utilisateurs, produits, clients,
+--    factures, lignes_facture, categories_produits, alertes_stock.
+--
+-- Tables volontairement NON accordées à service_role (aucune des 3 Edge
+-- Functions ne les lit ni ne les écrit via ce rôle à ce jour) :
+--   mouvements_stock, paiements, journal_activites, facture_sequences.
+-- Si une future Edge Function a besoin d'y accéder via service_role, ajouter
+-- le GRANT correspondant dans une NOUVELLE migration documentée de la même
+-- manière (ne pas élargir ce fichier a posteriori sans justification tracée).
+--
+-- Choix délibéré SELECT uniquement (pas INSERT/UPDATE/DELETE) : à la
+-- différence de `authenticated` (dont les écritures restent bornées par RLS
+-- même après le GRANT), `service_role` bypass RLS -> tout GRANT d'écriture
+-- accordé ici s'appliquerait SANS AUCUN garde-fou RLS. Comme aucune des 3
+-- fonctions n'écrit dans une table `public` via service_role (les seules
+-- écritures observées sont dans Storage, et l'unique écriture métier
+-- passe par le RPC SECURITY DEFINER scanner_alertes_stock_quotidien(), qui
+-- n'a pas besoin de privilèges service_role), accorder plus que SELECT
+-- ouvrirait une surface d'attaque inutile en cas de compromission d'une
+-- Edge Function (ex: faille dans une dépendance npm). Ce choix est plus
+-- restrictif que le correctif manuel appliqué en urgence sur le conteneur
+-- (qui accordait arwd sur les 11 tables par prudence/rapidité) : cette
+-- migration le resserre au strict nécessaire vérifié par lecture de code,
+-- conformément à la consigne de ne pas sur-accorder.
+--
+-- =============================================================================
+-- STORAGE (buckets factures / produits-photos / logo / rapports) — AUDIT DE
+-- PRUDENCE, AUCUN GRANT NÉCESSAIRE
+-- =============================================================================
+-- Vérifié directement en base (\dp storage.objects / \dp storage.buckets) :
+-- ces deux tables du schéma `storage` sont créées et possédées par
+-- `supabase_storage_admin` (composant de la plateforme Supabase, PAS par nos
+-- migrations), et portent déjà, par construction de la stack Supabase :
+--   service_role=arwdDxtm, authenticated=arwdDxtm, anon=arwdDxtm
+-- c'est-à-dire un GRANT SQL complet pour les trois rôles au niveau table,
+-- le filtrage fin restant assuré par les policies RLS de storage.objects
+-- (déjà écrites en 0001 section 15, déjà auditées par expert-securite : accès
+-- public en lecture pour produits-photos/logo, accès restreint par
+-- bucket_id + propriétaire pour factures, accès admin uniquement pour
+-- rapports cf. 0004). Il n'existe donc PAS de trou GRANT équivalent côté
+-- Storage : le bug qui a motivé cette migration était spécifique au schéma
+-- `public` (tables créées par nos migrations, dont l'ACL par défaut n'inclut
+-- aucun droit table-level pour aucun rôle applicatif — cf. plus haut).
+-- Aucune action requise ici ; ce paragraphe documente la vérification faite,
+-- comme demandé, plutôt que de supposer que "c'est probablement bon".
+--
+-- =============================================================================
+-- GRANTS
+-- =============================================================================
+
+GRANT SELECT ON
+  entreprise_config,
+  utilisateurs,
+  produits,
+  clients,
+  factures,
+  lignes_facture,
+  categories_produits,
+  alertes_stock
+TO service_role;
+
+-- =============================================================================
+-- FIN DU CORRECTIF
+-- =============================================================================
