@@ -193,6 +193,12 @@ SMTP) et, dans Authentication > URL Configuration, l'URL du site ; collez le mod
 `RESEND_API_KEY` et `EMAIL_EXPEDITEUR` (voir `.env.local.example`). Sans elles, le bouton
 **E-mail** répond « non configuré ».
 
+**Edge Functions en production** : définir le secret `ALLOWED_ORIGINS` (adresse de
+l'application, ex. `https://gfb.exemple.sn`) dans Supabase > Edge Functions > Secrets. Sans
+lui, seules les adresses locales (`localhost:3000`) peuvent appeler la génération de PDF
+depuis un navigateur. Limites d'usage : 10 envois d'e-mails et 60 PDF par heure et par
+utilisateur.
+
 **Échéance de paiement** : une facture peut porter une date d'échéance ; elle est alors en
 retard le lendemain de cette date. Sans échéance, la règle des 10 jours après validation
 s'applique. Le tableau de bord, les alertes et les badges de retard suivent cette règle.
