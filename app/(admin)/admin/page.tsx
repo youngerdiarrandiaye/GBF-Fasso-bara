@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDate, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { StatCard } from "@/components/admin/StatCard";
+import { Ticket, zoneCredit, type LigneTicket } from "@/components/ui/Ticket";
 import type { PointVenteSemaine } from "@/components/admin/WeeklySalesBarChart";
 import type { PointCategorieProduit } from "@/components/admin/DonutChart";
 import { NestedRadialProgress, type PointAgentCA } from "@/components/admin/NestedRadialProgress";
@@ -18,7 +18,6 @@ import { OverdueBadge } from "@/components/facture/OverdueBadge";
 import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
 import { ChartPeriodControl } from "@/components/admin/ChartPeriodControl";
 import { Pagination } from "@/components/admin/Pagination";
-import { CreditGaugeCard } from "@/components/admin/CreditGaugeCard";
 import { CreditStatusBadge } from "@/components/ui/CreditStatusBadge";
 import { readAll } from "@/lib/supabase/read-all";
 import { DashboardRefresh } from "@/components/admin/DashboardRefresh";
@@ -286,64 +285,95 @@ export default async function DashboardAdminPage({
 
   const nbTransferts = transfertsEnTransit ?? 0;
   const nbALivrer = (facturesALivrer as unknown[] | null)?.length ?? 0;
+  const pluriel = (n: number, mot: string) => `${mot}${n > 1 ? "s" : ""}`;
+  // « À traiter aujourd'hui » : seuls les points actifs sont détaillés, le
+  // nombre en tête ; les points déjà en ordre tiennent sur une ligne.
   const priorites = [
     {
       href: "/admin/bons-livraison/nouveau",
-      actif: nbALivrer > 0,
-      titre: nbALivrer > 0
-        ? `${nbALivrer} facture${nbALivrer > 1 ? "s" : ""} validée${nbALivrer > 1 ? "s" : ""} à livrer`
-        : "Aucune facture à livrer",
-      detail: nbALivrer > 0 ? "Le stock sort à la création du bon de livraison" : "Toutes les ventes sont livrées",
+      nombre: nbALivrer,
+      titre: `${pluriel(nbALivrer, "facture")} ${pluriel(nbALivrer, "validée")} à livrer`,
+      detail: "Le stock sort à la création du bon de livraison",
+      enOrdre: "livraisons",
       icone: faTruck,
-      cadre: "border-[color-mix(in_srgb,var(--color-amber)_35%,var(--color-border))]",
-      pastille: "badge-pastel-amber",
+      ton: "text-amber-text",
     },
     {
       href: "#retards-paiement",
-      actif: facturesEnRetard.length > 0,
-      titre: facturesEnRetard.length > 0
-        ? `${facturesEnRetard.length} paiement${facturesEnRetard.length > 1 ? "s" : ""} en retard`
-        : "Aucun paiement en retard",
-      detail: facturesEnRetard.length > 0 ? `${formatMontant(soldeTotalRetard)} à relancer` : "Tous les paiements sont à jour",
+      nombre: facturesEnRetard.length,
+      titre: `${pluriel(facturesEnRetard.length, "paiement")} en retard`,
+      detail: `${formatMontant(soldeTotalRetard)} à relancer`,
+      enOrdre: "paiements",
       icone: faTriangleExclamation,
-      cadre: "border-[color-mix(in_srgb,var(--color-red)_30%,var(--color-border))]",
-      pastille: "badge-pastel-red",
+      ton: "text-red-text",
     },
     {
       href: "/admin/stock?niveau=bas&actif=1",
-      actif: nbProduitsStockBas > 0,
-      titre: nbProduitsStockBas > 0
-        ? `${nbProduitsStockBas} produit${nbProduitsStockBas > 1 ? "s" : ""} sous le seuil`
-        : "Stock au-dessus des seuils",
-      detail: nbProduitsStockBas > 0 ? "Réapprovisionner ou transférer" : "Aucun produit à surveiller",
+      nombre: nbProduitsStockBas,
+      titre: `${pluriel(nbProduitsStockBas, "produit")} sous le seuil`,
+      detail: "Réapprovisionner ou transférer",
+      enOrdre: "stock",
       icone: faBoxesStacked,
-      cadre: "border-[color-mix(in_srgb,var(--color-amber)_35%,var(--color-border))]",
-      pastille: "badge-pastel-amber",
+      ton: "text-amber-text",
     },
     {
       href: "/admin/credits",
-      actif: creditsEnCoursTypes.length > 0,
-      titre: creditsEnCoursTypes.length > 0
-        ? `${creditsEnCoursTypes.length} crédit${creditsEnCoursTypes.length > 1 ? "s" : ""} à recouvrer`
-        : "Aucun crédit en cours",
-      detail: creditsEnCoursTypes.length > 0 ? "Enregistrer les remboursements du jour" : "Rien à recouvrer",
+      nombre: creditsEnCoursTypes.length,
+      titre: `${pluriel(creditsEnCoursTypes.length, "crédit")} à recouvrer`,
+      detail: "Enregistrer les remboursements du jour",
+      enOrdre: "crédits",
       icone: faWallet,
-      cadre: "border-border",
-      pastille: "badge-pastel-blue",
+      ton: "text-blue-text",
     },
     {
       href: "/admin/transferts",
-      actif: nbTransferts > 0,
-      titre: nbTransferts > 0
-        ? `${nbTransferts} transfert${nbTransferts > 1 ? "s" : ""} à réceptionner`
-        : "Aucun transfert en transit",
-      detail: nbTransferts > 0 ? "Confirmer la réception à l'entrepôt d'arrivée" : "Tous les transferts sont réceptionnés",
+      nombre: nbTransferts,
+      titre: `${pluriel(nbTransferts, "transfert")} à réceptionner`,
+      detail: "Confirmer la réception à l'entrepôt d'arrivée",
+      enOrdre: "transferts",
       icone: faRightLeft,
-      cadre: "border-border",
-      pastille: "badge-pastel-blue",
+      ton: "text-blue-text",
     },
   ];
-  const nbPrioritesActives = priorites.filter((p) => p.actif).length;
+  const prioritesActives = priorites.filter((p) => p.nombre > 0);
+  const prioritesEnOrdre = priorites.filter((p) => p.nombre === 0);
+
+  const seuilCredit = config?.seuil_credit_max ?? 0;
+  const jaugeCredit = zoneCredit(encoursCreditTotal, seuilCredit);
+  const nbAEncaisser = facturesEnAttente ?? 0;
+  const lignesTicket: LigneTicket[] = [
+    {
+      href: "/admin/paiements",
+      libelle: "À encaisser",
+      valeur: `${nbAEncaisser} ${pluriel(nbAEncaisser, "facture")}`,
+    },
+    {
+      href: facturesEnRetard.length > 0 ? "#retards-paiement" : "/admin/paiements",
+      libelle: "En retard",
+      valeur: formatMontant(soldeTotalRetard),
+      signal: facturesEnRetard.length > 0 ? "red" : "green",
+      detail: facturesEnRetard.length > 0
+        ? `${facturesEnRetard.length} ${pluriel(facturesEnRetard.length, "facture")}`
+        : "Aucun retard",
+    },
+    {
+      href: "/admin/credits",
+      libelle: "Crédit en cours",
+      valeur: formatMontant(encoursCreditTotal),
+      signal: jaugeCredit?.zone,
+      jauge: jaugeCredit ?? undefined,
+      detail: !jaugeCredit
+        ? "Seuil non configuré"
+        : jaugeCredit.ratio >= 1
+          ? "Plafond atteint"
+          : `${Math.round(jaugeCredit.ratio * 100)} % du plafond`,
+    },
+    {
+      href: "/admin/stock?actif=1",
+      libelle: "Valeur du stock",
+      valeur: formatMontant(valeurTotaleStock),
+    },
+  ];
 
   return (
     <div className="flex min-w-0 flex-col gap-6 sm:gap-7">
@@ -386,261 +416,170 @@ export default async function DashboardAdminPage({
         ))}
       </nav>
 
-      <section aria-labelledby="indicateurs-dashboard">
-        <div className="mb-3">
-          <h2 id="indicateurs-dashboard" className="scroll-mt-24 text-h2 font-semibold text-text">Vue globale</h2>
+      <Ticket
+        id="ticket-du-mois"
+        titre="Chiffre d'affaires du mois"
+        sousTitre={`Du ${formatDate(dateVersISO(debutMois))} au ${formatDate(dateVersISO(maintenant))}`}
+        montant={caduMois}
+        lien={{ href: `/admin/factures?debut=${dateVersISO(debutMois)}&fin=${dateVersISO(maintenant)}`, label: "Voir les factures du mois" }}
+        lignes={lignesTicket}
+      />
+
+      <section aria-labelledby="priorites-dashboard">
+        <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h2 id="priorites-dashboard" className="scroll-mt-24 text-h2 font-semibold tracking-tight text-text">À traiter aujourd&apos;hui</h2>
+          {prioritesEnOrdre.length > 0 && prioritesActives.length > 0 && (
+            <p className="flex items-center gap-1.5 text-body-sm text-muted">
+              <FontAwesomeIcon icon={faCircleCheck} className="h-3.5 w-3.5 text-green-text" aria-hidden="true" />
+              En ordre : {prioritesEnOrdre.map((p) => p.enOrdre).join(", ")}
+            </p>
+          )}
         </div>
-      <div className="cascade grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <div>
-        <StatCard
-          label="CA mois"
-          value={formatMontant(caduMois)}
-          format="montant"
-          hint={`Du ${formatDate(dateVersISO(debutMois))} au ${formatDate(dateVersISO(maintenant))}`}
-          href={`/admin/factures?debut=${dateVersISO(debutMois)}&fin=${dateVersISO(maintenant)}`}
-        />
-        </div>
-        <StatCard
-          label="A encaisser"
-          value={String(facturesEnAttente ?? 0)}
-          tone="blue"
-          hint="En attente"
-          href="/admin/paiements"
-        />
-        <StatCard
-          label="Valeur stock"
-          value={formatMontant(valeurTotaleStock)}
-          format="montant"
-          hint="Stock actif"
-          href="/admin/stock?actif=1"
-        />
-        <CreditGaugeCard
-          encoursCredit={encoursCreditTotal}
-          seuilCreditMax={config?.seuil_credit_max ?? 0}
-        />
-      </div>
+        {prioritesActives.length === 0 ? (
+          <Card className="!p-0">
+            <EmptyState icone={faCircleCheck} titre="Rien à traiter pour le moment" description="Livraisons, paiements, stock, crédits et transferts sont à jour." ton="succes" />
+          </Card>
+        ) : (
+          <ul className="cascade grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {prioritesActives.map((p) => (
+              <li key={p.href}>
+                <Link
+                  href={p.href}
+                  className="focus-ring group flex h-full items-center gap-4 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow] duration-card ease-out hover:-translate-y-0.5 hover:shadow-card-hover"
+                >
+                  <span className={`min-w-[2ch] shrink-0 text-right font-mono text-[2.25rem] font-semibold leading-none tracking-[-0.04em] ${p.ton}`}>
+                    {p.nombre}
+                  </span>
+                  <span className="min-w-0 flex-1 border-l border-border pl-4">
+                    <span className="flex items-center gap-2 text-body font-semibold text-text">
+                      <FontAwesomeIcon icon={p.icone} className={`h-3.5 w-3.5 shrink-0 ${p.ton}`} aria-hidden="true" />
+                      {p.titre}
+                    </span>
+                    <span className="mt-0.5 block text-body-sm text-muted">{p.detail}</span>
+                  </span>
+                  <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
-      <Card className="!p-0">
-        <div className="flex items-center gap-2 border-b border-border px-4 py-3 sm:px-5">
-          <h2 id="priorites-dashboard" className="scroll-mt-24 text-h3 font-semibold text-text">À traiter aujourd&apos;hui</h2>
-          <span className="ml-auto font-mono text-body-sm text-muted">{nbPrioritesActives} action{nbPrioritesActives > 1 ? "s" : ""}</span>
-        </div>
-        <ul className="cascade grid grid-cols-1 gap-2 p-3 sm:p-4 lg:grid-cols-2">
-          {priorites.map((p) => (
-            <li key={p.href}>
-              <Link
-                href={p.href}
-                className={`focus-ring group flex items-center gap-3 rounded-input border p-3 transition-colors hover:bg-surface-2 ${p.actif ? p.cadre : "border-border"}`}
-              >
-                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-input ${p.actif ? p.pastille : "badge-pastel-green"}`}>
-                  <FontAwesomeIcon icon={p.actif ? p.icone : faCircleCheck} className="h-4 w-4" aria-hidden="true" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-body font-semibold text-text">{p.titre}</span>
-                  <span className="block text-body-sm text-muted">{p.detail}</span>
-                </span>
-                <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1" aria-hidden="true" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Card>
-
-      <Card className="overflow-hidden !p-0">
-        <div className="flex flex-col gap-4 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 id="factures-recentes" className="scroll-mt-24 text-h2 font-semibold text-text">Factures récentes</h2>
-              <span className="rounded-badge bg-surface-2 px-2 py-0.5 font-mono text-caption text-muted">{totalCountFactures}</span>
-            </div>
-            
+      {facturesEnRetard.length > 0 && (
+        <Card className="!p-0">
+          <div className="flex flex-wrap items-center justify-between gap-2 p-4">
+            <h2 id="retards-paiement" className="scroll-mt-24 text-h2 font-semibold text-text">Factures en retard de paiement</h2>
+            <span
+              className={`text-body-sm font-medium ${facturesEnRetard.length > 0 ? "text-red-text" : "text-muted"}`}
+            >
+              {facturesEnRetard.length} facture{facturesEnRetard.length > 1 ? "s" : ""} · {formatMontant(soldeTotalRetard)} dû au total
+            </span>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/admin/rapports" className="focus-ring rounded-input text-body-sm text-muted hover:text-text">Exporter</Link>
-            <Link href="/admin/factures" className="focus-ring inline-flex h-9 items-center gap-1 rounded-input bg-surface-2 px-3 text-body-sm font-medium text-text hover:bg-[color-mix(in_srgb,var(--color-green)_12%,var(--color-surface))]">
-              Toutes les factures <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-        <div className="divide-y divide-border md:hidden">
-          {factures.length === 0 ? (
-            <EmptyState icone={faFileInvoice} titre="Aucune facture pour le moment." action={{ href: "/admin/nouvelle-facture", label: "Créer une facture" }} />
-          ) : factures.map((facture) => (
-            <Link key={facture.id} href={`/admin/factures/${facture.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2 active:bg-surface-2">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate text-body font-semibold text-text">{facture.client?.nom ?? "Client non renseigné"}</p>
-                  <p className="mt-1 font-mono text-caption text-muted">{facture.numero} · {formatDate(facture.date_facture)}</p>
+            <>
+            <div className="divide-y divide-border md:hidden">
+              {facturesEnRetard.map((facture) => (
+                <div key={facture.facture_id} className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <Link href={`/admin/factures/${facture.facture_id}`} className="focus-ring truncate text-body font-semibold text-text hover:underline">{facture.client_nom}</Link>
+                      <p className="mt-1 font-mono text-body-sm text-muted">{facture.numero}</p>
+                    </div>
+                    <p className="shrink-0 font-mono text-body font-semibold text-red-text">{formatMontant(facture.solde_restant)}</p>
+                  </div>
+                  <div className="mt-3"><OverdueBadge joursDeRetard={facture.jours_de_retard} /></div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <QuickWhatsappButton factureId={facture.facture_id} factureNumero={facture.numero} clientTelephone={facture.client_telephone} totalGeneral={facture.total_general} />
+                    <RegisterPaymentButton factureId={facture.facture_id} factureNumero={facture.numero} resteAPayer={facture.solde_restant} />
+                  </div>
                 </div>
-                <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
-              </div>
-              <div className="mt-3 flex items-center justify-between gap-3">
-                <StatusBadge statut={facture.statut} />
-                <p className="truncate text-body-sm text-muted">{facture.agent?.nom}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className="hidden overflow-x-auto md:block">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
-                <th className="px-5 py-3 font-semibold">Facture</th>
-                <th className="px-5 py-3 font-semibold">Client</th>
-                <th className="px-5 py-3 font-semibold">Agent</th>
-                <th className="px-5 py-3 font-semibold">Statut</th>
-                <th className="px-5 py-3 text-right font-semibold">Montant</th>
-              </tr>
-            </thead>
-            <tbody>
-              {factures.length === 0 ? (
-                <tr>
-                  <td colSpan={5}><EmptyState icone={faFileInvoice} titre="Aucune facture pour le moment." action={{ href: "/admin/nouvelle-facture", label: "Créer une facture" }} /></td>
-                </tr>
-              ) : (
-                factures.map((facture) => (
-                  <tr key={facture.id} className="group border-t border-border transition-colors hover:bg-surface-2">
-                    <td className="px-5 py-4">
-                      <Link
-                        href={`/admin/factures/${facture.id}`}
-                        className="focus-ring font-mono text-body-sm font-semibold text-text group-hover:text-green-text"
-                      >
-                        {facture.numero}
-                      </Link>
-                      <p className="mt-1 text-caption text-muted">{formatDate(facture.date_facture)}</p>
-                    </td>
-                    <td className="px-5 py-4 text-body font-medium text-text">{facture.client?.nom ?? "—"}</td>
-                    <td className="px-5 py-4 text-body-sm text-muted">{facture.agent?.nom ?? "—"}</td>
-                    <td className="px-5 py-4">
-                      <StatusBadge statut={facture.statut} />
-                    </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-right font-mono text-body font-semibold text-text">
-                      {formatMontant(facture.total_general)}
-                    </td>
+              ))}
+            </div>
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
+                    <th className="px-4 py-2.5 font-medium">Numéro</th>
+                    <th className="px-4 py-2.5 font-medium">Client</th>
+                    <th className="px-4 py-2.5 text-right font-medium">Montant dû</th>
+                    <th className="px-4 py-2.5 font-medium">Jours de retard</th>
+                    <th className="px-4 py-2.5 font-medium">Actions</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        <Pagination
-          page={pageActuelle}
-          totalPages={totalPagesFactures}
-          totalCount={totalCountFactures}
-          pageSize={FACTURES_PAGE_SIZE}
-          buildHref={buildHrefDernieresFactures}
-        />
-      </Card>
+                </thead>
+                <tbody>
+                  {facturesEnRetard.map((facture) => (
+                    <tr key={facture.facture_id} className="border-t border-border hover:bg-surface-2">
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/admin/factures/${facture.facture_id}`}
+                          className="focus-ring rounded-input bg-surface-2 px-2 py-1 font-mono text-body-sm text-text hover:underline"
+                        >
+                          {facture.numero}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 text-body text-text">{facture.client_nom}</td>
+                      <td className="px-4 py-3 text-right font-mono text-body text-text">
+                        {formatMontant(facture.solde_restant)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <OverdueBadge joursDeRetard={facture.jours_de_retard} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-2">
+                          <QuickWhatsappButton
+                            factureId={facture.facture_id}
+                            factureNumero={facture.numero}
+                            clientTelephone={facture.client_telephone}
+                            totalGeneral={facture.total_general}
+                          />
+                          <RegisterPaymentButton
+                            factureId={facture.facture_id}
+                            factureNumero={facture.numero}
+                            resteAPayer={facture.solde_restant}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            </>
+        </Card>
+      )}
 
-      <Card className="!p-0">
-        <div className="flex flex-wrap items-center justify-between gap-2 p-4">
-          <h2 id="retards-paiement" className="scroll-mt-24 text-h2 font-semibold text-text">Factures en retard de paiement</h2>
-          <span
-            className={`text-body-sm font-medium ${facturesEnRetard.length > 0 ? "text-red-text" : "text-muted"}`}
-          >
-            {facturesEnRetard.length} facture{facturesEnRetard.length > 1 ? "s" : ""} · {formatMontant(soldeTotalRetard)} dû au total
-          </span>
-        </div>
-        {facturesEnRetard.length === 0 ? (
-          <EmptyState icone={faCircleCheck} titre="Aucune facture en retard" description="Tous les paiements sont à jour." ton="succes" />
-        ) : (
-          <>
+      <div className="grid grid-cols-1 gap-6 2xl:grid-cols-3">
+        <Card className="min-w-0 overflow-hidden !p-0 2xl:col-span-2">
+          <div className="flex flex-col gap-4 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 id="factures-recentes" className="scroll-mt-24 text-h2 font-semibold text-text">Factures récentes</h2>
+                <span className="rounded-badge bg-surface-2 px-2 py-0.5 font-mono text-caption text-muted">{totalCountFactures}</span>
+              </div>
+              
+            </div>
+            <div className="flex items-center gap-3">
+              <Link href="/admin/rapports" className="focus-ring rounded-input text-body-sm text-muted hover:text-text">Exporter</Link>
+              <Link href="/admin/factures" className="focus-ring inline-flex h-9 items-center gap-1 rounded-input bg-surface-2 px-3 text-body-sm font-medium text-text hover:bg-[color-mix(in_srgb,var(--color-green)_12%,var(--color-surface))]">
+                Toutes les factures
+              </Link>
+            </div>
+          </div>
           <div className="divide-y divide-border md:hidden">
-            {facturesEnRetard.map((facture) => (
-              <div key={facture.facture_id} className="p-4">
+            {factures.length === 0 ? (
+              <EmptyState icone={faFileInvoice} titre="Aucune facture pour le moment." action={{ href: "/admin/nouvelle-facture", label: "Créer une facture" }} />
+            ) : factures.map((facture) => (
+              <Link key={facture.id} href={`/admin/factures/${facture.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2 active:bg-surface-2">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <Link href={`/admin/factures/${facture.facture_id}`} className="focus-ring truncate text-body font-semibold text-text hover:underline">{facture.client_nom}</Link>
-                    <p className="mt-1 font-mono text-body-sm text-muted">{facture.numero}</p>
+                    <p className="truncate text-body font-semibold text-text">{facture.client?.nom ?? "Client non renseigné"}</p>
+                    <p className="mt-1 font-mono text-caption text-muted">{facture.numero} · {formatDate(facture.date_facture)}</p>
                   </div>
-                  <p className="shrink-0 font-mono text-body font-semibold text-red-text">{formatMontant(facture.solde_restant)}</p>
+                  <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
                 </div>
-                <div className="mt-3"><OverdueBadge joursDeRetard={facture.jours_de_retard} /></div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <QuickWhatsappButton factureId={facture.facture_id} factureNumero={facture.numero} clientTelephone={facture.client_telephone} totalGeneral={facture.total_general} />
-                  <RegisterPaymentButton factureId={facture.facture_id} factureNumero={facture.numero} resteAPayer={facture.solde_restant} />
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <StatusBadge statut={facture.statut} />
+                  <p className="truncate text-body-sm text-muted">{facture.agent?.nom}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="hidden overflow-x-auto md:block">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
-                  <th className="px-4 py-2.5 font-medium">Numéro</th>
-                  <th className="px-4 py-2.5 font-medium">Client</th>
-                  <th className="px-4 py-2.5 text-right font-medium">Montant dû</th>
-                  <th className="px-4 py-2.5 font-medium">Jours de retard</th>
-                  <th className="px-4 py-2.5 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {facturesEnRetard.map((facture) => (
-                  <tr key={facture.facture_id} className="border-t border-border hover:bg-surface-2">
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/admin/factures/${facture.facture_id}`}
-                        className="focus-ring rounded-input bg-surface-2 px-2 py-1 font-mono text-body-sm text-text hover:underline"
-                      >
-                        {facture.numero}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-body text-text">{facture.client_nom}</td>
-                    <td className="px-4 py-3 text-right font-mono text-body text-text">
-                      {formatMontant(facture.solde_restant)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <OverdueBadge joursDeRetard={facture.jours_de_retard} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        <QuickWhatsappButton
-                          factureId={facture.facture_id}
-                          factureNumero={facture.numero}
-                          clientTelephone={facture.client_telephone}
-                          totalGeneral={facture.total_general}
-                        />
-                        <RegisterPaymentButton
-                          factureId={facture.facture_id}
-                          factureNumero={facture.numero}
-                          resteAPayer={facture.solde_restant}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          </>
-        )}
-      </Card>
-
-      {/* Avenant Crédit / BL / Multi-entrepôts — tableau des crédits en
-          cours (règle métier 12), ajouté après les sections V1 déjà livrées,
-          sans les modifier. Même tri que /admin/credits (le plus vieux
-          d'abord — priorité de recouvrement), limité aux 8 premiers ici. */}
-      <Card className="!p-0">
-        <div className="flex flex-wrap items-center justify-between gap-2 p-4">
-          <h2 className="text-h2 text-text">Crédits en cours</h2>
-          <Link href="/admin/credits" className="focus-ring rounded-input text-body-sm text-text hover:underline">
-            Voir tous les crédits ({creditsEnCoursTypes.length}) →
-          </Link>
-        </div>
-        
-        {creditsEnCoursTypes.length === 0 ? (
-          <EmptyState icone={faHandHoldingDollar} titre="Aucun crédit en cours pour le moment." />
-        ) : (
-          <>
-          <div className="divide-y divide-border md:hidden">
-            {creditsEnCoursTypes.slice(0, 8).map((c) => (
-              <Link key={c.id} href={`/admin/credits/${c.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0"><p className="truncate text-body font-semibold text-text">{c.client?.nom}</p><p className="mt-1 text-body-sm text-muted">Ouvert le {formatDate(c.date_ouverture)}</p></div>
-                  <p className="shrink-0 font-mono text-body font-semibold text-red-text">{formatMontant(c.solde_restant)}</p>
-                </div>
-                <div className="mt-3"><CreditStatusBadge statut={c.statut} /></div>
               </Link>
             ))}
           </div>
@@ -648,38 +587,87 @@ export default async function DashboardAdminPage({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
-                  <th className="px-4 py-2.5 font-medium">Client</th>
-                  <th className="px-4 py-2.5 font-medium">Ouvert le</th>
-                  <th className="px-4 py-2.5 text-right font-medium">Solde restant</th>
-                  <th className="px-4 py-2.5 font-medium">Statut</th>
+                  <th className="px-5 py-3 font-semibold">Facture</th>
+                  <th className="px-5 py-3 font-semibold">Client</th>
+                  <th className="px-5 py-3 font-semibold">Agent</th>
+                  <th className="px-5 py-3 font-semibold">Statut</th>
+                  <th className="px-5 py-3 text-right font-semibold">Montant</th>
                 </tr>
               </thead>
               <tbody>
-                {creditsEnCoursTypes.slice(0, 8).map((c) => (
-                  <tr key={c.id} className="border-t border-border hover:bg-surface-2">
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/admin/credits/${c.id}`}
-                        className="focus-ring rounded-input text-body font-medium text-text hover:underline"
-                      >
-                        {c.client?.nom}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-body-sm text-muted">{formatDate(c.date_ouverture)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-body font-medium text-red-text">
-                      {formatMontant(c.solde_restant)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <CreditStatusBadge statut={c.statut} />
-                    </td>
+                {factures.length === 0 ? (
+                  <tr>
+                    <td colSpan={5}><EmptyState icone={faFileInvoice} titre="Aucune facture pour le moment." action={{ href: "/admin/nouvelle-facture", label: "Créer une facture" }} /></td>
                   </tr>
-                ))}
+                ) : (
+                  factures.map((facture) => (
+                    <tr key={facture.id} className="group border-t border-border transition-colors hover:bg-surface-2">
+                      <td className="px-5 py-4">
+                        <Link
+                          href={`/admin/factures/${facture.id}`}
+                          className="focus-ring font-mono text-body-sm font-semibold text-text group-hover:text-green-text"
+                        >
+                          {facture.numero}
+                        </Link>
+                        <p className="mt-1 text-caption text-muted">{formatDate(facture.date_facture)}</p>
+                      </td>
+                      <td className="px-5 py-4 text-body font-medium text-text">{facture.client?.nom ?? "—"}</td>
+                      <td className="px-5 py-4 text-body-sm text-muted">{facture.agent?.nom ?? "—"}</td>
+                      <td className="px-5 py-4">
+                        <StatusBadge statut={facture.statut} />
+                      </td>
+                      <td className="whitespace-nowrap px-5 py-4 text-right font-mono text-body font-semibold text-text">
+                        {formatMontant(facture.total_general)}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
-          </>
-        )}
-      </Card>
+          <Pagination
+            page={pageActuelle}
+            totalPages={totalPagesFactures}
+            totalCount={totalCountFactures}
+            pageSize={FACTURES_PAGE_SIZE}
+            buildHref={buildHrefDernieresFactures}
+          />
+        </Card>
+
+        {/* Crédits en cours (règle métier 12) : liste compacte, même tri que
+            /admin/credits (le plus vieux d'abord — priorité de recouvrement),
+            limitée aux 8 premiers. */}
+        <Card className="flex min-w-0 flex-col !p-0">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border p-4 sm:p-5">
+            <h2 className="text-h2 font-semibold text-text">Crédits en cours</h2>
+            <span className="font-mono text-body-sm text-muted">{creditsEnCoursTypes.length}</span>
+          </div>
+          {creditsEnCoursTypes.length === 0 ? (
+            <EmptyState icone={faHandHoldingDollar} titre="Aucun crédit en cours pour le moment." />
+          ) : (
+            <ul className="divide-y divide-border">
+              {creditsEnCoursTypes.slice(0, 8).map((c) => (
+                <li key={c.id}>
+                  <Link href={`/admin/credits/${c.id}`} className="focus-ring flex items-start justify-between gap-3 px-4 py-3 transition-colors hover:bg-surface-2 sm:px-5">
+                    <span className="min-w-0">
+                      <span className="block truncate text-body font-medium text-text">{c.client?.nom}</span>
+                      <span className="block text-body-sm text-muted">Ouvert le {formatDate(c.date_ouverture)}</span>
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end gap-1">
+                      <span className="font-mono text-body font-semibold text-red-text">{formatMontant(c.solde_restant)}</span>
+                      <CreditStatusBadge statut={c.statut} />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          <Link href="/admin/credits" className="focus-ring mt-auto border-t border-border px-4 py-3 text-body-sm font-medium text-text hover:bg-surface-2 sm:px-5">
+            Voir tous les crédits
+          </Link>
+        </Card>
+      </div>
+
       <details className="rounded-card border border-border bg-surface p-4" open={periodePersonnalisee || ventesDebutParam != null || ventesFinParam != null || NB_SEMAINES !== NB_SEMAINES_DEFAUT}>
         <summary className="focus-ring min-h-11 cursor-pointer rounded-input py-3 text-h2 font-semibold text-text">Voir les analyses de l&apos;activité</summary>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

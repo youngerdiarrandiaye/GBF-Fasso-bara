@@ -2,10 +2,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
+import { Ticket, type LigneTicket } from "@/components/ui/Ticket";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileCirclePlus, faFileInvoice, faFileLines, faTruck, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faFileCirclePlus, faFileLines, faTruck, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { EmptyState } from "@/components/ui/EmptyState";
 import type { FactureAvecClient, StatutFacture } from "@/lib/supabase/database.types";
 
 export const dynamic = "force-dynamic";
@@ -20,10 +20,12 @@ interface FactureALivrer {
 }
 
 /**
- * Accueil Agent — direction « Comptoir » (docs/design-system.md D-25) :
- * ventes du jour en tête, 4 actions en grandes tuiles, puis les factures à
- * livrer (`factures_a_livrer()`, 0023) avec un accès direct au bon de
- * livraison, et les factures du jour.
+ * Accueil Agent — direction « Comptoir » (docs/design-system.md D-25/D-26) :
+ * ticket « Mes ventes du jour » en tête (même composant que le dashboard
+ * Admin), une seule grande action « Nouvelle facture » sur mobile (la barre
+ * d'onglets porte déjà les autres) et 4 tuiles à partir de md, puis les
+ * factures à livrer (`factures_a_livrer()`, 0023) — section masquée s'il n'y
+ * en a aucune — et les factures du jour.
  */
 export default async function AccueilAgentPage() {
   const supabase = await createClient();
@@ -51,6 +53,26 @@ export default async function AccueilAgentPage() {
     .reduce((sum, f) => sum + f.total_general, 0);
   const nombreVentes = factures.filter((f) => STATUTS_VENTE_CONCLUE.includes(f.statut)).length;
   const nombreBrouillons = factures.filter((f) => f.statut === "brouillon").length;
+  const pluriel = (n: number, mot: string) => `${mot}${n > 1 ? "s" : ""}`;
+  const lignesTicket: LigneTicket[] = [
+    {
+      href: "#factures-du-jour",
+      libelle: pluriel(nombreVentes, "Vente") + " " + pluriel(nombreVentes, "conclue"),
+      valeur: String(nombreVentes),
+    },
+    {
+      href: "#factures-du-jour",
+      libelle: "Brouillons à finir",
+      valeur: String(nombreBrouillons),
+      signal: nombreBrouillons > 0 ? "amber" : undefined,
+    },
+    {
+      href: facturesALivrer.length > 0 ? "#a-livrer" : "/bons-livraison",
+      libelle: "À livrer",
+      valeur: String(facturesALivrer.length),
+      signal: facturesALivrer.length > 0 ? "amber" : undefined,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -59,22 +81,23 @@ export default async function AccueilAgentPage() {
         <p className="text-body text-muted first-letter:uppercase">{formatDateLongue(maintenant)}</p>
       </div>
 
-      <section aria-label="Mes ventes du jour" className="flex flex-col gap-2 rounded-modal bg-encre p-5 text-white">
-        <p className="text-body text-encre-muted">Mes ventes du jour</p>
-        <p className="break-words font-mono text-display font-semibold leading-tight tracking-tight">
-          {formatMontant(totalDuJour)}
-        </p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <span className="rounded-input bg-white/10 px-3 py-1.5 text-body">
-            {nombreVentes} vente{nombreVentes > 1 ? "s" : ""}
-          </span>
-          <span className="rounded-input bg-white/10 px-3 py-1.5 text-body">
-            {nombreBrouillons} brouillon{nombreBrouillons > 1 ? "s" : ""}
-          </span>
-        </div>
-      </section>
+      <Ticket
+        id="ventes-du-jour"
+        titre="Mes ventes du jour"
+        montant={totalDuJour}
+        lien={{ href: "/mes-factures", label: "Voir mes factures" }}
+        lignes={lignesTicket}
+      />
 
-      <nav aria-label="Actions du quotidien" className="cascade grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <Link
+        href="/nouvelle-facture"
+        className="focus-ring flex min-h-14 items-center justify-center gap-3 rounded-modal bg-green-dk px-5 text-h3 font-semibold text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] md:hidden"
+      >
+        <FontAwesomeIcon icon={faFileCirclePlus} className="h-5 w-5" aria-hidden="true" />
+        Nouvelle facture
+      </Link>
+
+      <nav aria-label="Actions du quotidien" className="cascade hidden grid-cols-4 gap-3 md:grid">
         {[
           { href: "/nouvelle-facture", label: "Nouvelle facture", icon: faFileCirclePlus, primary: true },
           { href: "/bons-livraison/nouveau", label: "Livrer", icon: faTruck, primary: false },
@@ -94,22 +117,12 @@ export default async function AccueilAgentPage() {
         ))}
       </nav>
 
-      <section aria-labelledby="a-livrer" className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <h2 id="a-livrer" className="text-h3 font-semibold text-text">À livrer</h2>
-          {facturesALivrer.length > 0 && (
+      {facturesALivrer.length > 0 && (
+        <section aria-labelledby="a-livrer" className="flex scroll-mt-24 flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <h2 id="a-livrer" className="text-h3 font-semibold text-text">À livrer</h2>
             <span className="badge-pastel-amber rounded-pill px-2.5 py-0.5 text-body font-semibold">{facturesALivrer.length}</span>
-          )}
-        </div>
-        {facturesALivrer.length === 0 ? (
-          <EmptyState
-            icone={faTruck}
-            titre="Aucune facture à livrer."
-            description="Les factures validées sans bon de livraison apparaîtront ici."
-            ton="succes"
-            className="rounded-card border border-border bg-surface"
-          />
-        ) : (
+          </div>
           <ul className="cascade flex flex-col gap-2">
             {facturesALivrer.map((f) => (
               <li key={f.id}>
@@ -130,18 +143,15 @@ export default async function AccueilAgentPage() {
               </li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
 
-      <section aria-labelledby="factures-du-jour" className="flex flex-col gap-3">
+      <section aria-labelledby="factures-du-jour" className="flex scroll-mt-24 flex-col gap-3">
         <h2 id="factures-du-jour" className="text-h3 font-semibold text-text">Factures du jour</h2>
         {factures.length === 0 ? (
-          <EmptyState
-            icone={faFileInvoice}
-            titre="Aucune facture créée aujourd'hui."
-            action={{ href: "/nouvelle-facture", label: "Créer une facture" }}
-            className="rounded-card border border-dashed border-border bg-surface"
-          />
+          <p className="rounded-card border border-dashed border-border px-4 py-5 text-center text-body text-muted">
+            Aucune facture aujourd&apos;hui. Vos factures du jour s&apos;afficheront ici.
+          </p>
         ) : (
           factures.map((facture) => (
             <Link key={facture.id} href={`/mes-factures/${facture.id}`} className="focus-ring block rounded-card">

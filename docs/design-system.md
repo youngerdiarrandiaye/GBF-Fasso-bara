@@ -1544,6 +1544,27 @@ fond (« Vert sombre », « Bleu nuit »), tout comme « Sable ». Changements :
 Les valeurs détaillées des §3.1, §3.3 et §3.7 décrivent l'état antérieur ; la source de vérité est
 `design-system/tokens.css` / `app/globals.css`.
 
+**D-26 — Dashboard Admin : « ticket du mois » et priorités actives seules (octobre 2026).**
+Prolonge D-25 sans nouveau token. Le tableau de bord Admin est réorganisé par ordre d'action :
+- **Ticket du mois** (`components/ui/Ticket.tsx`, partagé avec l'accueil Agent) sur la carte encre : CA du mois en grand à
+  gauche, relevé façon ticket de caisse à droite (libellé, points de conduite, montant en Geist Mono)
+  pour « À encaisser », « En retard », « Crédit en cours » (jauge fine, zones §5.9/D-23) et « Valeur du
+  stock ». Chaque ligne est un lien. Remplace les quatre `StatCard` et `CreditGaugeCard` (supprimée).
+  Sur la carte encre, le texte reste blanc / `--color-encre-muted` ; la couleur d'état n'apparaît que
+  dans le point et la jauge, jamais seule (le libellé ou le détail porte l'information).
+- **À traiter aujourd'hui** : seuls les points actifs sont détaillés (nombre en Geist Mono 36 px, ton
+  d'état, titre, conseil) ; les points déjà en ordre tiennent sur une ligne « En ordre : … ».
+- **Factures en retard** : la carte n'est rendue que s'il y a au moins un retard.
+- **Factures récentes + Crédits en cours** côte à côte à partir de `2xl` (2/3 – 1/3), empilés en
+  dessous ; les crédits passent en liste compacte.
+- **Accueil Agent** : « Mes ventes du jour » passe au même composant `Ticket` (lignes « Vente(s)
+  conclue(s) », « Brouillons à finir », « À livrer », point ambre si > 0). Sur mobile, une seule grande
+  action « Nouvelle facture » (la barre d'onglets porte déjà les autres) ; les 4 tuiles restent à
+  partir de `md`. La section « À livrer » n'est rendue que si elle contient au moins une facture ;
+  l'état vide « Factures du jour » tient sur une ligne, sans bouton redondant.
+La carte encre reste limitée à **un seul bloc par écran** (ventes du jour côté Agent, ticket du mois
+côté Admin).
+
 ## 11. Handoff
 
 **Le design system GFB-STOCK est prêt à être repris par `dev-frontend-admin` et
