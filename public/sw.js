@@ -1,10 +1,18 @@
 // Service worker GFB-STOCK — installabilité PWA + cache des assets statiques.
 // Volontairement PAS de cache des pages HTML ni des requêtes Supabase
 // (API auth/data) : l'app manipule du stock/facturation en temps réel, un
-// affichage périmé serait pire qu'une absence de mode hors-ligne.
-const CACHE_NAME = "gfb-stock-static-v1";
+// affichage périmé serait pire qu'une absence de mode hors-ligne. Seule
+// exception : la page /offline.html, servie quand une navigation échoue
+// faute de réseau, à la place de l'erreur du navigateur.
+const CACHE_NAME = "gfb-stock-static-v2";
+const PAGE_HORS_CONNEXION = "/offline.html";
 
-self.addEventListener("install", () => {
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll([PAGE_HORS_CONNEXION, "/icons/icon-192.png"])
+    )
+  );
   self.skipWaiting();
 });
 
@@ -28,6 +36,17 @@ function estAssetStatiqueMemeOrigine(url) {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  // Navigation (ouverture d'une page) : toujours le réseau ; la page hors
+  // connexion uniquement si le réseau est injoignable.
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).catch(() =>
+        caches.match(PAGE_HORS_CONNEXION).then((page) => page ?? Response.error())
+      )
+    );
+    return;
+  }
 
   const url = new URL(event.request.url);
   if (!estAssetStatiqueMemeOrigine(url)) return;

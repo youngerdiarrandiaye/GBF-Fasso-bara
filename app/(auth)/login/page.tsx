@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "./LoginForm";
+import { InstallAppPrompt } from "@/components/ui/InstallAppPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,7 @@ export default async function LoginPage() {
         <p className="text-body text-muted">Connectez-vous à votre espace</p>
       </div>
       <LoginForm />
+      <InstallAppPrompt />
     </div>
   );
 }

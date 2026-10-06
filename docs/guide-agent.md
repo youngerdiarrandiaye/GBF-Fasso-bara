@@ -13,6 +13,7 @@ utilisez le sommaire pour aller directement à ce qui vous concerne.
 5. [Enregistrer un recouvrement (important — lisez ceci)](#5-enregistrer-un-recouvrement-important--lisez-ceci)
 6. [Créer un bon de livraison](#6-créer-un-bon-de-livraison)
 7. [Envoyer une facture et mot de passe oublié](#7-envoyer-une-facture-et-mot-de-passe-oublié)
+8. [Installer l'application sur votre téléphone](#8-installer-lapplication-sur-votre-téléphone)
 
 ---
 
@@ -158,7 +159,25 @@ recevez rien, votre administrateur peut redéfinir votre mot de passe.
 
 ---
 
+## 8. Installer l'application sur votre téléphone
+
+GFB-STOCK s'installe comme une application : une icône sur l'écran d'accueil, ouverture en
+plein écran, sans barre d'adresse.
+- **Android (Chrome) et ordinateur (Chrome, Edge)** : un encadré « Installer GFB-STOCK sur cet
+  appareil » apparaît sur l'écran de connexion et sur l'accueil. Touchez **Installer**. S'il
+  n'apparaît pas, ouvrez le menu du navigateur (⋮) puis « Installer l'application ».
+- **iPhone (Safari)** : touchez **Partager**, puis **Sur l'écran d'accueil**.
+- « Plus tard » masque l'encadré sur cet appareil.
+- Appui long sur l'icône : raccourcis **Nouvelle facture** et **Mes factures**.
+
+L'application a toujours besoin d'internet : sans réseau, un écran « Pas de connexion
+internet » s'affiche avec un bouton **Réessayer**. Rien n'est enregistré hors ligne.
+
+---
+
 ## Changelog de ce guide
+
+- **6 octobre 2026** — Installation de l'application sur téléphone et ordinateur (section 8).
 
 - **4 octobre 2026** — Nouvelle présentation « Comptoir » : accueil avec ventes du jour et liste
   « À livrer ».

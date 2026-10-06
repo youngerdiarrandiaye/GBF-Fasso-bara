@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#15803D">
+  <title>Hors connexion — GFB-STOCK</title>
+  <!-- Servie par le service worker (public/sw.js) quand une page ne peut pas
+       être chargée faute de réseau. Autonome : aucune ressource externe,
+       couleurs « Comptoir » (D-25) en dur faute d'accès à globals.css. -->
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px; background: #F4F6F3; color: #0E1A13;
+      font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main {
+      width: 100%; max-width: 400px; padding: 28px 24px; text-align: center;
+      background: #FFFFFF; border: 1px solid #E3E8E2; border-radius: 16px;
+    }
+    .marque {
+      width: 56px; height: 56px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+      border-radius: 14px; background: #15803D; color: #FFFFFF; font-weight: 700; font-size: 20px;
+    }
+    h1 { margin: 0 0 8px; font-size: 22px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; }
+    p { margin: 0 0 24px; color: #5B6A60; }
+    button {
+      width: 100%; min-height: 52px; border: 0; border-radius: 10px; cursor: pointer;
+      background: #15803D; color: #FFFFFF; font: inherit; font-weight: 600;
+    }
+    button:focus-visible { outline: 3px solid rgba(22, 163, 74, 0.35); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="marque" aria-hidden="true">GFB</div>
+    <h1>Pas de connexion internet</h1>
+    <p>Les factures et le stock ont besoin du réseau pour rester à jour. Vérifiez le Wi-Fi ou les données mobiles, puis réessayez.</p>
+    <button type="button" onclick="location.reload()">Réessayer</button>
+  </main>
+</body>
+</html>

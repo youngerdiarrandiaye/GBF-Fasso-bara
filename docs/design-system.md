@@ -1587,6 +1587,18 @@ côté Admin).
 - `formatMontant` : espace insécable avant « FCFA », un montant ne se coupe plus.
 - Mes factures (Agent) : numéro en mono, date et entrepôt en texte normal, montant insécable.
 
+**D-29 — Application installable (PWA, octobre 2026).**
+- Manifeste aux couleurs « Comptoir » (fond `#F4F6F3`, barre `#15803D` = `themeColor` du layout), sans
+  verrouillage d'orientation, raccourcis « Nouvelle facture » et « Mes factures ».
+- `InstallAppPrompt` (`components/ui/`) : encadré « Installer GFB-STOCK sur cet appareil » (carte
+  standard, icône teintée verte, bouton primaire « Installer » + « Plus tard » en ghost). Affiché sur
+  la connexion, l'accueil Agent et le tableau de bord Admin, uniquement si le navigateur propose
+  l'installation ; sur Safari iOS, marche à suivre (Partager → Sur l'écran d'accueil). Jamais une fois
+  l'application installée ; « Plus tard » est mémorisé sur l'appareil.
+- `public/offline.html` : écran « Pas de connexion internet » (carte blanche centrée, bouton
+  « Réessayer »), servi par le service worker quand une page ne peut pas être chargée. Aucune page ni
+  donnée métier n'est mise en cache.
+
 ## 11. Handoff
 
 **Le design system GFB-STOCK est prêt à être repris par `dev-frontend-admin` et

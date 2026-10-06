@@ -29,6 +29,7 @@ import type {
   StatutFacture,
 } from "@/lib/supabase/database.types";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { InstallAppPrompt } from "@/components/ui/InstallAppPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -415,6 +416,8 @@ export default async function DashboardAdminPage({
           </Link>
         ))}
       </nav>
+
+      <InstallAppPrompt />
 
       <Ticket
         id="ticket-du-mois"

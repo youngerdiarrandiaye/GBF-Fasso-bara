@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { Ticket, type LigneTicket } from "@/components/ui/Ticket";
+import { InstallAppPrompt } from "@/components/ui/InstallAppPrompt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileCirclePlus, faFileLines, faTruck, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -96,6 +97,8 @@ export default async function AccueilAgentPage() {
         <FontAwesomeIcon icon={faFileCirclePlus} className="h-5 w-5" aria-hidden="true" />
         Nouvelle facture
       </Link>
+
+      <InstallAppPrompt />
 
       <nav aria-label="Actions du quotidien" className="cascade hidden grid-cols-4 gap-3 md:grid">
         {[
