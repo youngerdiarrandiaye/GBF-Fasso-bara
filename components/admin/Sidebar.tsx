@@ -20,6 +20,7 @@ import {
   faWarehouse,
   faRightLeft,
   faTruck,
+  faTruckRampBox,
   faHandHoldingDollar,
   faMagnifyingGlass,
   type IconDefinition,
@@ -71,6 +72,7 @@ const GROUPES: { label: string; liens: LienNav[] }[] = [
       { href: "/admin/factures", label: "Factures", icon: faFileInvoice },
       { href: "/admin/nouvelle-facture", label: "Nouvelle facture", icon: faFileCirclePlus },
       { href: "/admin/bons-livraison", label: "Bons de livraison", icon: faTruck },
+      { href: "/admin/bons-livraison/nouveau", label: "Nouvelle livraison", icon: faTruckRampBox },
     ],
   },
   {
@@ -230,7 +232,12 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
                   {groupe.label}
                 </p>
               {groupe.liens.map((lien) => {
-                const actif = lien.exact ? pathname === lien.href : pathname.startsWith(lien.href);
+                // Lien le plus précis uniquement : sur /admin/bons-livraison/nouveau,
+                // « Nouvelle livraison » est actif, pas « Bons de livraison ».
+                const correspond = (href: string, exact?: boolean) => exact ? pathname === href : pathname.startsWith(href);
+                const actif = correspond(lien.href, lien.exact) && !GROUPES.some((g) =>
+                  g.liens.some((autre) => autre.href.length > lien.href.length && autre.href.startsWith(lien.href) && correspond(autre.href, autre.exact))
+                );
                 return (
                   <Link
                     key={lien.href}

@@ -1,8 +1,7 @@
-import { redirect } from "next/navigation";
 import { WeeklySalesBarChart, DonutChart } from "@/components/admin/LazyCharts";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faBoxesStacked, faCircleCheck, faFileCirclePlus, faFileInvoice, faHandHoldingDollar, faRightLeft, faTriangleExclamation, faTruck, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBoxesStacked, faCircleCheck, faFileInvoice, faHandHoldingDollar, faRightLeft, faTriangleExclamation, faTruck, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDate, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -17,7 +16,6 @@ import { QuickWhatsappButton } from "@/components/facture/QuickWhatsappButton";
 import { OverdueBadge } from "@/components/facture/OverdueBadge";
 import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
 import { ChartPeriodControl } from "@/components/admin/ChartPeriodControl";
-import { Pagination } from "@/components/admin/Pagination";
 import { CreditStatusBadge } from "@/components/ui/CreditStatusBadge";
 import { readAll } from "@/lib/supabase/read-all";
 import { DashboardRefresh } from "@/components/admin/DashboardRefresh";
@@ -37,7 +35,8 @@ const STATUTS_CA: StatutFacture[] = ["validee", "payee_partielle", "payee"];
 const STATUTS_EN_ATTENTE: StatutFacture[] = ["validee", "payee_partielle"];
 const SEMAINES_AUTORISEES = [4, 8, 12];
 const NB_SEMAINES_DEFAUT = 8;
-const FACTURES_PAGE_SIZE = 10;
+// Aperçu seulement : la liste complète est sur /admin/factures (« Voir plus »).
+const FACTURES_APERCU = 5;
 
 function dateDepuisISO(value: string): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
@@ -62,14 +61,13 @@ function debutSemaine(date: Date): Date {
 export default async function DashboardAdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ semaines?: string; ventes_debut?: string; ventes_fin?: string; page?: string }>;
+  searchParams: Promise<{ semaines?: string; ventes_debut?: string; ventes_fin?: string }>;
 }) {
-  const { semaines: semainesParam, ventes_debut: ventesDebutParam, ventes_fin: ventesFinParam, page: pageParam } = await searchParams;
+  const { semaines: semainesParam, ventes_debut: ventesDebutParam, ventes_fin: ventesFinParam } = await searchParams;
   const semainesDemandees = parseInt(semainesParam ?? "", 10);
   const NB_SEMAINES = SEMAINES_AUTORISEES.includes(semainesDemandees)
     ? semainesDemandees
     : NB_SEMAINES_DEFAUT;
-  const pageActuelle = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
 
   const supabase = await createClient();
 
@@ -84,8 +82,6 @@ export default async function DashboardAdminPage({
   const debutPeriodeGraph = periodePersonnalisee ? new Date(dateDebutDemandee!) : debutSemaine(maintenant);
   if (!periodePersonnalisee) debutPeriodeGraph.setDate(debutPeriodeGraph.getDate() - (NB_SEMAINES - 1) * 7);
   const finPeriodeGraph = periodePersonnalisee ? new Date(dateFinDemandee!) : new Date(maintenant);
-
-  const offsetFactures = (pageActuelle - 1) * FACTURES_PAGE_SIZE;
 
   const resultats = await Promise.all([
     // Étendue avec `agent:utilisateurs!factures_agent_id_fkey(...)` (FK
@@ -142,7 +138,7 @@ export default async function DashboardAdminPage({
         { count: "exact" }
       )
       .order("created_at", { ascending: false }).order("id")
-      .range(offsetFactures, offsetFactures + FACTURES_PAGE_SIZE - 1),
+      .range(0, FACTURES_APERCU - 1),
     readAll(supabase.from("v_factures_retard_paiement").select("*").order("jours_de_retard", { ascending: false }).order("facture_id")),
     // Règle métier 12 (0013_avenant_credit_entrepots.sql) : seuil_credit_max
     // ajouté à cette même requête (déjà utilisée par le dashboard) pour ne
@@ -263,26 +259,9 @@ export default async function DashboardAdminPage({
 
   const factures = (dernieresFactures as unknown as FactureAvecClientEtAgent[]) ?? [];
   const totalCountFactures = totalDernieresFactures ?? 0;
-  const totalPagesFactures = Math.max(1, Math.ceil(totalCountFactures / FACTURES_PAGE_SIZE));
   const facturesEnRetard = (facturesRetard as FactureRetardPaiementRow[]) ?? [];
   const soldeTotalRetard = facturesEnRetard.reduce((sum, f) => sum + f.solde_restant, 0);
 
-  // Préserve `semaines` (période du graphique) lors d'un changement de page
-  // des "Dernières factures" — les deux paramètres d'URL sont indépendants.
-  function buildHrefDernieresFactures(cible: number): string {
-    const params = new URLSearchParams();
-    if (NB_SEMAINES !== NB_SEMAINES_DEFAUT) params.set("semaines", String(NB_SEMAINES));
-    if (periodePersonnalisee) {
-      params.delete("semaines");
-      params.set("ventes_debut", dateVersISO(debutPeriodeGraph));
-      params.set("ventes_fin", dateVersISO(finPeriodeGraph));
-    }
-    if (cible > 1) params.set("page", String(cible));
-    const qs = params.toString();
-    return qs ? `/admin?${qs}` : "/admin";
-  }
-
-  if (pageActuelle > totalPagesFactures) redirect(buildHrefDernieresFactures(totalPagesFactures));
 
   const nbTransferts = transfertsEnTransit ?? 0;
   const nbALivrer = (facturesALivrer as unknown[] | null)?.length ?? 0;
@@ -393,29 +372,18 @@ export default async function DashboardAdminPage({
         <DashboardRefresh />
       </header>
 
-      <nav aria-label="Actions du quotidien" className="cascade flex flex-wrap gap-2">
-        {[
-          { href: "/admin/nouvelle-facture", label: "Créer une facture", icon: faFileCirclePlus, primary: true },
-          { href: "/admin/paiements", label: "Paiements", icon: faWallet, primary: false },
-          { href: "/admin/clients", label: "Clients", icon: faUsers, primary: false },
-          { href: "/admin/stock", label: "Produits et stock", icon: faBoxesStacked, primary: false },
-          { href: "/admin/bons-livraison/nouveau", label: "Créer une livraison", icon: faTruck, primary: false },
-          { href: "/admin/stock/nouveau", label: "Ajouter un produit", icon: faBoxesStacked, primary: false },
-        ].map((action) => (
-          <Link
-            key={action.href}
-            href={action.href}
-            className={`focus-ring inline-flex h-tap items-center gap-2 rounded-input border px-4 text-body font-medium transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] ${
-              action.primary
-                ? "border-green-dk bg-green-dk text-white"
-                : "border-border bg-surface text-text hover:bg-surface-2"
-            }`}
-          >
-            <FontAwesomeIcon icon={action.icon} className={`h-4 w-4 ${action.primary ? "" : "text-muted"}`} aria-hidden="true" />
-            {action.label}
-          </Link>
-        ))}
-      </nav>
+      {/* Une seule action en tête de page : les autres (nouvelle facture,
+          paiements, clients, stock, nouvelle livraison) sont dans le menu
+          latéral, hamburger sur mobile. */}
+      <div>
+        <Link
+          href="/admin/stock/nouveau"
+          className="focus-ring inline-flex h-tap items-center gap-2 rounded-input border border-green-dk bg-green-dk px-4 text-body font-medium text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <FontAwesomeIcon icon={faBoxesStacked} className="h-4 w-4" aria-hidden="true" />
+          Ajouter un produit
+        </Link>
+      </div>
 
       <InstallAppPrompt />
 
@@ -628,13 +596,15 @@ export default async function DashboardAdminPage({
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={pageActuelle}
-            totalPages={totalPagesFactures}
-            totalCount={totalCountFactures}
-            pageSize={FACTURES_PAGE_SIZE}
-            buildHref={buildHrefDernieresFactures}
-          />
+          {totalCountFactures > factures.length && (
+            <Link
+              href="/admin/factures"
+              className="focus-ring flex min-h-tap items-center justify-center gap-2 border-t border-border px-4 py-3 text-body font-medium text-green-text hover:bg-surface-2"
+            >
+              Voir plus
+              <span className="text-body-sm text-muted">({totalCountFactures - factures.length} autre{totalCountFactures - factures.length > 1 ? "s" : ""})</span>
+            </Link>
+          )}
         </Card>
 
         {/* Crédits en cours (règle métier 12) : liste compacte, même tri que
