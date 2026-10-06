@@ -18,10 +18,15 @@ const TABS: { href: string; label: string; icon: IconDefinition; primary?: boole
  * Barre d'onglets basse fixe — Espace Agent, mobile-first (docs §6.10 :
  * choix tranché par dev-frontend-agent en faveur d'une barre basse, cible
  * tactile ≥ 44px, action "Nouvelle facture" toujours accessible en un tap).
- * Masquée à partir de md (tablette paysage) où la navbar suffit.
+ * Masquée à partir de md (tablette paysage) où la navbar suffit, et pendant
+ * la saisie d'une facture (le formulaire a sa propre barre de pied).
  */
 export function BottomTabBar() {
   const pathname = usePathname();
+
+  // Saisie d'une facture : mode concentré, la barre de pied du formulaire
+  // (retour, total, étape suivante) prend la place de la barre d'onglets.
+  if (pathname.startsWith("/nouvelle-facture")) return null;
 
   return (
     <nav

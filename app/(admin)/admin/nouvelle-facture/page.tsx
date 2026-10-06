@@ -37,7 +37,7 @@ export default async function NouvelleFactureAdminPage({
     return (
       <div className="flex flex-col gap-6 pb-8">
         <Breadcrumbs items={[{ label: "Factures", href: "/admin/factures" }, { label: "Nouvelle facture" }]} />
-        <NouvelleFactureForm redirectApresValidation="/admin/factures" sansBarreOngletsMobile brand={brand} />
+        <NouvelleFactureForm redirectApresValidation="/admin/factures" brand={brand} />
       </div>
     );
   }
@@ -106,7 +106,6 @@ export default async function NouvelleFactureAdminPage({
       <Breadcrumbs items={[{ label: "Factures", href: "/admin/factures" }, { label: facture.numero }]} />
       <NouvelleFactureForm
         redirectApresValidation="/admin/factures"
-        sansBarreOngletsMobile
         brand={brand}
         initial={{
           factureId: facture.id,

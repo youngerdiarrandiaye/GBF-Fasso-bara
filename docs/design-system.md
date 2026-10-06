@@ -1565,6 +1565,15 @@ Prolonge D-25 sans nouveau token. Le tableau de bord Admin est réorganisé par 
 La carte encre reste limitée à **un seul bloc par écran** (ventes du jour côté Agent, ticket du mois
 côté Admin).
 
+**D-27 — Saisie de facture en mode concentré (octobre 2026).**
+- Espace Agent : la barre d'onglets mobile est masquée sur `/nouvelle-facture` ; le formulaire a sa
+  propre barre de pied.
+- Barre de pied sur une seule ligne : retour (icône, `aria-label` « Étape précédente »), total (masqué à
+  l'étape 1, où il vaut toujours 0), action suivante. Fixe en bas sous `md`, sticky au-delà, pour les
+  deux espaces (la prop `sansBarreOngletsMobile` est supprimée).
+- Récapitulatif de l'étape 3 au format ticket : nom, points de conduite, montant ; « quantité × prix
+  unitaire » en seconde ligne.
+
 ## 11. Handoff
 
 **Le design system GFB-STOCK est prêt à être repris par `dev-frontend-admin` et

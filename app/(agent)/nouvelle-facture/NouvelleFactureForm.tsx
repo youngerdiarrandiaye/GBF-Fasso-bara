@@ -28,6 +28,8 @@ import { ProduitAutocomplete, stockPourEntrepot } from "@/components/agent/Produ
 import { LigneFactureRow } from "@/components/agent/LigneFactureRow";
 import { RecapTotaux } from "@/components/agent/RecapTotaux";
 import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 type ActionEnCours = "brouillon" | "proforma" | "validee" | null;
 
@@ -113,20 +115,11 @@ async function precontrolerCredit(clientId: string, clientNom: string, montantFa
 export function NouvelleFactureForm({
   initial,
   redirectApresValidation = "/mes-factures",
-  sansBarreOngletsMobile = false,
   brand,
 }: {
   initial?: FactureInitiale;
   /** Espace Admin redirige vers /admin/factures plutôt que /mes-factures (route agent-only). */
   redirectApresValidation?: string;
-  /**
-   * true côté Espace Admin : ce layout n'a jamais de BottomTabBar (fixed,
-   * h-16, md:hidden — seulement en Espace Agent), donc la barre d'actions
-   * sticky ne doit pas réserver les 64px prévus pour la dégager en dessous
-   * de md — sinon elle flotte avec un espace mort inutile, sans rien à
-   * dégager. Corrige un chevauchement observé côté Admin en test mobile.
-   */
-  sansBarreOngletsMobile?: boolean;
   /**
    * Optionnel, opt-in : logo entreprise affiché à côté du titre. Utilisé
    * uniquement côté Espace Admin (branding "Ultraleads", cf. écrans-listes) —
@@ -510,7 +503,7 @@ export function NouvelleFactureForm({
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-8">
+    <div className="flex flex-col gap-6 pb-24 md:pb-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           {brand && <CompanyBrandMark nom={brand.nom} logoUrl={brand.logoUrl} size="sm" />}
@@ -623,13 +616,23 @@ export function NouvelleFactureForm({
 
       {etape === 3 && <>
       <div className="rounded-card border border-border bg-surface p-4">
-        <p className="font-medium text-text">{client?.nom}</p>
+        <p className="text-h3 font-semibold text-text">{client?.nom}</p>
         <p className="text-body text-muted">Entrepôt : {entrepotSelectionne?.nom}</p>
-        <ul className="mt-3 divide-y divide-border">
-          {lignes.map((ligne) => <li key={ligne.produit_id} className="flex justify-between gap-3 py-3 text-body">
-            <span>{ligne.nom} <span className="text-muted">× {ligne.quantite}</span></span>
-            <span className="shrink-0 font-mono">{ligne.type_ligne_produit === "inclus_dans_kit" ? "Inclus" : formatMontant(ligne.quantite * ligne.prix_unitaire)}</span>
-          </li>)}
+        {/* Relevé façon ticket (D-26/D-27) : libellé, points de conduite, montant. */}
+        <ul className="mt-3 flex flex-col gap-2.5 border-t border-dashed border-border pt-3">
+          {lignes.map((ligne) => {
+            const inclus = ligne.type_ligne_produit === "inclus_dans_kit";
+            return <li key={ligne.produit_id} className="text-body">
+              <span className="flex items-baseline gap-2">
+                <span className="min-w-0 text-text">{ligne.nom}</span>
+                <span className="mb-1 min-w-4 flex-1 border-b border-dotted border-border" aria-hidden="true" />
+                <span className="shrink-0 text-right font-mono">{inclus ? "Inclus" : formatMontant(ligne.quantite * ligne.prix_unitaire)}</span>
+              </span>
+              <span className="block font-mono text-body-sm text-muted">
+                {inclus ? `${ligne.quantite} inclus dans le kit` : `${ligne.quantite} × ${formatMontant(ligne.prix_unitaire)}`}
+              </span>
+            </li>;
+          })}
         </ul>
       </div>
       <RecapTotaux
@@ -749,26 +752,41 @@ export function NouvelleFactureForm({
       <p className="text-body text-muted">La facture ne modifie pas le stock. Créez ensuite un bon de livraison pour enregistrer la sortie des produits.</p>
       </>}
 
-      <div
-        className={`sticky z-sticky -mx-4 flex flex-col gap-2 border-t border-border bg-surface p-4 sm:flex-row sm:justify-end ${
-          sansBarreOngletsMobile ? "bottom-0" : "bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0"
-        }`}
-      >
-        <div className="flex items-center justify-between gap-3 sm:mr-auto">
-          {etape > 1 && <Button type="button" variant="outline" disabled={actionEnCours !== null} onClick={() => changerEtape(etape - 1)}>Retour</Button>}
-          <span className="text-body text-muted">Total <strong className="font-mono text-text">{formatMontant(totalGeneral)}</strong></span>
-        </div>
+      {/* Barre de pied sur une seule ligne (D-27) : retour, total, étape
+          suivante. Fixe en bas d'écran sous md (l'Espace Agent y masque la
+          barre d'onglets, cf. BottomTabBar ; pb-24 de la racine réserve sa
+          hauteur), sticky au-delà. */}
+      <div className="fixed inset-x-0 bottom-0 z-sticky flex items-center gap-3 border-t border-border bg-surface px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:sticky md:-mx-4">
+        {etape > 1 && (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-[52px] shrink-0 !px-0"
+            aria-label="Étape précédente"
+            disabled={actionEnCours !== null}
+            onClick={() => changerEtape(etape - 1)}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
+        {etape > 1 && (
+          <p className="flex min-w-0 shrink-0 flex-col leading-tight sm:mr-auto" aria-live="polite">
+            <span className="text-body-sm text-muted">Total</span>
+            <strong className="font-mono text-body font-semibold text-text">{formatMontant(totalGeneral)}</strong>
+          </p>
+        )}
         <Button
           type="button"
           variant="primary"
           size="lg"
-          fullWidth
-          className="sm:w-auto"
+          className={`min-w-0 flex-1 ${etape > 1 ? "sm:flex-none" : "sm:ml-auto sm:flex-none"}`}
+          aria-label={etape === 2 ? "Vérifier la facture" : undefined}
           loading={actionEnCours === "validee"}
           disabled={actionEnCours !== null || entrepotsChargement}
           onClick={() => etape < 3 ? changerEtape(etape + 1) : handleValider("validee")}
         >
-          {etape === 1 ? "Choisir les produits" : etape === 2 ? "Vérifier la facture" : "Créer la facture"}
+          {etape === 1 ? "Choisir les produits" : etape === 2 ? "Vérifier" : "Créer la facture"}
         </Button>
       </div>
     </div>
