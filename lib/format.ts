@@ -11,7 +11,9 @@ export function formatMontant(value: number): string {
     maximumFractionDigits: 2,
   }).format(arrondi);
 
-  return `${formatte} FCFA`;
+  // Espace insécable avant l'unité : un montant ne se coupe jamais en fin de
+  // ligne (« 354 000 » d'un côté, « FCFA » de l'autre), D-28.
+  return `${formatte} FCFA`;
 }
 
 export function formatQuantite(value: number, unite?: string): string {

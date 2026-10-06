@@ -87,14 +87,14 @@ export function StatCard({
             : "bg-muted";
 
   const content = (
-    <div className="flex h-full min-h-[132px] flex-col justify-between gap-4">
+    <div className="flex h-full flex-col justify-between gap-3">
       <div className="flex items-start gap-2">
-        <span className={cn("mt-1 h-1.5 w-1.5 shrink-0 rounded-full", signalClass)} aria-hidden="true" />
-        <p className={cn("min-w-0 flex-1 text-[0.68rem] font-semibold uppercase leading-4 tracking-[0.16em]", hero ? "text-green-text" : "text-muted")}>{label}</p>
+        <span className={cn("mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full", signalClass)} aria-hidden="true" />
+        <p className={cn("min-w-0 flex-1 text-body-sm font-medium", hero ? "text-green-text" : "text-muted")}>{label}</p>
         {href && <span aria-hidden="true" className={cn("text-body-sm transition-transform group-hover:translate-x-1", hero ? "text-muted" : "text-muted")}>→</span>}
       </div>
-      <p className={cn("break-words font-mono text-[1.75rem] font-semibold leading-none tracking-[-0.04em] sm:text-[2.05rem]", toneClass)}>{valeurAffichee}</p>
-      {hint && <p className={cn("text-[0.72rem] leading-4", hero ? "text-muted" : "text-muted")}>{hint}</p>}
+      <p className={cn("break-words font-mono text-[1.75rem] font-semibold leading-none tracking-[-0.04em]", toneClass)}>{valeurAffichee}</p>
+      {hint && <p className="text-body-sm text-muted">{hint}</p>}
     </div>
   );
 

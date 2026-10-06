@@ -1574,6 +1574,19 @@ côté Admin).
 - Récapitulatif de l'étape 3 au format ticket : nom, points de conduite, montant ; « quantité × prix
   unitaire » en seconde ligne.
 
+**D-28 — Écrans-listes allégés (octobre 2026).** Sans nouveau token :
+- `QuickActionGrid` : rangée de raccourcis de 44 px (icône teintée, libellé, description à partir de
+  `sm`), défilement horizontal sur mobile, au lieu des tuiles de 112 px.
+- `BrandedListPanel` : plus de carte englobante (filtres et tableau restent des cartes, sans carte
+  dans une carte) ; en-tête aligné sur le tableau de bord.
+- `StatCard` : libellé en casse normale (`text-body-sm`), hauteur selon le contenu, indication en 14 px.
+- `StockGauge` compact : quantité chiffrée toujours affichée à droite de la barre (§8) ; badge
+  « Rupture de stock » insécable.
+- Stock : colonne « Statut » supprimée, badge « Inactif » sous le nom uniquement si besoin ; kit
+  affiché « Inclus dans le kit » en texte discret ; cartes mobiles sur trois lignes.
+- `formatMontant` : espace insécable avant « FCFA », un montant ne se coupe plus.
+- Mes factures (Agent) : numéro en mono, date et entrepôt en texte normal, montant insécable.
+
 ## 11. Handoff
 
 **Le design system GFB-STOCK est prêt à être repris par `dev-frontend-admin` et

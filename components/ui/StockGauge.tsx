@@ -29,7 +29,7 @@ export function StockGauge({
   compact?: boolean;
 }) {
   if (quantiteStock <= 0) {
-    return <Badge tone="red">Rupture de stock</Badge>;
+    return <span className="whitespace-nowrap"><Badge tone="red">Rupture de stock</Badge></span>;
   }
 
   const zone =
@@ -64,11 +64,11 @@ export function StockGauge({
           <rect x={`${pourcentageSeuil}%`} y="0" width="1" height={hauteur} className="fill-text/30" aria-hidden="true" />
         )}
       </svg>
-      {!compact && (
-        <span className="text-right font-mono text-body-sm text-muted">
-          {formatQuantite(quantiteStock, libelleUnite(unite, quantiteStock))}
-        </span>
-      )}
+      {/* Valeur chiffrée toujours visible, compact compris (docs §8 : jamais
+          l'information portée par la seule couleur de la barre). */}
+      <span className={compact ? "shrink-0 whitespace-nowrap font-mono text-body-sm text-text" : "text-right font-mono text-body-sm text-muted"}>
+        {compact ? quantiteStock.toLocaleString("fr-FR") : formatQuantite(quantiteStock, libelleUnite(unite, quantiteStock))}
+      </span>
     </div>
   );
 }

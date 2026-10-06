@@ -128,36 +128,37 @@ export default async function StockPage({
               <EmptyState icone={faBoxesStacked} titre="Aucun produit ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/stock", label: "Effacer les filtres", variante: "outline" }} />
             ) : produits.map((produit) => (
               <Link key={produit.id} href={`/admin/stock/${produit.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-body font-semibold text-text">{produit.nom}</p>
-                    <p className="font-mono text-body-sm text-muted">{produit.code}</p>
-                  </div>
-                  <Badge tone={produit.actif ? "green" : "red"}>{produit.actif ? "Actif" : "Inactif"}</Badge>
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className="min-w-0 truncate text-body font-semibold text-text">{produit.nom}</p>
+                  {produit.type_ligne_produit === "inclus_dans_kit" ? (
+                    <span className="shrink-0 whitespace-nowrap text-body-sm text-muted">Inclus dans le kit</span>
+                  ) : (
+                    <span className="shrink-0 whitespace-nowrap font-mono text-body font-semibold text-text">{formatMontant(produit.prix_unitaire ?? 0)}</span>
+                  )}
                 </div>
-                <p className="mt-2 text-body-sm text-muted">{produit.categorie?.nom ?? "—"}</p>
-                <div className="mt-3"><StockGauge quantiteStock={produit.quantite_stock} seuilAlerte={produit.seuil_alerte} unite={produit.unite} compact /></div>
-                <p className="mt-3 text-right font-mono text-body font-semibold text-text">
-                  {produit.type_ligne_produit === "inclus_dans_kit" ? "Inclus dans kit" : formatMontant(produit.prix_unitaire ?? 0)}
+                <p className="mt-0.5 flex min-w-0 items-center gap-2 text-body-sm text-muted">
+                  <span className="shrink-0 font-mono">{produit.code}</span>
+                  <span className="truncate">· {produit.categorie?.nom ?? "Sans catégorie"}</span>
+                  {!produit.actif && <Badge tone="red">Inactif</Badge>}
                 </p>
+                <div className="mt-2.5"><StockGauge quantiteStock={produit.quantite_stock} seuilAlerte={produit.seuil_alerte} unite={produit.unite} compact /></div>
               </Link>
             ))}
           </div>
           <div className="hidden overflow-x-auto md:block">
-            <table className="min-w-[760px] w-full border-collapse">
+            <table className="min-w-[680px] w-full border-collapse">
               <thead>
                 <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
                   <th className="px-4 py-2.5 font-medium">Produit</th>
                   <th className="px-4 py-2.5 font-medium">Catégorie</th>
                   <th className="px-4 py-2.5 font-medium">Niveau de stock</th>
-                  <th className="px-4 py-2.5 font-medium">Statut</th>
                   <th className="px-4 py-2.5 text-right font-medium">Prix</th>
                 </tr>
               </thead>
               <tbody>
                 {produits.length === 0 ? (
                   <tr>
-                    <td colSpan={5}><EmptyState icone={faBoxesStacked} titre="Aucun produit ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/stock", label: "Effacer les filtres", variante: "outline" }} /></td>
+                    <td colSpan={4}><EmptyState icone={faBoxesStacked} titre="Aucun produit ne correspond à ces filtres." description="Modifiez ou effacez les filtres pour élargir la recherche." action={{ href: "/admin/stock", label: "Effacer les filtres", variante: "outline" }} /></td>
                   </tr>
                 ) : (
                   produits.map((produit) => (
@@ -172,7 +173,10 @@ export default async function StockPage({
                           className="focus-ring flex flex-col gap-0.5 rounded-input"
                         >
                           <span className="text-body font-medium text-text hover:underline">{produit.nom}</span>
-                          <span className="font-mono text-body-sm text-muted">{produit.code}</span>
+                          <span className="flex items-center gap-2">
+                            <span className="font-mono text-body-sm text-muted">{produit.code}</span>
+                            {!produit.actif && <Badge tone="red">Inactif</Badge>}
+                          </span>
                         </Link>
                       </td>
                       <td className="px-4 py-3 text-body-sm text-muted">{produit.categorie?.nom ?? "—"}</td>
@@ -186,16 +190,9 @@ export default async function StockPage({
                           />
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <Badge tone={produit.actif ? "green" : "red"}>
-                          {produit.actif ? "Actif" : "Inactif"}
-                        </Badge>
-                      </td>
                       <td className="px-4 py-3 text-right font-mono text-body text-text">
                         {produit.type_ligne_produit === "inclus_dans_kit" ? (
-                          <span className="badge-pastel-neutral rounded-badge px-2 py-1 text-caption">
-                            Inclus dans kit
-                          </span>
+                          <span className="whitespace-nowrap font-sans text-body-sm text-muted">Inclus dans le kit</span>
                         ) : (
                           formatMontant(produit.prix_unitaire ?? 0)
                         )}

@@ -144,13 +144,14 @@ export function MesFacturesList({
               >
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{facture.client?.nom}</p>
-                  <p className="font-mono text-body text-muted">
-                    {facture.numero} · {formatDate(facture.date_facture)}
+                  <p className="font-mono text-body-sm text-muted">{facture.numero}</p>
+                  <p className="text-body-sm text-muted">
+                    {formatDate(facture.date_facture)}
                     {facture.entrepot?.nom ? ` · ${facture.entrepot.nom}` : ""}
                   </p>
                 </div>
-                <div className="flex flex-col items-end gap-1.5">
-                  <span className="font-mono text-body text-text">
+                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                  <span className="whitespace-nowrap font-mono text-body font-semibold text-text">
                     {formatMontant(facture.total_general)}
                   </span>
                   <div className="flex flex-wrap items-center justify-end gap-1.5">

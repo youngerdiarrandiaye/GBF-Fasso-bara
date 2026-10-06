@@ -12,7 +12,7 @@ import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
  * défaut (refonte "Ultraleads", `[data-theme="admin"]` dans
  * `app/globals.css`), ce patch est devenu redondant — la carte utilise
  * simplement `bg-surface`/`border-border`, cohérents avec le reste de
- * l'Admin, sans plus rien forcer.
+ * l'Admin, sans plus rien forcer. Depuis D-28, plus de carte du tout.
  */
 export function BrandedListPanel({
   nom,
@@ -29,19 +29,20 @@ export function BrandedListPanel({
   actions?: ReactNode;
   children: ReactNode;
 }) {
+  // D-28 : plus de carte englobante (les filtres et le tableau sont déjà
+  // des cartes — l'enveloppe créait des cartes dans une carte). L'en-tête
+  // reprend celui du tableau de bord.
   return (
-    <section className="overflow-hidden rounded-card-lg border border-border bg-surface shadow-sm">
-      <header className="flex flex-col gap-4 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-        <div className="flex items-center gap-3">
-          <CompanyBrandMark nom={nom} logoUrl={logoUrl} size="lg" />
-          <div className="min-w-0">
-            <h1 className="text-h1 font-semibold tracking-tight text-text">{title}</h1>
-            <p className="mt-1 text-body-sm text-muted">{subtitle}</p>
-          </div>
+    <section className="flex flex-col gap-4">
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <CompanyBrandMark nom={nom} logoUrl={logoUrl} size="md" />
+        <div className="mr-auto min-w-0">
+          <h1 className="text-h1 font-semibold tracking-tight text-text">{title}</h1>
+          <p className="text-body-sm text-muted">{subtitle}</p>
         </div>
         {actions}
       </header>
-      <div className="flex flex-col gap-4 p-4 sm:p-5">{children}</div>
+      {children}
     </section>
   );
 }

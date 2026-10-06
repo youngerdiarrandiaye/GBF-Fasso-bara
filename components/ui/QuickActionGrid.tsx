@@ -22,46 +22,41 @@ const TONE_CLASSES: Record<QuickActionTone, string> = {
   neutral: "bg-surface-2 text-text",
 };
 
+/**
+ * Raccourcis d'un écran-liste (D-28) : une rangée compacte de liens (icône
+ * teintée, libellé, description courte à partir de sm), 44 px de haut, qui
+ * défile horizontalement sur mobile. Remplace les grandes tuiles de 112 px
+ * qui repoussaient le tableau sous la ligne de flottaison et répétaient la
+ * navigation. `columns` est conservé pour compatibilité, sans effet.
+ */
 export function QuickActionGrid({
   actions,
-  columns = "auto",
   className,
 }: {
   actions: QuickAction[];
   columns?: "auto" | 2 | 3 | 4 | 6;
   className?: string;
 }) {
-  const gridClass =
-    columns === "auto"
-      ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
-      : columns === 2
-        ? "grid-cols-2"
-        : columns === 3
-          ? "grid-cols-2 sm:grid-cols-3"
-          : columns === 4
-            ? "grid-cols-2 sm:grid-cols-4"
-            : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6";
-
   return (
-    <nav className={cn("grid gap-3", gridClass, className)} aria-label="Actions rapides">
+    <nav
+      className={cn("-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0", className)}
+      aria-label="Raccourcis"
+    >
       {actions.map((action) => (
         <Link
           key={`${action.href}-${action.label}`}
           href={action.href}
-          className="focus-ring group flex min-h-[112px] flex-col items-center justify-center rounded-card border border-border bg-surface p-3 text-center shadow-sm transition duration-card hover:-translate-y-0.5 hover:bg-surface-2"
+          className="focus-ring inline-flex h-tap shrink-0 items-center gap-2.5 rounded-input border border-border bg-surface pl-1.5 pr-3.5 text-body transition-colors hover:bg-surface-2"
         >
           <span
-            className={cn(
-              "mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full",
-              TONE_CLASSES[action.tone ?? "neutral"]
-            )}
+            className={cn("inline-flex h-8 w-8 items-center justify-center rounded-[8px]", TONE_CLASSES[action.tone ?? "neutral"])}
             aria-hidden="true"
           >
-            <FontAwesomeIcon icon={action.icon} className="h-5 w-5" />
+            <FontAwesomeIcon icon={action.icon} className="h-3.5 w-3.5" />
           </span>
-          <span className="text-body font-semibold leading-tight text-text">{action.label}</span>
+          <span className="font-semibold text-text">{action.label}</span>
           {action.description && (
-            <span className="mt-1 line-clamp-2 text-body-sm leading-snug text-muted">{action.description}</span>
+            <span className="hidden text-body-sm text-muted sm:inline">{action.description}</span>
           )}
         </Link>
       ))}
