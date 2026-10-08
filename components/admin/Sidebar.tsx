@@ -222,11 +222,11 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
             {search && <button type="button" onClick={() => setSearch("")} aria-label="Effacer la recherche" className="focus-ring flex h-9 w-9 items-center justify-center rounded-input"><FontAwesomeIcon icon={faXmark} className="h-3 w-3" /></button>}
           </label>
         </div>
-        <nav aria-label="Rubriques Admin" className="flex min-h-0 flex-1 touch-pan-y flex-col gap-5 overflow-y-auto overscroll-contain p-3 pt-0">
-          {(collapsed && !mobileOpen ? GROUPES : groups).map((groupe) => (
-            <div key={groupe.label} className="flex flex-col gap-1">
+        <nav aria-label="Rubriques Admin" className="flex min-h-0 flex-1 touch-pan-y flex-col gap-4 overflow-y-auto overscroll-contain p-3 pt-0">
+          {(collapsed && !mobileOpen ? GROUPES : groups).map((groupe, index) => (
+            <div key={groupe.label} className={cn("flex flex-col gap-1", index > 0 && "border-t border-sidebar-text-muted/30 pt-4")}>
                 <p className={cn(
-                  "px-3 text-caption font-semibold uppercase tracking-wide text-sidebar-text-muted",
+                  "px-3 text-caption font-bold uppercase tracking-wide text-sidebar-text",
                   collapsed && "lg:hidden"
                 )}>
                   {groupe.label}

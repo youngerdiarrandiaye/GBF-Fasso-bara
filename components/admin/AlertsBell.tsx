@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/cn";
+import { useDismiss } from "@/lib/hooks/useDismiss";
 import type { AlerteStockRow } from "@/lib/supabase/database.types";
 
 // Fenêtre de regroupement des alertes reçues en rafale (docs/toast-et-coherence-donnees.md
@@ -27,6 +28,9 @@ const FENETRE_REGROUPEMENT_MS = 1200;
 export function AlertsBell({ alertesInitiales }: { alertesInitiales: AlerteStockRow[] }) {
   const [alertes, setAlertes] = useState<AlerteStockRow[]>(alertesInitiales);
   const [ouvert, setOuvert] = useState(false);
+  const conteneurRef = useRef<HTMLDivElement>(null);
+  const fermer = useCallback(() => setOuvert(false), []);
+  useDismiss(conteneurRef, ouvert, fermer);
   useEffect(() => {
     // Réconcilier la liste avec le dernier résultat serveur.
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -96,11 +100,11 @@ export function AlertsBell({ alertesInitiales }: { alertesInitiales: AlerteStock
   const nonLues = alertes.filter((a) => !a.lue);
 
   return (
-    <div className="relative">
+    <div ref={conteneurRef} className="sm:relative">
       <button
         type="button"
         onClick={() => setOuvert((v) => !v)}
-        className="focus-ring relative flex h-10 w-10 items-center justify-center rounded-input text-text hover:bg-surface-2"
+        className="focus-ring relative flex h-11 w-11 items-center justify-center rounded-input text-text hover:bg-surface-2 sm:h-10 sm:w-10"
         aria-haspopup="menu"
         aria-expanded={ouvert}
         aria-label={`Alertes de stock (${nonLues.length} non lues)`}
@@ -116,7 +120,7 @@ export function AlertsBell({ alertesInitiales }: { alertesInitiales: AlerteStock
       {ouvert && (
         <div
           role="menu"
-          className="absolute right-0 z-dropdown mt-2 w-80 rounded-card border border-border bg-surface p-2 shadow-lg"
+          className="fixed inset-x-3 top-[4.25rem] z-dropdown max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-card border border-border bg-surface p-2 shadow-lg sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-80"
         >
           <p className="px-2 py-1.5 text-body-sm font-semibold text-text">
             Alertes de stock ({nonLues.length})
