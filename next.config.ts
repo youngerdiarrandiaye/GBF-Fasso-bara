@@ -16,7 +16,30 @@ const securityHeaders = [
     : []),
 ];
 
+// Domaine public de Supabase (ex. https://api.mondomaine.sn derrière Caddy),
+// figé au build via NEXT_PUBLIC_SUPABASE_URL : autorise next/image à servir
+// les photos produit et le logo hors *.supabase.co.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseRemotePattern = (() => {
+  try {
+    if (!supabaseUrl) return [];
+    const u = new URL(supabaseUrl);
+    return [
+      {
+        protocol: u.protocol.replace(":", "") as "http" | "https",
+        hostname: u.hostname,
+        ...(u.port ? { port: u.port } : {}),
+        pathname: "/storage/v1/object/**",
+      },
+    ];
+  } catch {
+    return [];
+  }
+})();
+
 const nextConfig: NextConfig = {
+  // Image Docker de production minimale (.next/standalone), cf. Dockerfile.
+  output: "standalone",
   poweredByHeader: false,
   async headers() {
     return [
@@ -40,26 +63,31 @@ const nextConfig: NextConfig = {
     // générique *.supabase.co : couvre tout projet Supabase hébergé sans
     // devoir committer l'URL exacte du projet dans le code applicatif.
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "*.supabase.co",
-        pathname: "/storage/v1/object/**",
-      },
-      // Stack Supabase local (`supabase start`) : nécessaire uniquement en
-      // développement, sans effet en production où l'URL réelle est
-      // *.supabase.co ci-dessus.
-      {
-        protocol: "http",
-        hostname: "127.0.0.1",
-        port: "54321",
-        pathname: "/storage/v1/object/**",
-      },
-      {
-        protocol: "http",
-        hostname: "127.0.0.1",
-        port: "55321",
-        pathname: "/storage/v1/object/**",
-      },
+      ...supabaseRemotePattern,
+      // Hors production uniquement : Supabase hébergé et stack locale
+      // (`supabase start`). En production, seul le domaine public de
+      // NEXT_PUBLIC_SUPABASE_URL est autorisé.
+      ...(process.env.NODE_ENV === "production"
+        ? []
+        : [
+            {
+              protocol: "https" as const,
+              hostname: "*.supabase.co",
+              pathname: "/storage/v1/object/**",
+            },
+            {
+              protocol: "http" as const,
+              hostname: "127.0.0.1",
+              port: "54321",
+              pathname: "/storage/v1/object/**",
+            },
+            {
+              protocol: "http" as const,
+              hostname: "127.0.0.1",
+              port: "55321",
+              pathname: "/storage/v1/object/**",
+            },
+          ]),
     ],
   },
 };

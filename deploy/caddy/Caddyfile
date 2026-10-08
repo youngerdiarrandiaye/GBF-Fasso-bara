@@ -1,0 +1,78 @@
+{
+	# Let's Encrypt automatique (ports 80/443 publics requis)
+	email {$ACME_EMAIL}
+}
+
+(securite) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		Cross-Origin-Opener-Policy "same-origin"
+		-Server
+	}
+}
+
+# Journal d'acces : jamais de jeton ni de secret dans les logs (liens e-mail Auth
+# ?token=..., access/refresh_token, en-tetes d'authentification, cookies).
+(journal) {
+	log {
+		output stdout
+		format filter {
+			wrap console
+			fields {
+				request>uri query {
+					replace token REDACTED
+					replace access_token REDACTED
+					replace refresh_token REDACTED
+					replace apikey REDACTED
+				}
+				request>headers>Authorization delete
+				request>headers>Apikey delete
+				request>headers>Cookie delete
+				request>headers>X-Cron-Secret delete
+				resp_headers>Set-Cookie delete
+			}
+		}
+	}
+}
+
+# Application Next.js
+{$DOMAIN} {
+	import securite
+	import journal
+	reverse_proxy app:3000
+}
+
+# API Supabase (Kong : auth, rest, realtime/websocket, storage, functions)
+{$API_DOMAIN} {
+	import securite
+	import journal
+	request_body {
+		max_size 60MB
+	}
+	# Routes d'administration/cron jamais utiles depuis Internet : l'app serveur passe par
+	# kong:8000 en interne (SUPABASE_INTERNAL_URL) et pg_net appelle functions:9000 en interne.
+	# Le navigateur appelle /functions/v1/generer-* et export-rapport : seuls alerte-* sont fermes.
+	@interdit path_regexp (?i)(functions/v1/alerte-|auth/v1/admin|realtime/v1/api)
+	handle @interdit {
+		respond "Forbidden" 403
+	}
+	handle {
+		reverse_proxy kong:8000
+	}
+}
+
+# Ecoute INTERNE uniquement (port 8088 non publie) : healthcheck + gabarits e-mail Auth
+http://:8088 {
+	handle /healthz {
+		respond "ok" 200
+	}
+	handle {
+		root * /templates
+		file_server
+	}
+}

@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+# fasso : commande unique d'exploitation de GFB-STOCK sur le VPS.
+# Installee dans /usr/local/bin/fasso (lien symbolique vers ce fichier) par deploy.sh ou
+# bootstrap-vps.sh. Fonctionne depuis n'importe quel dossier : fasso help
+set -uo pipefail
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+HERE="$(dirname "$SELF")"
+# shellcheck source=lib.sh
+. "$HERE/lib.sh"
+
+aide() {
+  cat <<EOF
+${C_BLD}fasso${C_OFF} : exploitation de GFB-STOCK
+
+  ${C_BLD}fasso status${C_OFF} [--quiet]   État des services, espace disque, dernière sauvegarde et son âge.
+                            Rouge si la sauvegarde a plus de ${BACKUP_MAX_AGE_H} h. --quiet : n'écrit (et ne notifie
+                            via NOTIFY_*) que s'il y a un problème ; code retour 1 dans ce cas (pour cron).
+  ${C_BLD}fasso logs${C_OFF} [service]     Suit les journaux (tous, ou un service : app, auth, db, caddy...). Ctrl+C pour quitter.
+  ${C_BLD}fasso update${C_OFF}             Met à jour : récupère le code, reconstruit, sauvegarde, migre, redémarre, teste.
+  ${C_BLD}fasso rollback${C_OFF}           Revient à la version précédente de l'application (la base n'est pas annulée).
+  ${C_BLD}fasso backup${C_OFF}             Sauvegarde immédiate (base + fichiers).
+  ${C_BLD}fasso backups${C_OFF}            Liste les sauvegardes (quotidiennes, hebdomadaires, mensuelles).
+  ${C_BLD}fasso restore${C_OFF} [--reelle] Guide de restauration. Par défaut : TEST dans une base temporaire (la
+                            production n'est pas touchée). --reelle : écrase la base actuelle (confirmation explicite).
+  ${C_BLD}fasso create-admin${C_OFF}       Crée le premier compte Administrateur (questions interactives).
+  ${C_BLD}fasso smoke${C_OFF}              Test de fumée complet (HTTPS, sécurité, migrations, cohérence facture/BL).
+  ${C_BLD}fasso help${C_OFF}               Cette aide.
+
+Depot : $FASSO_ROOT        Sauvegardes : $BACKUP_DIR
+EOF
+}
+
+# ---------------------------------------------------------------------------
+cmd_status() {
+  local quiet=0 pb=()
+  [ "${1:-}" = "--quiet" ] && quiet=1
+  exiger_docker
+  charger_env
+  say()  { [ "$quiet" = 1 ] || "$@"; }
+
+  say titre "Services"
+  local attendus ligne svc etat sante
+  attendus="$("${COMPOSE[@]}" config --services 2>/dev/null)" || die "compose.prod.yaml ou .env invalide."
+  local ps; ps="$("${COMPOSE[@]}" ps -a --format '{{.Service}}|{{.State}}|{{.Health}}' 2>/dev/null)"
+  for svc in $attendus; do
+    ligne="$(printf '%s\n' "$ps" | grep -E "^${svc}\|" | head -1)"
+    if [ -z "$ligne" ]; then pb+=("service $svc absent"); say ko "$svc : absent"; continue; fi
+    IFS='|' read -r _ etat sante <<<"$ligne"
+    if [ "$etat" = running ] && { [ -z "$sante" ] || [ "$sante" = healthy ]; }; then
+      say ok "$svc : en marche${sante:+ ($sante)}"
+    elif [ "$etat" = running ] && [ "$sante" = starting ]; then
+      say warn "$svc : démarrage en cours"
+    else
+      pb+=("service $svc : $etat${sante:+/$sante}"); say ko "$svc : $etat${sante:+ ($sante)}  -> fasso logs $svc"
+    fi
+  done
+
+  say titre "Espace disque"
+  local chemin pct dispo
+  for chemin in "${DATA_DIR:-/srv/fasso/data}" "$BACKUP_DIR"; do
+    if [ ! -d "$chemin" ]; then pb+=("dossier $chemin introuvable"); say ko "$chemin : introuvable"; continue; fi
+    read -r pct dispo < <(df -Pk "$chemin" | awk 'NR==2{gsub("%","",$5); print $5, int($4/1024)}')
+    if   [ "$pct" -ge 90 ]; then pb+=("disque presque plein : $chemin ${pct}%"); say ko "$chemin : ${pct}% utilisé, ${dispo} Mo libres (CRITIQUE)"
+    elif [ "$pct" -ge 80 ]; then say warn "$chemin : ${pct}% utilisé, ${dispo} Mo libres"
+    else say ok "$chemin : ${pct}% utilisé, ${dispo} Mo libres"; fi
+  done
+
+  say titre "Dernière sauvegarde"
+  local d rep chemin_s t age
+  if rep="$(derniere_sauvegarde)"; then
+    chemin_s="${rep%|*}"; t="${rep#*|}"; age=$(( $(date +%s) - t ))
+    local txt; txt="$(basename "$chemin_s") (il y a $(duree_humaine "$age"), $(du -sh "$chemin_s" 2>/dev/null | cut -f1))"
+    if [ "$age" -gt $((BACKUP_MAX_AGE_H * 3600)) ]; then
+      pb+=("derniere sauvegarde trop ancienne : $txt (limite ${BACKUP_MAX_AGE_H} h)")
+      say ko "$txt : PLUS DE ${BACKUP_MAX_AGE_H} h  -> fasso backup, puis fasso logs backup"
+    else
+      say ok "$txt"
+    fi
+    [ -f "$chemin_s/SHA256SUMS" ] || say warn "empreintes SHA256SUMS absentes dans ce jeu"
+  else
+    pb+=("aucune sauvegarde trouvee dans $BACKUP_DIR/daily")
+    say ko "Aucune sauvegarde trouvée dans $BACKUP_DIR/daily  -> fasso backup"
+  fi
+
+  say titre "Version"
+  if d="$(git -C "$FASSO_ROOT" log -1 --format='%h  %cd  %s' --date=short 2>/dev/null)"; then say echo "  code : $d"; fi
+  local img; img="$(docker image inspect -f '{{.Created}}' "fasso-app:${APP_TAG:-latest}" 2>/dev/null | cut -c1-19)"; say echo "  image app : ${img:-inconnue}"
+
+  if [ "$quiet" = 1 ]; then
+    [ "${#pb[@]}" -eq 0 ] && return 0
+    local msg; msg="GFB-STOCK ($(hostname)) : ${#pb[@]} probleme(s) : $(printf '%s ; ' "${pb[@]}")"
+    echo "$msg"
+    notifier "$msg"
+    return 1
+  fi
+  echo
+  if [ "${#pb[@]}" -eq 0 ]; then printf '%s✔ Tout va bien.%s\n' "$C_GRN" "$C_OFF"; return 0; fi
+  printf '%s✘ %d problème(s) à traiter (voir ci-dessus).%s\n' "$C_RED" "${#pb[@]}" "$C_OFF"; return 1
+}
+
+# ---------------------------------------------------------------------------
+confirmer() { # question -> 0 si "oui"
+  local r; printf '%s [o/N] ' "$1"; IFS= read -r r || return 1
+  case "$r" in o|O|oui|OUI|y|Y) return 0 ;; *) return 1 ;; esac
+}
+
+cmd_backup() {
+  exiger_docker; charger_env
+  titre "Sauvegarde immédiate"
+  "${COMPOSE[@]}" run --rm --no-deps backup now || die "la sauvegarde a échoué (fasso logs backup)."
+  local rep; if rep="$(derniere_sauvegarde)"; then ok "Sauvegarde créée : $(basename "${rep%|*}")"; fi
+}
+
+cmd_backups() {
+  local type d t found=0
+  titre "Sauvegardes dans $BACKUP_DIR"
+  for type in daily weekly monthly; do
+    [ -d "$BACKUP_DIR/$type" ] || continue
+    printf '\n  %s%s%s\n' "$C_BLD" "$type" "$C_OFF"
+    for d in $(ls -1d "$BACKUP_DIR/$type"/*/ 2>/dev/null | sort -r); do
+      d="${d%/}"; case "$d" in *.partial) continue ;; esac
+      [ -s "$d/db.dump" ] || continue
+      t="$(stat -c %Y "$d/db.dump")"; found=1
+      printf '    %-18s %8s   %s   il y a %s\n' "$(basename "$d")" "$(du -sh "$d" | cut -f1)" \
+        "$([ -f "$d/SHA256SUMS" ] && echo 'empreintes ✔' || echo 'sans empreintes')" "$(duree_humaine $(( $(date +%s) - t )))"
+    done
+  done
+  [ "$found" = 1 ] || { ko "Aucune sauvegarde. Lancer : fasso backup"; return 1; }
+  echo; echo "  Tester la restauration : fasso restore"
+}
+
+cmd_restore() {
+  local reelle=0
+  case "${1:-}" in --reelle) reelle=1 ;; "") ;; *) die "usage : fasso restore [--reelle]" ;; esac
+  [ -t 0 ] || die "restauration interactive : à lancer dans un terminal."
+  exiger_docker; charger_env
+
+  titre "Restauration"
+  local sets=() d i
+  while IFS= read -r d; do sets+=("$(basename "$d")"); done < <(ls -1d "$BACKUP_DIR"/daily/*/ 2>/dev/null | sed 's|/$||' | grep -v '\.partial$' | sort -r | head -10)
+  [ "${#sets[@]}" -gt 0 ] || die "aucune sauvegarde dans $BACKUP_DIR/daily."
+  echo "  Sauvegardes quotidiennes disponibles (les plus récentes d'abord) :"
+  for i in "${!sets[@]}"; do
+    printf '   %2d) %s\n' $((i + 1)) "${sets[$i]}"
+  done
+  local choix; printf '  Laquelle utiliser ? [1] '; IFS= read -r choix || true
+  choix="${choix:-1}"
+  [[ "$choix" =~ ^[0-9]+$ ]] && [ "$choix" -ge 1 ] && [ "$choix" -le "${#sets[@]}" ] || die "choix invalide."
+  local SET="${sets[$((choix - 1))]}"
+  [[ "$SET" =~ ^[0-9]{8}_[0-9]{6}$ ]] || die "nom de sauvegarde inattendu : $SET"
+  [ -s "$BACKUP_DIR/daily/$SET/db.dump" ] || die "db.dump absent ou vide dans $SET."
+
+  titre "Étape 1 : test de restauration (base temporaire, production intacte)"
+  "${COMPOSE[@]}" ps -q db | grep -q . || die "la base n'est pas démarrée (docker compose up -d db)."
+  local log; log="$(mktemp)"
+  "${COMPOSE[@]}" run --rm --no-deps -T backup restore.sh --dump "/backups/daily/$SET/db.dump" 2>&1 | tee "$log"
+  if grep -q 'RESTAURATION VALIDEE' "$log"; then ok "Sauvegarde $SET restaurable (RESTAURATION VALIDEE)."
+  else ko "Le test n'affiche pas RESTAURATION VALIDEE : ne pas restaurer cette sauvegarde, en essayer une autre."; rm -f "$log"; return 1; fi
+  rm -f "$log"
+
+  if [ "$reelle" = 0 ]; then
+    echo
+    echo "  Test terminé : rien n'a été modifié. Notez la date du test."
+    echo "  Pour RESTAURER réellement cette sauvegarde (écrase les données actuelles) : fasso restore --reelle"
+    return 0
+  fi
+
+  titre "Étape 2 : restauration RÉELLE"
+  printf '%s' "$C_RED"
+  cat <<EOF
+  ATTENTION : la base actuelle sera ÉCRASÉE par la sauvegarde $SET.
+  Tout ce qui a été saisi depuis (factures, paiements, stock...) sera PERDU.
+  L'application sera indisponible pendant l'opération.
+  Une sauvegarde de l'état actuel est faite juste avant (filet de sécurité).
+EOF
+  printf '%s' "$C_OFF"
+  local rep; printf '  Pour confirmer, tapez exactement RESTAURER : '; IFS= read -r rep || true
+  [ "$rep" = "RESTAURER" ] || { echo "  Annulé."; return 1; }
+
+  echo "  -> Sauvegarde de sécurité de l'état actuel"
+  "${COMPOSE[@]}" run --rm --no-deps backup now || die "sauvegarde de sécurité échouée : restauration annulée."
+  echo "  -> Arrêt des services applicatifs"
+  "${COMPOSE[@]}" stop app auth rest realtime storage meta kong functions >/dev/null
+  echo "  -> Restauration de la base"
+  "${COMPOSE[@]}" run --rm --no-deps -T backup restore.sh --dump "/backups/daily/$SET/db.dump" --in-place --yes \
+    || die "la restauration de la base a échoué. Les services restent arrêtés ; état d'avant = sauvegarde de sécurité."
+  if [ -s "$BACKUP_DIR/daily/$SET/storage.tar.gz" ]; then
+    echo "  -> Restauration des fichiers (photos, logo, PDF)"
+    local sud=""; [ "$(id -u)" -eq 0 ] || sud="sudo"
+    $sud tar -xzf "$BACKUP_DIR/daily/$SET/storage.tar.gz" -C "${DATA_DIR:-/srv/fasso/data}/storage" || die "extraction des fichiers échouée."
+  fi
+  echo "  -> Redémarrage complet (migrations éventuelles + test de fumée)"
+  bash "$HERE/deploy.sh" deploy
+}
+
+cmd_install() {
+  local cible="${FASSO_BIN:-/usr/local/bin/fasso}" sud=""
+  chmod +x "$HERE"/*.sh "$SELF" 2>/dev/null || true
+  if [ "$(readlink -f "$cible" 2>/dev/null)" = "$SELF" ]; then ok "Commande déjà installée : $cible"; return 0; fi
+  [ "$(id -u)" -eq 0 ] || sud="sudo -n"
+  if $sud ln -sf "$SELF" "$cible" 2>/dev/null; then ok "Commande installée : $cible -> $SELF"
+  else warn "Impossible d'installer $cible. A faire une fois : sudo ln -sf $SELF $cible"; return 1; fi
+}
+
+# ---------------------------------------------------------------------------
+case "${1:-help}" in
+  status)       shift; cmd_status "$@" ;;
+  logs)         shift; exec bash "$HERE/deploy.sh" logs "$@" ;;
+  update)       exec bash "$HERE/deploy.sh" update ;;
+  rollback)
+    echo "Retour à la version précédente de l'application (la base de données n'est PAS annulée)."
+    confirmer "Continuer ?" || { echo "Annulé."; exit 1; }
+    exec bash "$HERE/deploy.sh" rollback ;;
+  backup)       cmd_backup ;;
+  backups)      cmd_backups ;;
+  restore)      shift; cmd_restore "$@" ;;
+  create-admin) shift; exec bash "$HERE/create-admin.sh" "$@" ;;
+  smoke)        shift; exec bash "$HERE/smoke-test.sh" "$@" ;;
+  install)     cmd_install ;;
+  help|-h|--help) aide ;;
+  *) echo "Commande inconnue : $1" >&2; echo >&2; aide >&2; exit 2 ;;
+esac

@@ -1,0 +1,259 @@
+_format_version: '2.1'
+_transform: true
+
+# Gabarit : les variables SUPABASE_ANON_KEY et SUPABASE_SERVICE_KEY sont substituees
+# par le shell au demarrage (entrypoint compose, eval). Ne mettre ici ni dollar,
+# ni backtick, ni guillemet double en dehors de ces deux variables.
+# CORS : restreint a l'origine de l'application (https://${DOMAIN}) ; la variable DOMAIN est
+# transmise a Kong par le compose. En-tetes Prefer/Range/Accept-Profile/Content-Profile/
+# Cache-Control/X-Supabase-Api-Version ajoutes a la liste minimale : supabase-js les envoie
+# depuis le navigateur (PostgREST/Storage) et un preflight les refuserait sinon.
+# Kong n est joignable que via Caddy (API_DOMAIN) ; le reseau Docker est interne.
+
+consumers:
+  - username: anon
+    keyauth_credentials:
+      - key: ${SUPABASE_ANON_KEY}
+  - username: service_role
+    keyauth_credentials:
+      - key: ${SUPABASE_SERVICE_KEY}
+
+acls:
+  - consumer: anon
+    group: anon
+  - consumer: service_role
+    group: admin
+
+services:
+  # --- Auth : flux navigateur (lien e-mail) sans apikey ---
+  - name: auth-v1-open
+    url: http://auth:9999/verify
+    routes:
+      - name: auth-v1-open
+        strip_path: true
+        paths: [/auth/v1/verify]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+  - name: auth-v1-open-callback
+    url: http://auth:9999/callback
+    routes:
+      - name: auth-v1-open-callback
+        strip_path: true
+        paths: [/auth/v1/callback]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+  - name: auth-v1-open-authorize
+    url: http://auth:9999/authorize
+    routes:
+      - name: auth-v1-open-authorize
+        strip_path: true
+        paths: [/auth/v1/authorize]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+
+  # --- Auth : /token (connexion, refresh) avec limitation de debit par IP ---
+  # Route plus specifique que /auth/v1/ : elle l'emporte. IP reelle = X-Forwarded-For
+  # pose par Caddy (KONG_REAL_IP_HEADER / KONG_TRUSTED_IPS dans le compose). Les appels
+  # serveur de l'app (Server Actions) partagent l'IP du conteneur app : plafond large.
+  - name: auth-v1-token
+    url: http://auth:9999/token
+    routes:
+      - name: auth-v1-token
+        strip_path: true
+        paths: [/auth/v1/token]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+      - name: rate-limiting
+        config:
+          minute: 60
+          hour: 600
+          policy: local
+          limit_by: ip
+          fault_tolerant: true
+          hide_client_headers: true
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+
+  # --- Auth : reste protege par apikey ---
+  - name: auth-v1
+    url: http://auth:9999/
+    routes:
+      - name: auth-v1-all
+        strip_path: true
+        paths: [/auth/v1/]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+
+  # --- REST (PostgREST) ---
+  - name: rest-v1
+    url: http://rest:3000/
+    routes:
+      - name: rest-v1-all
+        strip_path: true
+        paths: [/rest/v1/]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+      - name: key-auth
+        config:
+          hide_credentials: true
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+
+  # --- Realtime (websocket + API) ---
+  - name: realtime-v1-ws
+    url: http://realtime-dev.supabase-realtime:4000/socket
+    protocol: ws
+    routes:
+      - name: realtime-v1-ws
+        strip_path: true
+        paths: [/realtime/v1/]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+  - name: realtime-v1-rest
+    url: http://realtime-dev.supabase-realtime:4000/api
+    protocol: http
+    routes:
+      - name: realtime-v1-rest
+        strip_path: true
+        paths: [/realtime/v1/api]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+
+  # --- Storage : controle d'acces par JWT/token signe cote Storage (les URL
+  # signees servies a un <img> n'ont pas d'en-tete apikey) ---
+  - name: storage-v1
+    url: http://storage:5000/
+    routes:
+      - name: storage-v1-all
+        strip_path: true
+        paths: [/storage/v1/]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+
+  # --- Edge Functions ---
+  - name: functions-v1
+    url: http://functions:9000/
+    routes:
+      - name: functions-v1-all
+        strip_path: true
+        paths: [/functions/v1/]
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - https://${DOMAIN}
+          credentials: true
+          methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD]
+          headers: [Authorization, apikey, Content-Type, x-client-info, x-upsert, Prefer, Range, Accept, Accept-Profile, Content-Profile, Cache-Control, X-Supabase-Api-Version]
+          exposed_headers: [Content-Range, Content-Length]
+          max_age: 3600
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+
+  # NB : pas de route /pg/ (postgres-meta) ni de Studio ici : non exposes
+  # publiquement. Studio parle a meta directement sur le reseau interne.

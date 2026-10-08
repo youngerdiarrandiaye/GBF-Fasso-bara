@@ -52,3 +52,6 @@ supabase/.branches/
 
 # Claude Code (réglages personnels)
 .claude/settings.local.json
+
+# Deploiement : modele de variables versionne (le vrai deploy/.env reste ignore)
+!deploy/.env.example

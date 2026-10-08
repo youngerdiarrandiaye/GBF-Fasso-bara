@@ -1,0 +1,59 @@
+# Fragment compose : service de sauvegarde GFB-STOCK.
+# Inclusion (compose >= 2.20), chemins relatifs a CE fichier :
+#   include:
+#     - deploy/backup/compose.backup.yaml
+# Hypotheses : le service Postgres s'appelle `db`, le reseau par defaut du projet
+# est partage ; /srv/fasso/data/storage est le dossier monte par `storage`
+# (/var/lib/storage) ; variables lues depuis le .env du projet.
+services:
+  backup:
+    build: .
+    image: gfb-backup:latest
+    container_name: gfb-backup
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD requis}
+      PGDATABASE: ${POSTGRES_DB:-postgres}
+      TZ: ${TZ:-Africa/Dakar}
+      BACKUP_HOUR: ${BACKUP_HOUR:-02:30}
+      BACKUP_VERIFY_RESTORE: ${BACKUP_VERIFY_RESTORE:-false}
+      KEEP_DAILY: ${KEEP_DAILY:-7}
+      KEEP_WEEKLY: ${KEEP_WEEKLY:-4}
+      KEEP_MONTHLY: ${KEEP_MONTHLY:-6}
+      # Notification d'echec (tous optionnels)
+      NOTIFY_WEBHOOK_URL: ${NOTIFY_WEBHOOK_URL:-}
+      NOTIFY_NTFY_URL: ${NOTIFY_NTFY_URL:-}
+      HEALTHCHECK_URL: ${HEALTHCHECK_URL:-}
+      # Off-site rclone : DESACTIVE par defaut. Chiffrement OBLIGATOIRE (backup.sh refuse
+      # sinon) : remote "offraw" = stockage brut, remote "offsite" = crypt par-dessus.
+      OFFSITE_ENABLED: ${OFFSITE_ENABLED:-false}
+      OFFSITE_REMOTE: ${OFFSITE_REMOTE:-}
+      OFFSITE_RETENTION_DAYS: ${OFFSITE_RETENTION_DAYS:-60}
+      RCLONE_CONFIG_OFFRAW_TYPE: ${RCLONE_CONFIG_OFFRAW_TYPE:-}
+      RCLONE_CONFIG_OFFRAW_PROVIDER: ${RCLONE_CONFIG_OFFRAW_PROVIDER:-}
+      RCLONE_CONFIG_OFFRAW_ENDPOINT: ${RCLONE_CONFIG_OFFRAW_ENDPOINT:-}
+      RCLONE_CONFIG_OFFRAW_ACCESS_KEY_ID: ${RCLONE_CONFIG_OFFRAW_ACCESS_KEY_ID:-}
+      RCLONE_CONFIG_OFFRAW_SECRET_ACCESS_KEY: ${RCLONE_CONFIG_OFFRAW_SECRET_ACCESS_KEY:-}
+      RCLONE_CONFIG_OFFRAW_REGION: ${RCLONE_CONFIG_OFFRAW_REGION:-}
+      RCLONE_CONFIG_OFFSITE_TYPE: ${RCLONE_CONFIG_OFFSITE_TYPE:-}
+      RCLONE_CONFIG_OFFSITE_REMOTE: ${RCLONE_CONFIG_OFFSITE_REMOTE:-}
+      RCLONE_CONFIG_OFFSITE_PASSWORD: ${RCLONE_CONFIG_OFFSITE_PASSWORD:-}
+      RCLONE_CONFIG_OFFSITE_PASSWORD2: ${RCLONE_CONFIG_OFFSITE_PASSWORD2:-}
+    # Durcissement. Le conteneur reste root (lecture de /storage, ecriture /backups) mais
+    # sans capacites : DAC_READ_SEARCH suffit a lire les fichiers du Storage (uid varies),
+    # CHOWN/FOWNER/DAC_OVERRIDE ne sont pas necessaires (umask 077, fichiers crees par lui).
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - DAC_READ_SEARCH
+    pids_limit: 256
+    volumes:
+      - /srv/fasso/backups:/backups
+      - ${DATA_DIR:-/srv/fasso/data}/storage:/storage:ro
