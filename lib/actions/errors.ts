@@ -84,6 +84,8 @@ function detecterErreurWhitelistee(messageBrut: string, code?: string): ErreurWh
     BL_FACTURE_STOCK_HISTORIQUE: "Cette ancienne facture a déjà retiré du stock. Un administrateur doit vérifier et régulariser ses mouvements avant de créer le bon de livraison.",
     BL_FACTURE_DONNEES_MODIFIEES: "Les données ne correspondent plus à la facture. Sélectionnez de nouveau la facture pour actualiser le client et les quantités.",
     BL_ENTREPOT_INDISPONIBLE: "L’entrepôt de départ est indisponible.",
+    BL_FACTURE_CREDIT_EN_COURS: "Cette facture est vendue à crédit : enregistrez les remboursements du crédit, le bon sera marqué payé automatiquement.",
+    BL_FACTURE_DEJA_PAYEE: "La facture liée est entièrement payée par d’autres paiements. Annulez d’abord ces paiements pour repasser le bon en non payé.",
     BL_DOCUMENT_IMMUABLE: "Les produits et le client d’une livraison enregistrée ne peuvent plus être modifiés.",
   };
   if (erreursLivraison[messageBrut]) return { error: erreursLivraison[messageBrut] };

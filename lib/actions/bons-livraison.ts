@@ -73,6 +73,10 @@ export async function changerStatutBonLivraison(
 
   revalidatePath("/admin/bons-livraison");
   revalidatePath(`/admin/bons-livraison/${id}`);
+  // Le statut du BL pilote celui de la facture liée (migration 0024).
+  revalidatePath("/admin/factures");
+  revalidatePath("/admin/paiements");
+  revalidatePath("/admin");
   return { data: data as BonLivraisonRow };
 }
 
