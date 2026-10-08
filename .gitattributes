@@ -1,0 +1,4 @@
+# Scripts et configs de déploiement : toujours LF (exécutés sous Linux).
+deploy/** text eol=lf
+Dockerfile* text eol=lf
+*.sh text eol=lf
