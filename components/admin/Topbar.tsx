@@ -39,12 +39,13 @@ export function Topbar({
       <button
         type="button"
         onClick={openMobile}
-        className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-input border border-border bg-surface-2 text-text transition-colors hover:border-green hover:text-green-text active:scale-95 lg:hidden"
+        className="focus-ring flex h-11 shrink-0 items-center justify-center gap-2 rounded-input border border-green-dk bg-green-dk px-3 text-body-sm font-semibold text-white shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 lg:hidden"
         aria-label="Ouvrir le menu"
         aria-controls="admin-navigation"
         aria-expanded={mobileOpen}
       >
-        <FontAwesomeIcon icon={faBars} className="h-5 w-5" />
+        <FontAwesomeIcon icon={faBars} className="h-5 w-5" aria-hidden="true" />
+        <span className="hidden min-[420px]:inline">Menu</span>
       </button>
 
       <GlobalSearch />

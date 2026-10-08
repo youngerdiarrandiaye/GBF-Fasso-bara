@@ -4,7 +4,7 @@ import { useState } from "react";
 import { NavigationLink as Link } from "@/components/ui/NavigationLink";
 import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faFileLines, faUsers, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faHouse, faFileLines, faUsers, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { SignOutButton } from "@/components/agent/SignOutButton";
 import { cn } from "@/lib/cn";
 
@@ -67,12 +67,14 @@ export function NavBar({ nom }: { nom: string }) {
           <button
             type="button"
             onClick={() => setMenuOuvert((v) => !v)}
-            className="focus-ring flex h-11 w-11 items-center justify-center rounded-full bg-surface-2 text-body-sm font-semibold text-text"
+            className="focus-ring flex h-11 items-center justify-center gap-2 rounded-input border border-green-dk bg-green-dk px-3 text-body-sm font-semibold text-white shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 md:w-11 md:rounded-full md:border-transparent md:bg-surface-2 md:px-0 md:text-text md:shadow-none md:hover:brightness-95"
             aria-haspopup="menu"
             aria-expanded={menuOuvert}
-            aria-label="Menu utilisateur"
+            aria-label="Menu"
           >
-            {initiales || "A"}
+            <FontAwesomeIcon icon={faBars} className="h-5 w-5 md:hidden" aria-hidden="true" />
+            <span className="md:hidden">Menu</span>
+            <span className="hidden md:inline">{initiales || "A"}</span>
           </button>
           {menuOuvert && (
             <div
@@ -81,14 +83,22 @@ export function NavBar({ nom }: { nom: string }) {
             >
               <p className="px-3 py-2 text-body font-medium text-text">{nom}</p>
               <p className="mb-1 px-3 text-body text-muted">Agent</p>
-              <Link
-                href="/bons-livraison"
-                onClick={() => setMenuOuvert(false)}
-                className="focus-ring tap-target flex w-full items-center gap-2 rounded-input px-3 text-body text-text hover:bg-surface-2 md:hidden"
-              >
-                <FontAwesomeIcon icon={faTruck} className="h-4 w-4" aria-hidden="true" />
-                Bons de livraison
-              </Link>
+              {[
+                { href: "/", label: "Accueil", icon: faHouse },
+                { href: "/mes-factures", label: "Mes factures", icon: faFileLines },
+                { href: "/clients", label: "Clients", icon: faUsers },
+                { href: "/bons-livraison", label: "Bons de livraison", icon: faTruck },
+              ].map((lien) => (
+                <Link
+                  key={lien.href}
+                  href={lien.href}
+                  onClick={() => setMenuOuvert(false)}
+                  className="focus-ring tap-target flex w-full items-center gap-2 rounded-input px-3 text-body text-text hover:bg-surface-2 md:hidden"
+                >
+                  <FontAwesomeIcon icon={lien.icon} className="h-4 w-4" aria-hidden="true" />
+                  {lien.label}
+                </Link>
+              ))}
               <SignOutButton className="w-full justify-start" />
             </div>
           )}
