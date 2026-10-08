@@ -1,7 +1,7 @@
 import { WeeklySalesBarChart, DonutChart } from "@/components/admin/LazyCharts";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faBoxesStacked, faCircleCheck, faFileInvoice, faHandHoldingDollar, faRightLeft, faTriangleExclamation, faTruck, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBoxesStacked, faCircleCheck, faFileCirclePlus, faFileInvoice, faHandHoldingDollar, faRightLeft, faTriangleExclamation, faTruck, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/lib/supabase/server";
 import { formatMontant, formatDate, formatDateLongue } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -14,7 +14,6 @@ import { RealtimeRevalidate } from "@/components/admin/RealtimeRevalidate";
 import { RegisterPaymentButton } from "@/components/admin/RegisterPaymentButton";
 import { QuickWhatsappButton } from "@/components/facture/QuickWhatsappButton";
 import { OverdueBadge } from "@/components/facture/OverdueBadge";
-import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
 import { ChartPeriodControl } from "@/components/admin/ChartPeriodControl";
 import { CreditStatusBadge } from "@/components/ui/CreditStatusBadge";
 import { readAll } from "@/lib/supabase/read-all";
@@ -362,7 +361,6 @@ export default async function DashboardAdminPage({
       />
 
       <header className="flex flex-wrap items-center gap-4">
-        <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="md" />
         <div className="mr-auto min-w-0">
           <p className="text-body-sm text-muted">
             {config?.nom ?? "GIE FASSO BARA"} · {formatDateLongue(maintenant)}
@@ -372,16 +370,16 @@ export default async function DashboardAdminPage({
         <DashboardRefresh />
       </header>
 
-      {/* Une seule action en tête de page : les autres (nouvelle facture,
-          paiements, clients, stock, nouvelle livraison) sont dans le menu
-          latéral, hamburger sur mobile. */}
+      {/* Une seule action en tête de page : l'action du quotidien (facturer).
+          Les autres (produit, paiements, clients, livraison) sont dans le
+          menu latéral, hamburger sur mobile. */}
       <div>
         <Link
-          href="/admin/stock/nouveau"
+          href="/admin/nouvelle-facture"
           className="focus-ring inline-flex h-tap items-center gap-2 rounded-input border border-green-dk bg-green-dk px-4 text-body font-medium text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98]"
         >
-          <FontAwesomeIcon icon={faBoxesStacked} className="h-4 w-4" aria-hidden="true" />
-          Ajouter un produit
+          <FontAwesomeIcon icon={faFileCirclePlus} className="h-4 w-4" aria-hidden="true" />
+          Nouvelle facture
         </Link>
       </div>
 

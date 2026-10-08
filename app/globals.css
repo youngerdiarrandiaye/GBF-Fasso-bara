@@ -250,6 +250,10 @@
   --color-text-red: var(--color-red);
   --color-text-blue: #60A5FA;
   --color-text-purple: #A78BFA;
+  /* Menu latéral : suit le fond choisi (plus de bloc blanc sur fond sombre). */
+  --color-sidebar-bg: var(--color-surface);
+  --color-sidebar-text: var(--color-text);
+  --color-sidebar-text-muted: var(--color-muted);
   --color-sidebar-active-bg: var(--color-green);
   --color-sidebar-active-text: #FFFFFF;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -276,6 +280,9 @@
   --color-border: #DBCEBA;
   --color-text: #30291F;
   --color-muted: #72634F;
+  --color-sidebar-bg: var(--color-surface);
+  --color-sidebar-text: var(--color-text);
+  --color-sidebar-text-muted: var(--color-muted);
 }
 
 @tailwind base;

@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
 
 /**
  * Enveloppe "feuille brandée" partagée par les écrans-listes de l'Espace
@@ -15,15 +14,14 @@ import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
  * l'Admin, sans plus rien forcer. Depuis D-28, plus de carte du tout.
  */
 export function BrandedListPanel({
-  nom,
-  logoUrl,
   title,
   subtitle,
   actions,
   children,
 }: {
-  nom: string;
-  logoUrl: string | null;
+  /** Conservés pour les appels existants ; l'identité est déjà dans le menu. */
+  nom?: string;
+  logoUrl?: string | null;
   title: string;
   subtitle: string;
   actions?: ReactNode;
@@ -35,7 +33,6 @@ export function BrandedListPanel({
   return (
     <section className="flex flex-col gap-4">
       <header className="flex flex-wrap items-center gap-x-4 gap-y-3">
-        <CompanyBrandMark nom={nom} logoUrl={logoUrl} size="md" />
         <div className="mr-auto min-w-0">
           <h1 className="text-h1 font-semibold tracking-tight text-text">{title}</h1>
           <p className="text-body-sm text-muted">{subtitle}</p>

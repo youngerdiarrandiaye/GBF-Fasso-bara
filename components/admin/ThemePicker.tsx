@@ -34,18 +34,23 @@ export function ThemePicker({ collapsed }: { collapsed: boolean }) {
   }
 
   return (
-    <fieldset className={cn("min-w-0", collapsed && "lg:hidden")}>
-      <legend className="mb-3 text-caption font-semibold uppercase tracking-wide text-sidebar-text-muted">Thème de votre espace</legend>
-      <div className="grid grid-cols-4 gap-2">
+    <fieldset className={cn("flex min-w-0 items-center justify-between gap-3", collapsed && "lg:hidden")}>
+      <legend className="sr-only">Thème de votre espace</legend>
+      <span aria-hidden="true" className="text-body-sm text-sidebar-text-muted">Thème</span>
+      <div className="flex items-center gap-2">
         {THEMES.map((item) => (
-          <label key={item.id} className={cn(
-            "relative flex min-h-16 min-w-0 cursor-pointer flex-col items-center gap-1.5 rounded-input border px-1 py-2 text-center text-caption text-sidebar-text transition-colors hover:border-green",
-            theme === item.id ? "border-green bg-green/10 font-semibold" : "border-sidebar-text-muted/20"
-          )}>
+          <label key={item.id} title={item.label} className="relative cursor-pointer">
             <input type="radio" name="admin-background" value={item.id} checked={theme === item.id}
-              onChange={() => chooseTheme(item.id)} className="peer sr-only" />
-            <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/15 peer-focus-visible:ring-2 peer-focus-visible:ring-green peer-focus-visible:ring-offset-2" style={{ backgroundColor: item.color, color: item.id === "comptoir" || item.id === "sand" ? "#182331" : "#FFFFFF" }}>{theme === item.id ? "✓" : ""}</span>
-            {item.label}
+              onChange={() => chooseTheme(item.id)} aria-label={item.label} className="peer sr-only" />
+            <span aria-hidden="true"
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-full border text-caption font-bold transition-shadow",
+                "peer-focus-visible:ring-2 peer-focus-visible:ring-green peer-focus-visible:ring-offset-2",
+                theme === item.id ? "border-green ring-2 ring-green ring-offset-2 ring-offset-sidebar-bg" : "border-black/20 hover:ring-2 hover:ring-green/40"
+              )}
+              style={{ backgroundColor: item.color, color: item.id === "comptoir" || item.id === "sand" ? "#182331" : "#FFFFFF" }}>
+              {theme === item.id ? "✓" : ""}
+            </span>
           </label>
         ))}
       </div>

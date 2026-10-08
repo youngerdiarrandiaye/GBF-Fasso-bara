@@ -264,7 +264,7 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
           ))}
           {groups.length === 0 && <p role="status" className={cn("px-3 py-6 text-body-sm text-sidebar-text-muted", collapsed && "lg:hidden")}>Aucune rubrique trouvée.</p>}
         </nav>
-        <div className={cn("shrink-0 border-t border-sidebar-text-muted/15 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]", collapsed && "lg:hidden")}>
+        <div className={cn("shrink-0 border-t border-sidebar-text-muted/15 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]", collapsed && "lg:hidden")}>
           <ThemePicker collapsed={collapsed} />
         </div>
       </aside>
