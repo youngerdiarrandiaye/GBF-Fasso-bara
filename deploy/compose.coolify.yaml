@@ -1,0 +1,435 @@
+# Stack Coolify : proxy TLS externe, Caddy interne uniquement.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-defaults: &defaults
+  restart: unless-stopped
+  logging: *logging
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  # ------------------------------------------------------------------ Edge
+  caddy:
+    <<: *defaults
+    image: caddy:2.10-alpine
+    expose:
+      - "8080"
+      - "8081"
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN manquant}
+      API_DOMAIN: ${API_DOMAIN:?API_DOMAIN manquant}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      FASSO_DEPLOY_REVISION: ${FASSO_DEPLOY_REVISION:?SHA Git requis}
+    volumes:
+      - ./coolify/Caddyfile:/etc/caddy/Caddyfile:ro
+      # Gabarits e-mail Auth, servis sur :8088 (ecoute interne, port non publie)
+      - ../supabase/templates:/templates:ro
+      - ${DATA_DIR:-/srv/fasso/data}/caddy/data:/data
+      - ${DATA_DIR:-/srv/fasso/data}/caddy/config:/config
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8088/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      app: { condition: service_healthy }
+      kong: { condition: service_healthy }
+    mem_limit: 256m
+    pids_limit: 256
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+
+  # ------------------------------------------------------------------ App
+  app:
+    <<: *defaults
+    # Dockerfile de production ecrit par un autre agent (non modifie ici).
+    # Les NEXT_PUBLIC_* sont figees au build : les passer en ARG.
+    build:
+      context: ..
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: https://${API_DOMAIN:?API_DOMAIN manquant}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY:?ANON_KEY manquant}
+    image: fasso-app:${APP_TAG:-latest}
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+      NEXT_PUBLIC_SUPABASE_URL: https://${API_DOMAIN}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_INTERNAL_URL: http://kong:8000
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY:?SERVICE_ROLE_KEY manquant}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_EXPEDITEUR: ${EMAIL_EXPEDITEUR:-}
+      EMAIL_REPONSE_A: ${EMAIL_REPONSE_A:-}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/ || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    depends_on:
+      kong: { condition: service_healthy }
+      init: { condition: service_completed_successfully }
+    mem_limit: 768m
+    pids_limit: 512
+    # Systeme de fichiers en lecture seule ; seuls /tmp et le cache Next sont inscriptibles
+    # (en memoire, perdus au redemarrage : sans consequence). uid 1001 = utilisateur nextjs.
+    read_only: true
+    tmpfs:
+      - /tmp:mode=1777
+      - /app/.next/cache:uid=1001,gid=1001,mode=0755
+    cap_drop: [ALL]
+
+  # ------------------------------------------------------------- Supabase
+  db:
+    <<: *defaults
+    image: ghcr.io/supabase/postgres:17.6.1.156
+    shm_size: 1gb
+    environment:
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: "5432"
+      POSTGRES_PORT: "5432"
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ${DATA_DIR:-/srv/fasso/data}/db:/var/lib/postgresql/data
+      # Tuning (agent deploy/db) : include_dir de la config Supabase
+      - ./db/postgresql.conf:/etc/postgresql-custom/conf.d/99-fasso.conf:ro
+      # Scripts d'initialisation (premier demarrage, data dir vide, uniquement)
+      - ./supabase/db-init/98-realtime.sql:/docker-entrypoint-initdb.d/migrations/98-realtime.sql:ro
+      - ./supabase/db-init/99-roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    mem_limit: 4g
+    pids_limit: 1024
+
+  kong:
+    <<: *defaults
+    image: ghcr.io/supabase/kong:2.8.1
+    entrypoint: >
+      bash -c 'eval "echo \"$$(cat /home/kong/temp.yml)\"" > /home/kong/kong.yml
+      && exec /docker-entrypoint.sh kong docker-start'
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,rate-limiting
+      # IP reelle du client = X-Forwarded-For pose par Caddy (reseaux Docker prives seulement)
+      KONG_REAL_IP_HEADER: X-Forwarded-For
+      KONG_TRUSTED_IPS: 172.16.0.0/12,10.0.0.0/8,192.168.0.0/16
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+      KONG_NGINX_WORKER_PROCESSES: "1"
+      DOMAIN: ${DOMAIN}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+    volumes:
+      - ./supabase/kong.yml:/home/kong/temp.yml:ro
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      auth: { condition: service_healthy }
+      storage: { condition: service_healthy }
+      realtime: { condition: service_healthy }
+      meta: { condition: service_healthy }
+      rest: { condition: service_started }
+      functions: { condition: service_started }
+    mem_limit: 512m
+    pids_limit: 512
+    cap_drop: [ALL]
+
+  auth:
+    <<: *defaults
+    image: public.ecr.aws/supabase/gotrue:v2.194.0
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: https://${API_DOMAIN}
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      GOTRUE_SITE_URL: https://${DOMAIN}
+      GOTRUE_URI_ALLOW_LIST: https://${DOMAIN}/**
+      # Les comptes sont crees par l'Admin (auth.admin.createUser) : pas d'inscription libre.
+      GOTRUE_DISABLE_SIGNUP: "true"
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: ${JWT_EXPIRY:-3600}
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_SECURITY_REFRESH_TOKEN_ROTATION_ENABLED: "true"
+      GOTRUE_SECURITY_REFRESH_TOKEN_REUSE_INTERVAL: "10"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "false"
+      GOTRUE_MAILER_AUTOCONFIRM: ${MAILER_AUTOCONFIRM:-false}
+      # Limitation de debit GoTrue (en plus de Kong sur /auth/v1/token)
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: "30"      # e-mails (reset, invitation) par heure
+      GOTRUE_RATE_LIMIT_TOKEN_REFRESH: "150"  # refresh par 5 min et par IP
+      GOTRUE_RATE_LIMIT_VERIFY: "30"          # verifications de lien par 5 min et par IP
+      GOTRUE_RATE_LIMIT_OTP: "30"
+      GOTRUE_RATE_LIMIT_ANONYMOUS_USERS: "5"
+      GOTRUE_RATE_LIMIT_SSO: "5"
+      GOTRUE_RATE_LIMIT_SMS_SENT: "5"
+      GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: /auth/v1/verify
+      GOTRUE_MAILER_SUBJECTS_RECOVERY: "GFB-STOCK - Réinitialisation de votre mot de passe"
+      GOTRUE_MAILER_TEMPLATES_RECOVERY: http://caddy:8088/recovery.html
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-587}
+      GOTRUE_SMTP_USER: ${SMTP_USER:-}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS:-}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:-}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-GFB-STOCK}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:9999/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      db: { condition: service_healthy }
+    mem_limit: 256m
+    pids_limit: 256
+    cap_drop: [ALL]
+
+  rest:
+    <<: *defaults
+    image: public.ecr.aws/supabase/postgrest:v14.15
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,graphql_public
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_MAX_ROWS: "1000"
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db: { condition: service_healthy }
+    mem_limit: 256m
+    cap_drop: [ALL]
+
+  realtime:
+    <<: *defaults
+    image: public.ecr.aws/supabase/realtime:v2.120.3
+    # Le nom d'hote doit commencer par "realtime-dev" : Realtime en deduit le tenant.
+    networks:
+      default:
+        aliases: ["realtime-dev.supabase-realtime"]
+    environment:
+      PORT: "4000"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: supabase_admin
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: postgres
+      DB_AFTER_CONNECT_QUERY: SET search_path TO _realtime
+      DB_ENC_KEY: ${REALTIME_DB_ENC_KEY:?REALTIME_DB_ENC_KEY manquant}
+      API_JWT_SECRET: ${JWT_SECRET}
+      METRICS_JWT_SECRET: ${JWT_SECRET}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?SECRET_KEY_BASE manquant}
+      ERL_AFLAGS: -proto_dist inet_tcp
+      DNS_NODES: "''"
+      RLIMIT_NOFILE: "10000"
+      APP_NAME: realtime
+      SEED_SELF_HOST: "true"
+      RUN_JANITOR: "true"
+    # Pas de cap_drop ALL ici : l'entrypoint de Realtime utilise sudo (setuid), teste KO.
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sSfL --head -o /dev/null -H \"Authorization: Bearer ${ANON_KEY}\" http://127.0.0.1:4000/api/tenants/realtime-dev/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      db: { condition: service_healthy }
+    mem_limit: 512m
+
+  storage:
+    <<: *defaults
+    image: public.ecr.aws/supabase/storage-api:v1.67.20
+    environment:
+      ANON_KEY: ${ANON_KEY}
+      SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      AUTH_JWT_SECRET: ${JWT_SECRET}
+      POSTGREST_URL: http://rest:3000
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: stub
+      REGION: stub
+      GLOBAL_S3_BUCKET: stub
+      FILE_SIZE_LIMIT: "52428800"
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+      S3_PROTOCOL_ENABLED: "false"
+    # Meme dossier que celui lu (ro) par le service de sauvegarde.
+    volumes:
+      - ${DATA_DIR:-/srv/fasso/data}/storage:/var/lib/storage
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:5000/status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      db: { condition: service_healthy }
+      rest: { condition: service_started }
+    mem_limit: 384m
+    pids_limit: 512
+    cap_drop: [ALL]
+
+  meta:
+    <<: *defaults
+    image: public.ecr.aws/supabase/postgres-meta:v0.96.6
+    environment:
+      PG_META_PORT: "8080"
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: "5432"
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:8080/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db: { condition: service_healthy }
+    mem_limit: 256m
+
+  # Edge Functions (supabase/functions) via un routeur "main" (deploy/supabase/functions-main)
+  functions:
+    <<: *defaults
+    image: public.ecr.aws/supabase/edge-runtime:v1.74.3
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      FASSO_DEPLOY_REVISION: ${FASSO_DEPLOY_REVISION:?SHA Git requis}
+      SUPABASE_URL: http://kong:8000
+      PUBLIC_SUPABASE_URL: https://${API_DOMAIN}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+      CRON_SECRET: ${CRON_SECRET:?CRON_SECRET manquant}
+      ALLOWED_ORIGINS: https://${DOMAIN}
+      # Fonctions appelables sans JWT utilisateur (protegees par x-cron-secret)
+      VERIFY_JWT_DISABLED: alerte-stock-bas,alerte-facture-impayee
+      FACTURE_PDF_SIGNED_URL_TTL_SECONDS: ${FACTURE_PDF_SIGNED_URL_TTL_SECONDS:-3600}
+      BON_LIVRAISON_PDF_SIGNED_URL_TTL_SECONDS: ${BON_LIVRAISON_PDF_SIGNED_URL_TTL_SECONDS:-3600}
+      EXPORT_RAPPORT_SIGNED_URL_TTL_SECONDS: ${EXPORT_RAPPORT_SIGNED_URL_TTL_SECONDS:-3600}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_EXPEDITEUR: ${EMAIL_EXPEDITEUR:-}
+      EMAIL_REPONSE_A: ${EMAIL_REPONSE_A:-}
+    command: ["start", "--main-service", "/home/deno/main"]
+    volumes:
+      - ../supabase/functions:/home/deno/functions:ro
+      - ./supabase/functions-main:/home/deno/main:ro
+      - ${DATA_DIR:-/srv/fasso/data}/deno-cache:/root/.cache/deno
+    depends_on:
+      db: { condition: service_healthy }
+    mem_limit: 512m
+
+  studio:
+    <<: *defaults
+    image: public.ecr.aws/supabase/studio:2026.07.27-sha-cbb076d
+    # Jamais expose publiquement : boucle locale uniquement -> tunnel SSH
+    #   ssh -L 3001:127.0.0.1:3001 user@vps   puis http://localhost:3001
+    ports:
+      - "127.0.0.1:${STUDIO_PORT:-3001}:3000"
+    environment:
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DEFAULT_ORGANIZATION_NAME: GFB
+      DEFAULT_PROJECT_NAME: GFB-STOCK
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: https://${API_DOMAIN}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      AUTH_JWT_SECRET: ${JWT_SECRET}
+      NEXT_TELEMETRY_DISABLED: "1"
+    depends_on:
+      meta: { condition: service_healthy }
+    mem_limit: 512m
+
+  backup:
+    build: ./backup
+    image: gfb-backup:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD requis}
+      PGDATABASE: ${POSTGRES_DB:-postgres}
+      TZ: ${TZ:-Africa/Dakar}
+      BACKUP_HOUR: ${BACKUP_HOUR:-02:30}
+      BACKUP_VERIFY_RESTORE: ${BACKUP_VERIFY_RESTORE:-false}
+      KEEP_DAILY: ${KEEP_DAILY:-7}
+      KEEP_WEEKLY: ${KEEP_WEEKLY:-4}
+      KEEP_MONTHLY: ${KEEP_MONTHLY:-6}
+      # Notification d'echec (tous optionnels)
+      NOTIFY_WEBHOOK_URL: ${NOTIFY_WEBHOOK_URL:-}
+      NOTIFY_NTFY_URL: ${NOTIFY_NTFY_URL:-}
+      HEALTHCHECK_URL: ${HEALTHCHECK_URL:-}
+      # Off-site rclone : DESACTIVE par defaut. Chiffrement OBLIGATOIRE (backup.sh refuse
+      # sinon) : remote "offraw" = stockage brut, remote "offsite" = crypt par-dessus.
+      OFFSITE_ENABLED: ${OFFSITE_ENABLED:-false}
+      OFFSITE_REMOTE: ${OFFSITE_REMOTE:-}
+      OFFSITE_RETENTION_DAYS: ${OFFSITE_RETENTION_DAYS:-60}
+      RCLONE_CONFIG_OFFRAW_TYPE: ${RCLONE_CONFIG_OFFRAW_TYPE:-}
+      RCLONE_CONFIG_OFFRAW_PROVIDER: ${RCLONE_CONFIG_OFFRAW_PROVIDER:-}
+      RCLONE_CONFIG_OFFRAW_ENDPOINT: ${RCLONE_CONFIG_OFFRAW_ENDPOINT:-}
+      RCLONE_CONFIG_OFFRAW_ACCESS_KEY_ID: ${RCLONE_CONFIG_OFFRAW_ACCESS_KEY_ID:-}
+      RCLONE_CONFIG_OFFRAW_SECRET_ACCESS_KEY: ${RCLONE_CONFIG_OFFRAW_SECRET_ACCESS_KEY:-}
+      RCLONE_CONFIG_OFFRAW_REGION: ${RCLONE_CONFIG_OFFRAW_REGION:-}
+      RCLONE_CONFIG_OFFSITE_TYPE: ${RCLONE_CONFIG_OFFSITE_TYPE:-}
+      RCLONE_CONFIG_OFFSITE_REMOTE: ${RCLONE_CONFIG_OFFSITE_REMOTE:-}
+      RCLONE_CONFIG_OFFSITE_PASSWORD: ${RCLONE_CONFIG_OFFSITE_PASSWORD:-}
+      RCLONE_CONFIG_OFFSITE_PASSWORD2: ${RCLONE_CONFIG_OFFSITE_PASSWORD2:-}
+    # Durcissement. Le conteneur reste root (lecture de /storage, ecriture /backups) mais
+    # sans capacites : DAC_READ_SEARCH suffit a lire les fichiers du Storage (uid varies),
+    # CHOWN/FOWNER/DAC_OVERRIDE ne sont pas necessaires (umask 077, fichiers crees par lui).
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - DAC_READ_SEARCH
+    pids_limit: 256
+    volumes:
+      - /srv/fasso/backups:/backups
+      - ${DATA_DIR:-/srv/fasso/data}/storage:/storage:ro
+
+  init:
+    extends:
+      service: backup
+    restart: "no"
+    entrypoint: ["bash", "/init.sh"]
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD requis}
+      CRON_SECRET: ${CRON_SECRET:?CRON_SECRET requis}
+      MAILER_AUTOCONFIRM: ${MAILER_AUTOCONFIRM:-false}
+      FASSO_DEPLOY_REVISION: ${FASSO_DEPLOY_REVISION:?SHA Git requis pour recreer init}
+    depends_on:
+      db: { condition: service_healthy }
+      storage: { condition: service_healthy }
+    volumes:
+      - ./coolify/init.sh:/init.sh:ro
+      - ./db/migrate.sh:/migrate.sh:ro
+      - ../supabase/migrations:/migrations:ro
+      - ../supabase/seed.sql:/seed.sql:ro

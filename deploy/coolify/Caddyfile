@@ -1,0 +1,52 @@
+{
+    auto_https off
+    admin off
+}
+
+(security) {
+    encode zstd gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+        Cross-Origin-Opener-Policy "same-origin"
+        -Server
+    }
+}
+
+# Le proxy Coolify termine TLS et route chaque domaine vers son port.
+http://:8080 {
+    import security
+    reverse_proxy app:3000 {
+        header_up X-Forwarded-Proto https
+    }
+}
+
+http://:8081 {
+    import security
+    request_body {
+        max_size 60MB
+    }
+    @forbidden path_regexp (?i)(functions/v1/alerte-|auth/v1/admin|realtime/v1/api)
+    handle @forbidden {
+        respond "Forbidden" 403
+    }
+    handle {
+        reverse_proxy kong:8000 {
+            header_up X-Forwarded-Proto https
+        }
+    }
+}
+
+# Templates de recuperation Auth ; aucun port publie sur l'hote.
+http://:8088 {
+    handle /healthz {
+        respond "ok" 200
+    }
+    handle {
+        root * /templates
+        file_server
+    }
+}
