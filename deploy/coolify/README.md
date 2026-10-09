@@ -14,6 +14,12 @@ de `.env` au depot. Generer les secrets avec `deploy/scripts/gen-secrets.sh`
 dans un environnement protege ; les cles JWT anon/service doivent correspondre
 au meme JWT_SECRET. `DOMAIN` et `API_DOMAIN` sont les noms sans `https://`.
 
+Les variables doivent etre disponibles au build ET au runtime pour que Compose
+puisse interpoler la stack complete pendant le build. Activer `Use Docker Build
+Secrets` et desactiver `Inject build arguments to Dockerfile` : seuls les deux
+arguments publics explicitement declares dans Dockerfile sont integres au build
+Next. Les autres valeurs restent hors du contexte et des couches des images.
+
 Associer au service **caddy** les domaines HTTPS : application vers port **8080**,
 API vers port **8081**. Coolify termine TLS. Ne pas exposer app, Kong, DB ou
 Studio sur Internet. Caddy conserve les restrictions API et les templates Auth.

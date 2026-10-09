@@ -23,7 +23,7 @@ def api(path, method='GET', payload=None):
 api(f'applications/{app}', 'PATCH', {'git_commit_sha': os.environ['DEPLOY_SHA']})
 api(f'applications/{app}/envs/bulk', 'PATCH', {'data': [{
     'key': 'FASSO_DEPLOY_REVISION', 'value': os.environ['DEPLOY_SHA'],
-    'is_buildtime': False, 'is_runtime': True,
+    'is_buildtime': True, 'is_runtime': True,
 }]})
 result = api('deploy', 'POST', {'uuid': app, 'force': False})
 deployment = result['deployments'][0]['deployment_uuid']
