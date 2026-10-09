@@ -28,14 +28,13 @@ export default async function LoginPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-card bg-green-dk text-h2 font-bold text-white">
-          GFB
-        </div>
-        <h1 className="text-h1 font-semibold tracking-tight text-text">GIE FASSO BARA</h1>
-        <p className="text-body text-muted">Connectez-vous à votre espace</p>
+      <div className="flex flex-col gap-3">
+        <p className="text-body-sm font-semibold uppercase tracking-widest text-green-text">Bienvenue chez GFB</p>
+        <h1 className="text-h1 font-semibold tracking-tight text-text">Connectez-vous</h1>
+        <p className="text-body leading-relaxed text-muted">Accédez à votre espace avec vos identifiants professionnels.</p>
       </div>
       <LoginForm />
+      <p className="border-t border-border pt-5 text-body-sm leading-relaxed text-muted">Besoin d’un accès ? Contactez l’administrateur de votre entreprise.</p>
       <InstallAppPrompt />
     </div>
   );
