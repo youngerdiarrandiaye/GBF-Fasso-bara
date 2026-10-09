@@ -231,7 +231,7 @@ export function ImportClientsWizard() {
             {apercu.ignorees > 0 && ` · ${apercu.ignorees} ligne${apercu.ignorees > 1 ? "s" : ""} ignorée${apercu.ignorees > 1 ? "s" : ""} (titres, totaux)`}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={recommencer}>
+        <Button variant="outline" size="sm" onClick={recommencer} className="gap-2">
           <FontAwesomeIcon icon={faRotateLeft} className="h-3.5 w-3.5" aria-hidden="true" />
           Changer de fichier
         </Button>
@@ -275,7 +275,59 @@ export function ImportClientsWizard() {
         {visibles.length === 0 ? (
           <p className="px-4 py-10 text-center text-body-sm text-muted">Aucune ligne dans cette catégorie.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          <ul className="divide-y divide-border md:hidden">
+            {visibles.map((ligne) => {
+              const { libelle, tone } = etat(ligne);
+              const choisie = choisies.has(ligne.ligne);
+              return (
+                <li key={ligne.ligne} className={cn("flex flex-col gap-3 p-4", !choisie && "bg-surface-2/50")}>
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={choisie}
+                      disabled={ligne.erreurs.length > 0}
+                      onChange={() => basculer(ligne)}
+                      aria-label={`Importer ${ligne.nom}`}
+                      className="focus-ring mt-0.5 h-6 w-6 shrink-0 accent-[var(--color-green-dk)]"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-body font-semibold text-text">{ligne.nom}</p>
+                      <p className="text-body-sm text-muted">
+                        {[ligne.telephone, ligne.adresse].filter(Boolean).join(" · ") || "Aucune coordonnée"}
+                      </p>
+                      <p className="text-caption text-muted">Ligne {ligne.ligne}</p>
+                    </div>
+                    <Badge tone={tone}>{libelle}</Badge>
+                  </div>
+                  {[...ligne.erreurs, ...ligne.avertissements].map((message) => (
+                    <p key={message} className="text-caption text-amber-text">{message}</p>
+                  ))}
+                  <div className="grid grid-cols-2 gap-2 pl-9">
+                    <input
+                      value={regions[ligne.ligne] ?? ligne.region ?? ""}
+                      onChange={(e) => setRegions((r) => ({ ...r, [ligne.ligne]: e.target.value }))}
+                      aria-label={`Région de ${ligne.nom}`}
+                      placeholder="Région"
+                      className={cn(CHAMP, "min-w-0")}
+                    />
+                    <select
+                      value={types[ligne.ligne] ?? ligne.type_client}
+                      onChange={(e) => setTypes((t) => ({ ...t, [ligne.ligne]: e.target.value as TypeClient }))}
+                      aria-label={`Type de ${ligne.nom}`}
+                      className={cn(CHAMP, "min-w-0")}
+                    >
+                      {(Object.keys(LIBELLES_TYPE) as TypeClient[]).map((t) => (
+                        <option key={t} value={t}>{LIBELLES_TYPE[t]}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {ligne.type_source && <p className="pl-9 text-caption text-muted">Fichier : {ligne.type_source}</p>}
+                </li>
+              );
+            })}
+          </ul>
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[860px] border-collapse">
               <thead>
                 <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
@@ -343,6 +395,7 @@ export function ImportClientsWizard() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </Card>
 
