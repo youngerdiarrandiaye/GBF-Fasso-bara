@@ -33,7 +33,7 @@ flowchart LR
 
 ## 2. Prérequis
 
-- Un VPS **Ubuntu 22.04 ou 24.04**, **2 Go de RAM minimum** (un swap de 2 Go est créé par le script), accès `root` en SSH **par clé**.
+- Un VPS **Ubuntu 22.04 ou 24.04**, accès `root` en SSH **par clé**. Les réglages livrés visent **12 Go de RAM / 6 vCPU** (base limitée à 4 Go). Sur un VPS plus petit (4 Go minimum), reprenez les valeurs « 4G » ou « 2G » en commentaire dans `deploy/db/postgresql.conf` et baissez `mem_limit` et `shm_size` du service `db` dans `deploy/compose.prod.yaml`. Un swap de 2 Go est créé par le script.
 - **Deux noms DNS** (enregistrements A/AAAA) pointant vers l'IP du VPS, créés **avant** le premier démarrage : `DOMAIN` et `API_DOMAIN`.
 - Un compte e-mail transactionnel : **Resend** (clé API) et/ou un serveur **SMTP**. Il sert à :
   - la réinitialisation de mot de passe (variables `SMTP_*`) ;
