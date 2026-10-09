@@ -35,7 +35,7 @@ export default async function LoginPage() {
       </div>
       <LoginForm />
       <p className="border-t border-border pt-5 text-body-sm leading-relaxed text-muted">Besoin d’un accès ? Contactez l’administrateur de votre entreprise.</p>
-      <InstallAppPrompt />
+      <InstallAppPrompt compact />
     </div>
   );
 }

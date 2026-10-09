@@ -41,7 +41,7 @@ function modeActuel(): Mode {
  * (marche à suivre manuelle) ; jamais une fois l'app installée ni après
  * « Plus tard » (mémorisé sur cet appareil).
  */
-export function InstallAppPrompt({ className }: { className?: string }) {
+export function InstallAppPrompt({ className, compact = false }: { className?: string; compact?: boolean }) {
   const mode = useSyncExternalStore(abonnerInstallation, modeActuel, () => "masque" as Mode);
 
   if (mode === "masque") return null;
@@ -49,7 +49,7 @@ export function InstallAppPrompt({ className }: { className?: string }) {
   return (
     <section
       aria-label="Installer l'application"
-      className={cn("flex flex-col gap-3 rounded-card border border-border bg-surface p-4 sm:flex-row sm:items-center", className)}
+      className={cn("gap-3 rounded-card border border-border bg-surface p-4", compact ? "grid grid-cols-[auto_1fr] items-start" : "flex flex-col sm:flex-row sm:items-center", className)}
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-input bg-green/10 text-green-text" aria-hidden="true">
         <FontAwesomeIcon icon={mode === "ios" ? faArrowUpFromBracket : faDownload} className="h-4 w-4" />
@@ -62,7 +62,7 @@ export function InstallAppPrompt({ className }: { className?: string }) {
             : "Ouvrez-la depuis l'écran d'accueil, en plein écran, sans passer par le navigateur."}
         </p>
       </div>
-      <div className="flex gap-2">
+      <div className={cn("flex gap-2", compact && "col-span-2 justify-end")}>
         {mode === "installer" && (
           <Button type="button" onClick={() => void lancerInstallation()}>
             Installer
