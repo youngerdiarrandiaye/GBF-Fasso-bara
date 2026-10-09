@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <p className="text-body-sm text-white/80">Votre espace de gestion</p>
             </div>
           </div>
-          <div className="my-8 max-w-md lg:my-16">
+          <div className="my-8 hidden max-w-md sm:block lg:my-16">
             <p className="mb-4 text-body-sm font-medium uppercase tracking-widest text-white/80">Au service de votre activité</p>
             <h2 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">Votre entreprise.<br />Tout simplement.</h2>
             <p className="mt-5 hidden text-body leading-relaxed text-white/80 sm:block">Retrouvez vos produits, suivez vos stocks et gérez vos factures dans un même espace.</p>
