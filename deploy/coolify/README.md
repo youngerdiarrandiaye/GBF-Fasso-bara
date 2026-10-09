@@ -4,6 +4,11 @@ Ressource Docker Compose depuis `main`. Base directory `/deploy`, compose
 `/compose.coolify.yaml`. Si Coolify attend le chemin depuis la racine Git,
 utiliser `/deploy/compose.coolify.yaml` avec base directory `/`.
 
+Activer **Preserve repository during deployment** : les configurations,
+templates, fonctions et migrations sont montees depuis les fichiers Git.
+Exclure le service ponctuel `init` du suivi global de sante dans Coolify ;
+son code de sortie reste controle par la dependance de l'application.
+
 Configurer les variables de `deploy/.env.example` dans Coolify. Ne pas ajouter
 de `.env` au depot. Generer les secrets avec `deploy/scripts/gen-secrets.sh`
 dans un environnement protege ; les cles JWT anon/service doivent correspondre
@@ -20,7 +25,10 @@ la stack totalisent environ 9 Go, en plus de Coolify et du build.
 
 `init` attend DB et Storage, sauvegarde, applique les migrations en mode strict,
 configure Vault, puis autorise le demarrage de l'application. Une erreur bloque
-ce deploiement. `backup` assure ensuite la sauvegarde quotidienne. Configurer
+ce deploiement. Sur une base vierge, il conserve un dump initial verifie dans
+`/srv/fasso/backups/bootstrap`, car la sauvegarde reguliere exige les tables
+applicatives. Un Storage vide est accepte. `backup` assure ensuite la sauvegarde
+quotidienne. Configurer
 une copie chiffree hors du VPS avec les variables RCLONE/OFFSITE pour proteger
 contre la perte du serveur ; les sauvegardes locales seules ne le font pas.
 

@@ -1,6 +1,10 @@
 {
     auto_https off
     admin off
+    servers {
+        trusted_proxies static private_ranges
+        trusted_proxies_strict
+    }
 }
 
 (security) {
@@ -21,6 +25,7 @@ http://:8080 {
     import security
     reverse_proxy app:3000 {
         header_up X-Forwarded-Proto https
+        header_up X-Forwarded-For {client_ip}
     }
 }
 
@@ -36,6 +41,7 @@ http://:8081 {
     handle {
         reverse_proxy kong:8000 {
             header_up X-Forwarded-Proto https
+            header_up X-Forwarded-For {client_ip}
         }
     }
 }

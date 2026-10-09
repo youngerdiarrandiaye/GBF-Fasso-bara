@@ -20,7 +20,8 @@ def api(path, method='GET', payload=None):
         return json.load(response)
 
 
-api(f'applications/{app}/envs', 'PATCH', {'data': [{
+api(f'applications/{app}', 'PATCH', {'git_commit_sha': os.environ['DEPLOY_SHA']})
+api(f'applications/{app}/envs/bulk', 'PATCH', {'data': [{
     'key': 'FASSO_DEPLOY_REVISION', 'value': os.environ['DEPLOY_SHA'],
     'is_buildtime': False, 'is_runtime': True,
 }]})

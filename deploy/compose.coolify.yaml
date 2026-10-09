@@ -379,6 +379,8 @@ services:
       TZ: ${TZ:-Africa/Dakar}
       BACKUP_HOUR: ${BACKUP_HOUR:-02:30}
       BACKUP_VERIFY_RESTORE: ${BACKUP_VERIFY_RESTORE:-false}
+      # Aucun fichier n'est une situation valide pour une application neuve.
+      STORAGE_REQUIRED: "false"
       KEEP_DAILY: ${KEEP_DAILY:-7}
       KEEP_WEEKLY: ${KEEP_WEEKLY:-4}
       KEEP_MONTHLY: ${KEEP_MONTHLY:-6}
