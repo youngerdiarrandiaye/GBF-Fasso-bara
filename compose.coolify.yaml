@@ -348,7 +348,7 @@ services:
     # Jamais expose publiquement : boucle locale uniquement -> tunnel SSH
     #   ssh -L 3001:127.0.0.1:3001 user@vps   puis http://localhost:3001
     ports:
-      - "127.0.0.1:${STUDIO_PORT:-3001}:3000"
+      - "127.0.0.1:3001:3000"
     environment:
       STUDIO_PG_META_URL: http://meta:8080
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
