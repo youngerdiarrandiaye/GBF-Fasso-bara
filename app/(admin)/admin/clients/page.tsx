@@ -10,7 +10,8 @@ import { NewClientButton } from "@/components/admin/NewClientButton";
 import { BrandedListPanel } from "@/components/admin/BrandedListPanel";
 import { ClickableTableRow } from "@/components/admin/ClickableTableRow";
 import { Pagination } from "@/components/admin/Pagination";
-import { faFileCirclePlus, faMoneyBillWave, faUserPlus, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCirclePlus, faFileImport, faMoneyBillWave, faUserPlus, faUsers, faWallet } from "@fortawesome/free-solid-svg-icons";
 import type { ClientRow, EntrepriseConfigRow } from "@/lib/supabase/database.types";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -42,7 +43,7 @@ export default async function ClientsAdminPage({
 
   let requete = supabase.from("clients").select("*", { count: "exact" }).order("nom");
   if (q) {
-    requete = requete.or(`nom.ilike.%${q}%,telephone.ilike.%${q}%`);
+    requete = requete.or(`nom.ilike.%${q}%,telephone.ilike.%${q}%,region.ilike.%${q}%`);
   }
 
   const offset = (pageActuelle - 1) * PAGE_SIZE;
@@ -105,7 +106,18 @@ export default async function ClientsAdminPage({
         logoUrl={config?.logo_url ?? null}
         title="Clients"
         subtitle="Répertoire client et solde impayé."
-        actions={<NewClientButton />}
+        actions={
+          <>
+            <Link
+              href="/admin/clients/importer"
+              className="focus-ring inline-flex h-tap items-center gap-2 rounded-input border border-border bg-surface px-4 text-body font-medium text-text hover:bg-surface-2"
+            >
+              <FontAwesomeIcon icon={faFileImport} className="h-4 w-4" aria-hidden="true" />
+              Importer
+            </Link>
+            <NewClientButton />
+          </>
+        }
       >
         <QuickActionGrid
           actions={[
@@ -119,7 +131,7 @@ export default async function ClientsAdminPage({
 
         <Card>
           <Suspense>
-            <SearchInput label="Rechercher" placeholder="Nom ou téléphone..." />
+            <SearchInput label="Rechercher" placeholder="Nom, téléphone ou région..." />
           </Suspense>
         </Card>
 
@@ -132,7 +144,7 @@ export default async function ClientsAdminPage({
               return (
                 <Link key={client.id} href={`/admin/clients/${client.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0"><p className="truncate text-body font-semibold text-text">{client.nom}</p><p className="mt-1 text-body-sm text-muted">{client.telephone ?? "Aucun téléphone"}</p></div>
+                    <div className="min-w-0"><p className="truncate text-body font-semibold text-text">{client.nom}</p><p className="mt-1 text-body-sm text-muted">{client.telephone ?? "Aucun téléphone"}{client.region ? ` · ${client.region}` : ""}</p></div>
                     <Badge>{LIBELLES_TYPE[client.type_client]}</Badge>
                   </div>
                   <div className="mt-3 flex items-end justify-between gap-3"><p className="text-body-sm text-muted">{nbFacturesParClient.get(client.id) ?? 0} facture(s)</p><div className="text-right"><p className="text-caption uppercase tracking-wide text-muted">Impayé</p><p className={`font-mono text-body font-semibold ${solde > 0 ? "text-red-text" : "text-text"}`}>{formatMontant(solde)}</p></div></div>
@@ -176,7 +188,7 @@ export default async function ClientsAdminPage({
                         <td className="px-4 py-3">
                           <Badge>{LIBELLES_TYPE[client.type_client]}</Badge>
                         </td>
-                        <td className="px-4 py-3 text-body-sm text-muted">{client.telephone ?? "—"}</td>
+                        <td className="px-4 py-3 text-body-sm text-muted">{client.telephone ?? "—"}{client.region && <span className="block text-caption">{client.region}</span>}</td>
                         <td className="px-4 py-3 text-right font-mono text-body text-muted">
                           {nbFacturesParClient.get(client.id) ?? 0}
                         </td>

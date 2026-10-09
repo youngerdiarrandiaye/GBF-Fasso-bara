@@ -54,6 +54,8 @@ export interface ClientRow {
   telephone: string | null;
   email: string | null;
   ninea: string | null;
+  /** Région commerciale (0025), renseignée par l'import de clientèle. */
+  region: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;

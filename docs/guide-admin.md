@@ -12,6 +12,7 @@ les modules ajoutés par l'avenant Crédit / Bon de livraison / Multi-entrepôts
 5. [Crédits & Recouvrement](#5-crédits--recouvrement)
 6. [Bons de livraison](#6-bons-de-livraison)
 7. [Comptes utilisateurs et e-mails](#7-comptes-utilisateurs-et-e-mails)
+8. [Importer la clientèle depuis Excel](#8-importer-la-clientèle-depuis-excel)
 
 ---
 
@@ -204,6 +205,22 @@ retard le lendemain de cette date. Sans échéance, la règle des 10 jours aprè
 s'applique. Le tableau de bord, les alertes et les badges de retard suivent cette règle.
 
 ---
+
+## 8. Importer la clientèle depuis Excel
+
+**Où :** Clients → bouton **Importer** (`/admin/clients/importer`). Réservé à l'Admin.
+
+1. **Déposez le fichier** (.xlsx, 5 Mo maximum, 2 000 clients maximum par import). Rien n'est enregistré à ce stade.
+2. **Vérifiez l'aperçu.** Le fichier est lu ainsi :
+   - colonnes reconnues : nom du client, téléphone / contact, adresse ou marché, type de client (la liste des colonnes lues s'affiche) ;
+   - les titres de région (« REGION DE THIES ») donnent sa région à chaque client du bloc ; les régions connues sont corrigées (« LOUGUA » → Louga, « THIES » → Thiès) ;
+   - les lignes vides, séparateurs et totaux sont ignorés ;
+   - téléphones mis au format `77 123 45 67` ; un numéro inhabituel est signalé (« À vérifier »).
+3. **Corrigez si besoin** : la région (champ texte) et le type (Particulier / Entreprise / Coopérative) se modifient ligne par ligne. Règle de conversion proposée : producteurs et amateurs → Particulier ; associations et coopératives → Coopérative ; revendeurs, distributeurs, importateurs, commerçants de gros → Entreprise.
+4. **Doublons** : un client déjà en base (même téléphone, ou même nom quand il n'y a pas de téléphone) ou répété dans le fichier est décoché et marqué. Vous pouvez le cocher pour l'importer quand même.
+5. **Importez.** Relancer le même fichier est sans risque : les clients déjà créés sont ignorés.
+
+La région est filtrable depuis la recherche de la liste des clients (nom, téléphone ou région). « Commande réalisée » du fichier n'est pas importé : aucune colonne correspondante.
 
 ## Changelog de ce guide
 
