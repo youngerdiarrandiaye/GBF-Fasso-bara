@@ -1,8 +1,9 @@
 # GitHub vers Coolify
 
-Ressource Docker Compose depuis `main`. Base directory `/deploy`, compose
-`/compose.coolify.yaml`. Si Coolify attend le chemin depuis la racine Git,
-utiliser `/deploy/compose.coolify.yaml` avec base directory `/`.
+Ressource Docker Compose depuis `main`. Base directory `/`, compose
+`/compose.coolify.yaml` a la racine du depot. Les chemins de fichiers sont
+relatifs a cette racine ; les donnees restent sous `/srv/fasso` avec des
+chemins absolus fixes pour eviter les ambiguities du parseur Coolify.
 
 Activer **Preserve repository during deployment** : les configurations,
 templates, fonctions et migrations sont montees depuis les fichiers Git.

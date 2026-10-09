@@ -23,8 +23,15 @@ export MIGRATIONS_DIR=/migrations
 echo "Sauvegarde avant migrations"
 # La sauvegarde reguliere exige les tables applicatives. Sur une base vierge,
 # conserver d'abord un dump initial verifie ; ne jamais sauter la sauvegarde.
+# Supabase contient deja public.schema_migrations sur une base neuve.
+# Detecter uniquement les tables applicatives attendues, pas tout le schema.
 table_count="$(psql "$DATABASE_URL" -X -At -v ON_ERROR_STOP=1 -c \
-  "select count(*) from pg_tables where schemaname = 'public'")"
+  "select count(*) from pg_tables where schemaname = 'public'
+   and tablename in ('factures', 'produits', 'utilisateurs')")"
+if [ "$table_count" != 0 ] && [ "$table_count" != 3 ]; then
+  echo "Schema applicatif partiel : sauvegarde et migrations interrompues" >&2
+  exit 1
+fi
 if [ "$table_count" = 0 ]; then
   umask 077
   baseline="/backups/bootstrap/$(date -u +%Y%m%d_%H%M%S)_${FASSO_DEPLOY_REVISION}"
