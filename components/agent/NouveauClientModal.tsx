@@ -104,7 +104,7 @@ export function NouveauClientModal({
           {...register("email")}
         />
 
-        <div className="mt-2 flex justify-end gap-3">
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:justify-end">
           <Button type="button" variant="outline" onClick={onClose}>
             Annuler
           </Button>

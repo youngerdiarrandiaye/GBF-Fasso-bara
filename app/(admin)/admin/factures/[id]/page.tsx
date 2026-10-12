@@ -95,17 +95,17 @@ export default async function FactureDetailAdminPage({
   const agent = facture.agent as unknown as { id: string; nom: string };
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
+    <div className="flex min-w-0 flex-col gap-4 break-words pb-8">
       <RealtimeRevalidate tables={["factures", "paiements", "credits", "remboursements_credit"]} />
 
       <Breadcrumbs items={[{ label: "Factures", href: "/admin/factures" }, { label: facture.numero }]} />
 
       <section className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card sm:p-5 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-start gap-3">
+        <div className="flex min-w-0 max-w-full flex-wrap items-start gap-3">
           <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} />
-          <div>
+          <div className="min-w-0 max-w-full">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="rounded-input bg-surface-2 px-3 py-1 font-mono text-h2 text-text">
+              <h1 className="min-w-0 max-w-full rounded-input bg-surface-2 px-3 py-1 font-mono text-h2 text-text">
                 {facture.numero}
               </h1>
               <StatusBadge statut={facture.statut} />
@@ -163,10 +163,10 @@ export default async function FactureDetailAdminPage({
           avant avec un rayon élargi. */}
       <Card className="overflow-hidden rounded-card-lg !p-0 shadow-card">
         <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
-          <div className="flex flex-col gap-2 border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
+          <div className="flex min-w-0 flex-col gap-2 border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
             <div className="flex items-center gap-3">
               <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} />
-              <div>
+              <div className="min-w-0">
                 <p className="text-h3 text-text">{config?.nom ?? "GIE FASSO BARA"}</p>
                 {config?.ninea && <p className="text-body-sm text-muted">NINEA {config.ninea}</p>}
                 {config?.rc && <p className="text-body-sm text-muted">RC {config.rc}</p>}
@@ -181,7 +181,7 @@ export default async function FactureDetailAdminPage({
             {config?.email && <p className="text-body-sm text-muted">{config.email}</p>}
           </div>
 
-          <div className="flex flex-col gap-1 p-4 sm:p-5">
+          <div className="flex min-w-0 flex-col gap-1 p-4 sm:p-5">
             <p className="text-caption uppercase tracking-wide text-muted">Facturé à</p>
             <p className="text-h3 text-text">{client?.nom}</p>
             {client?.adresse && <p className="text-body-sm text-muted">{client.adresse}</p>}
@@ -267,40 +267,40 @@ export default async function FactureDetailAdminPage({
             </div>
           </div>
 
-          <div className="flex w-full flex-col gap-1.5 rounded-input bg-surface-2 p-4 lg:w-80">
-            <div className="flex justify-between text-body text-muted">
+          <div className="flex min-w-0 w-full flex-col gap-1.5 rounded-input bg-surface-2 p-4 lg:w-80">
+            <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
               <span>Total HT</span>
               <span className="font-mono text-text">{formatMontant(facture.total_ht)}</span>
             </div>
             {facture.remise_montant > 0 && (
-              <div className="flex justify-between text-body text-muted">
+              <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
                 <span>Remise</span>
                 <span className="font-mono text-text">-{formatMontant(facture.remise_montant)}</span>
               </div>
             )}
-            <div className="flex justify-between text-body text-muted">
+            <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
               <span>Forfait transport</span>
               <span className="font-mono text-text">{formatMontant(facture.forfait_transport)}</span>
             </div>
             {facture.tva_taux > 0 && (
-              <div className="flex justify-between text-body text-muted">
+              <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
                 <span>TVA ({(facture.tva_taux * 100).toFixed(0)}%)</span>
                 <span className="font-mono text-text">
                   {formatMontant(facture.total_ht * facture.tva_taux)}
                 </span>
               </div>
             )}
-            <div className="mt-2 flex justify-between border-t border-border pt-2 text-h2 font-semibold text-text">
+            <div className="mt-2 flex flex-wrap justify-between gap-x-3 border-t border-border pt-2 text-h2 font-semibold text-text">
               <span>Total général</span>
               <span className="font-mono">{formatMontant(facture.total_general)}</span>
             </div>
             {totalPaye > 0 && (
               <>
-                <div className="flex justify-between text-body text-green-text">
+                <div className="flex flex-wrap justify-between gap-x-3 text-body text-green-text">
                   <span>Déjà payé</span>
                   <span className="font-mono">{formatMontant(totalPaye)}</span>
                 </div>
-                <div className="flex justify-between text-body font-medium text-red-text">
+                <div className="flex flex-wrap justify-between gap-x-3 text-body font-medium text-red-text">
                   <span>Reste à payer</span>
                   <span className="font-mono">{formatMontant(resteAPayer)}</span>
                 </div>

@@ -92,7 +92,7 @@ export default async function AccueilAgentPage() {
 
       <Link
         href="/nouvelle-facture"
-        className="focus-ring flex min-h-14 items-center justify-center gap-3 rounded-modal bg-green-dk px-5 text-h3 font-semibold text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] md:hidden"
+        className="focus-ring flex min-h-14 items-center justify-center gap-3 rounded-modal bg-green-dk px-5 text-h3 font-semibold text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] lg:hidden"
       >
         <FontAwesomeIcon icon={faFileCirclePlus} className="h-5 w-5" aria-hidden="true" />
         Nouvelle facture
@@ -159,13 +159,13 @@ export default async function AccueilAgentPage() {
           factures.map((facture) => (
             <Link key={facture.id} href={`/mes-factures/${facture.id}`} className="focus-ring block rounded-card">
               <Card interactive>
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="truncate text-body font-medium text-text">{facture.client?.nom}</p>
-                    <p className="font-mono text-body text-muted">{facture.numero}</p>
+                    <p className="break-words font-mono text-body text-muted">{facture.numero}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1.5">
-                    <span className="font-mono text-body text-text">{formatMontant(facture.total_general)}</span>
+                  <div className="flex min-w-0 flex-col items-start gap-1.5 sm:items-end">
+                    <span className="break-words font-mono text-body text-text">{formatMontant(facture.total_general)}</span>
                     <StatusBadge statut={facture.statut} />
                   </div>
                 </div>

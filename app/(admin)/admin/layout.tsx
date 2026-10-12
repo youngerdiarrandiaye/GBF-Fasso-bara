@@ -85,7 +85,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 alertesPaiementInitiales={(alertesPaiementInitiales as AlerteFactureRow[]) ?? []}
               />
               <NetworkStatusBanner />
-              <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
+              <main className="mx-auto min-w-0 w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
                 {children}
               </main>
             </div>

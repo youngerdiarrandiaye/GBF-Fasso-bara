@@ -58,10 +58,10 @@ export default async function BonsLivraisonPage() {
         <div className="flex flex-col gap-3">
           {bonsLivraison.map((bl) => (
             <Card key={bl.id}>
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{bl.client?.nom}</p>
-                  <p className="font-mono text-body text-muted">
+                  <p className="break-words font-mono text-body text-muted">
                     {bl.numero} · {formatDate(bl.date_livraison)}
                     {bl.entrepot?.nom ? ` · ${bl.entrepot.nom}` : ""}
                   </p>

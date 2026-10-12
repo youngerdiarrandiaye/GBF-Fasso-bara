@@ -31,7 +31,7 @@ export function BrandedListPanel({
   // des cartes — l'enveloppe créait des cartes dans une carte). L'en-tête
   // reprend celui du tableau de bord.
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex min-w-0 flex-col gap-4">
       <header className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <div className="mr-auto min-w-0">
           <h1 className="text-h1 font-semibold tracking-tight text-text">{title}</h1>

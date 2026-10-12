@@ -39,24 +39,24 @@ export function QuickActionGrid({
 }) {
   return (
     <nav
-      className={cn("-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0", className)}
+      className={cn("-mx-4 flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0", className)}
       aria-label="Raccourcis"
     >
       {actions.map((action) => (
         <Link
           key={`${action.href}-${action.label}`}
           href={action.href}
-          className="focus-ring inline-flex h-tap shrink-0 items-center gap-2.5 rounded-input border border-border bg-surface pl-1.5 pr-3.5 text-body transition-colors hover:bg-surface-2"
+          className="focus-ring inline-flex min-h-tap max-w-full shrink-0 items-center gap-2.5 rounded-input border border-border bg-surface py-2 pl-1.5 pr-3.5 text-body transition-colors hover:bg-surface-2"
         >
           <span
-            className={cn("inline-flex h-8 w-8 items-center justify-center rounded-[8px]", TONE_CLASSES[action.tone ?? "neutral"])}
+            className={cn("inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px]", TONE_CLASSES[action.tone ?? "neutral"])}
             aria-hidden="true"
           >
             <FontAwesomeIcon icon={action.icon} className="h-3.5 w-3.5" />
           </span>
-          <span className="font-semibold text-text">{action.label}</span>
+          <span className="min-w-0 break-words font-semibold text-text">{action.label}</span>
           {action.description && (
-            <span className="hidden text-body-sm text-muted sm:inline">{action.description}</span>
+            <span className="hidden min-w-0 break-words text-body-sm text-muted sm:inline">{action.description}</span>
           )}
         </Link>
       ))}

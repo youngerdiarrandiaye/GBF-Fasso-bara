@@ -142,7 +142,7 @@ export function AlertsBell({ alertesInitiales }: { alertesInitiales: AlerteStock
                   <span aria-hidden="true" className={alerte.type === "rupture" ? "text-red" : "text-amber"}>
                     ▲
                   </span>
-                  <span className="flex-1">{alerte.message}</span>
+                  <span className="min-w-0 flex-1 break-words">{alerte.message}</span>
                 </div>
               ))
             )}

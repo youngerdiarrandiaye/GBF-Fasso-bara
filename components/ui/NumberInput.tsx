@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { useId } from "react";
 
 interface NumberInputProps {
   value: number;
@@ -36,7 +37,8 @@ export function NumberInput({
   className,
   ...aria
 }: NumberInputProps) {
-  const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
 
   function clamp(candidate: number) {
     let next = Math.max(min, candidate);
@@ -50,7 +52,7 @@ export function NumberInput({
   }
 
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
+    <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
       {label && (
         <label htmlFor={inputId} className="text-body font-medium text-text">
           {label}
@@ -65,7 +67,8 @@ export function NumberInput({
         <button
           type="button"
           onClick={() => handleStep(-step)}
-          className="focus-ring tap-target flex w-11 shrink-0 items-center justify-center text-h3 text-muted hover:bg-surface-2"
+          disabled={value <= min}
+          className="focus-ring tap-target flex w-11 shrink-0 items-center justify-center text-h3 text-muted hover:bg-surface-2 disabled:opacity-40"
           aria-label="Diminuer"
         >
           −
@@ -82,18 +85,20 @@ export function NumberInput({
           }}
           className="focus-ring w-full min-w-0 border-0 bg-transparent px-2 text-right font-mono text-body text-text outline-none"
           aria-invalid={!!error}
+          aria-describedby={error ? `${inputId}-error` : undefined}
           {...aria}
         />
         <button
           type="button"
           onClick={() => handleStep(step)}
-          className="focus-ring tap-target flex w-11 shrink-0 items-center justify-center text-h3 text-muted hover:bg-surface-2"
+          disabled={max !== undefined && value >= max}
+          className="focus-ring tap-target flex w-11 shrink-0 items-center justify-center text-h3 text-muted hover:bg-surface-2 disabled:opacity-40"
           aria-label="Augmenter"
         >
           +
         </button>
       </div>
-      {error && <p className="text-body-sm text-red-text">{error}</p>}
+      {error && <p id={`${inputId}-error`} className="break-words text-body-sm text-red-text">{error}</p>}
     </div>
   );
 }

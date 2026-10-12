@@ -117,7 +117,7 @@ export function TransfertActions({
             Cette action est définitive : un transfert réceptionné ne peut plus être annulé (créez un transfert en
             sens inverse pour le corriger).
           </InlineAlert>
-          <div className="flex justify-end gap-3">
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={() => setModalOuverte(null)} disabled={enCours}>
               Annuler
             </Button>
@@ -138,7 +138,7 @@ export function TransfertActions({
               ? `Le stock de "${produitNom}" déjà décrémenté à "${entrepotSourceNom}" sera restitué.`
               : "Aucun mouvement de stock n'a encore eu lieu pour cette demande."}
           </InlineAlert>
-          <div className="flex justify-end gap-3">
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button variant="outline" onClick={() => setModalOuverte(null)} disabled={enCours}>
               Retour
             </Button>

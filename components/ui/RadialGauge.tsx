@@ -55,10 +55,11 @@ export function RadialGauge({
   const batonnets = Array.from({ length: NB_BATONNETS }, (_, i) => {
     const angleDeg = 180 - (i / (NB_BATONNETS - 1)) * 180;
     const angleRad = (angleDeg * Math.PI) / 180;
-    const x1 = cx + rInterieur * Math.cos(angleRad);
-    const y1 = cy - rInterieur * Math.sin(angleRad);
-    const x2 = cx + rExterieur * Math.cos(angleRad);
-    const y2 = cy - rExterieur * Math.sin(angleRad);
+    // Eviter les ecarts de derniers bits entre les moteurs JS serveur/client.
+    const x1 = Number((cx + rInterieur * Math.cos(angleRad)).toFixed(4));
+    const y1 = Number((cy - rInterieur * Math.sin(angleRad)).toFixed(4));
+    const x2 = Number((cx + rExterieur * Math.cos(angleRad)).toFixed(4));
+    const y2 = Number((cy - rExterieur * Math.sin(angleRad)).toFixed(4));
     const actif = i < nbActifs;
     const couleur = actif
       ? interpolerCouleur(NB_BATONNETS > 1 ? i / (NB_BATONNETS - 1) : 0)

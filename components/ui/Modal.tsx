@@ -19,6 +19,11 @@ interface ModalProps {
 export function Modal({ open, onClose, title, children, className }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
+  const closeRef = useRef(onClose);
+
+  useEffect(() => {
+    closeRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -33,7 +38,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
     (focusables?.[0] ?? dialog)?.focus();
 
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") closeRef.current();
       if (e.key !== "Tab" || !dialogRef.current) return;
 
       const elements = Array.from(
@@ -63,7 +68,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
       document.body.style.overflow = overflowInitial;
       elementActif?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open || typeof document === "undefined") return null;
 
@@ -81,18 +86,18 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          "relative z-modal max-h-[92dvh] w-full max-w-lg overflow-y-auto animate-[modal-in_200ms_var(--ease-standard)] rounded-t-modal border border-border bg-surface p-4 shadow-lg sm:rounded-modal sm:p-6",
+          "relative z-modal max-h-[92dvh] min-w-0 w-full max-w-lg overflow-y-auto overscroll-contain animate-[modal-in_200ms_var(--ease-standard)] rounded-t-modal border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:rounded-modal sm:p-6",
           className
         )}
       >
-        <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
-          <h2 id={titleId} className="text-h2 text-text">
+        <div className="mb-4 flex items-start justify-between gap-3 border-b border-border pb-3">
+          <h2 id={titleId} className="min-w-0 break-words text-h2 text-text">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="focus-ring tap-target flex items-center justify-center rounded-input text-h3 text-muted hover:bg-surface-2"
+            className="focus-ring tap-target flex shrink-0 items-center justify-center rounded-input text-h3 text-muted hover:bg-surface-2"
             aria-label="Fermer"
           >
             ×

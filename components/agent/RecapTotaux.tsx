@@ -35,7 +35,7 @@ export function RecapTotaux({
     <div className="flex flex-col gap-3 rounded-card border border-border bg-surface-2 p-4">
       <h3 className="text-h3 text-text">Récapitulatif</h3>
 
-      <div className="flex items-center justify-between text-body">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-body">
         <span className="text-muted">Total HT</span>
         <span className="font-mono text-text">{formatMontant(totalHT)}</span>
       </div>
@@ -69,7 +69,7 @@ export function RecapTotaux({
       </div>
       </details>
 
-      <label className="flex items-center justify-between gap-3">
+      <label className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-body text-muted">
           TVA ({Math.round(tvaTaux * 100)}%)
         </span>
@@ -85,9 +85,9 @@ export function RecapTotaux({
         </span>
       </label>
 
-      <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
+      <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-h3 text-text">Total général</span>
-        <span className="font-mono text-h2 font-bold text-text">{formatMontant(totalGeneral)}</span>
+        <span className="min-w-0 break-words font-mono text-h2 font-bold text-text">{formatMontant(totalGeneral)}</span>
       </div>
     </div>
   );

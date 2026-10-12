@@ -36,7 +36,7 @@ export function Pagination({
         {debut}–{fin} sur {totalCount} {itemLabel}
         {totalCount > 1 ? "s" : ""}
       </p>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+      <div className="grid min-w-0 grid-cols-2 items-center gap-2 sm:grid-cols-[1fr_auto_1fr]">
         <Link
           href={buildHref(page - 1)}
           aria-disabled={page <= 1}
@@ -48,7 +48,7 @@ export function Pagination({
         >
           ← Précédent
         </Link>
-        <span className="text-body-sm text-muted">
+        <span className="col-span-2 row-start-1 text-center text-body-sm text-muted sm:col-span-1 sm:col-start-2 sm:row-start-auto">
           Page {page} / {totalPages}
         </span>
         <Link

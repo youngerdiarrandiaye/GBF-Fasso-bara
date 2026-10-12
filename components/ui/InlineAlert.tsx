@@ -35,7 +35,7 @@ export function InlineAlert({
       )}
     >
       <span aria-hidden="true">{tone === "red" || tone === "amber" ? "▲" : "i"}</span>
-      <div className="flex-1">{children}</div>
+      <div className="min-w-0 flex-1 break-words">{children}</div>
     </div>
   );
 }

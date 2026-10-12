@@ -138,7 +138,7 @@ export function PaymentAlertsBell({ alertesInitiales }: { alertesInitiales: Aler
                   <span aria-hidden="true" className="text-red">
                     ▲
                   </span>
-                  <span className="flex-1">{alerte.message}</span>
+                  <span className="min-w-0 flex-1 break-words">{alerte.message}</span>
                 </div>
               ))
             )}

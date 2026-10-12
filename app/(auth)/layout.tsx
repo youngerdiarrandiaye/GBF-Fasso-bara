@@ -9,11 +9,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       data-theme="agent"
       className="min-h-screen bg-bg px-4 py-6 sm:px-8 sm:py-10 lg:flex lg:items-center lg:justify-center"
     >
-      <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-modal border border-border bg-surface shadow-sm lg:min-h-[680px] lg:grid-cols-2">
+      <div className="mx-auto grid min-w-0 w-full max-w-6xl grid-cols-1 overflow-hidden rounded-modal border border-border bg-surface shadow-sm lg:min-h-[680px] lg:grid-cols-2">
         <aside className="relative flex flex-col justify-between overflow-hidden bg-green-dk p-6 text-white sm:p-10 lg:p-12">
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-card border border-white/30 text-body font-bold">GFB</span>
-            <div>
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-card border border-white/30 text-body font-bold">GFB</span>
+            <div className="min-w-0 break-words">
               <p className="font-semibold tracking-wide">GIE FASSO BARA</p>
               <p className="text-body-sm text-white/80">Votre espace de gestion</p>
             </div>
@@ -27,8 +27,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <span>Produits</span><span>Stocks</span><span>Facturation</span>
           </div>
         </aside>
-        <main className="flex items-center justify-center px-6 py-9 sm:px-10 sm:py-12 lg:px-12">
-          <div className="w-full max-w-sm">{children}</div>
+        <main className="flex min-w-0 items-center justify-center px-4 py-9 sm:px-10 sm:py-12 lg:px-12">
+          <div className="min-w-0 w-full max-w-sm">{children}</div>
         </main>
       </div>
     </div>

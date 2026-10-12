@@ -64,7 +64,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
       : [];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6 break-words">
       <RealtimeRevalidate tables={["credits", "remboursements_credit"]} />
 
       <Breadcrumbs
@@ -72,9 +72,9 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
       />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0 max-w-full">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-h1 font-semibold tracking-tight text-text">{creditTyped.client?.nom}</h1>
+            <h1 className="min-w-0 max-w-full text-h1 font-semibold tracking-tight text-text">{creditTyped.client?.nom}</h1>
             <CreditStatusBadge statut={creditTyped.statut} />
           </div>
           <p className="mt-1 text-body-sm text-muted">

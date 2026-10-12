@@ -59,9 +59,9 @@ export function CreditGauge({
   const hauteur = compact ? 6 : 10;
 
   return (
-    <div className={compact ? "flex items-center gap-2" : "flex flex-col gap-1"}>
+    <div className={compact ? "flex min-w-0 items-center gap-2" : "flex min-w-0 flex-col gap-1"}>
       <svg
-        className="w-full overflow-hidden rounded-pill"
+        className="min-w-0 w-full overflow-hidden rounded-pill"
         style={{ height: hauteur }}
         viewBox={`0 0 100 ${hauteur}`}
         preserveAspectRatio="none"
@@ -81,9 +81,9 @@ export function CreditGauge({
         )}
       </svg>
       {!compact && (
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-caption text-muted">{pourcentageDuSeuil}&nbsp;% du seuil</span>
-          <span className="text-right font-mono text-body-sm text-muted">
+          <span className="min-w-0 break-words text-right font-mono text-body-sm text-muted">
             {formatMontant(encoursCredit)} / {formatMontant(seuilCreditMax)}
           </span>
         </div>

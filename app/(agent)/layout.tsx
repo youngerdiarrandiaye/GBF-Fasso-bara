@@ -43,7 +43,7 @@ export default async function AgentLayout({ children }: { children: React.ReactN
       <ToastProvider>
         <NavBar nom={profil.nom} />
         <NetworkStatusBanner />
-        <main className="mx-auto max-w-5xl px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-6 md:pb-10">{children}</main>
+        <main className="mx-auto min-w-0 w-full max-w-5xl px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-6 lg:pb-10">{children}</main>
         <BottomTabBar />
       </ToastProvider>
     </div>

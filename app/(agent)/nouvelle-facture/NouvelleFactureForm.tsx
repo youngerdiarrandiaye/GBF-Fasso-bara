@@ -503,7 +503,7 @@ export function NouvelleFactureForm({
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-24 md:pb-8">
+    <div className="flex flex-col gap-6 pb-40 sm:pb-24 md:pb-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           {brand && <CompanyBrandMark nom={brand.nom} logoUrl={brand.logoUrl} size="sm" />}
@@ -616,7 +616,7 @@ export function NouvelleFactureForm({
 
       {etape === 3 && <>
       <div className="rounded-card border border-border bg-surface p-4">
-        <p className="text-h3 font-semibold text-text">{client?.nom}</p>
+        <p className="break-words text-h3 font-semibold text-text">{client?.nom}</p>
         <p className="text-body text-muted">Entrepôt : {entrepotSelectionne?.nom}</p>
         {/* Relevé façon ticket (D-26/D-27) : libellé, points de conduite, montant. */}
         <ul className="mt-3 flex flex-col gap-2.5 border-t border-dashed border-border pt-3">
@@ -624,7 +624,7 @@ export function NouvelleFactureForm({
             const inclus = ligne.type_ligne_produit === "inclus_dans_kit";
             return <li key={ligne.produit_id} className="text-body">
               <span className="flex items-baseline gap-2">
-                <span className="min-w-0 text-text">{ligne.nom}</span>
+                <span className="min-w-0 break-words text-text">{ligne.nom}</span>
                 <span className="mb-1 min-w-4 flex-1 border-b border-dotted border-border" aria-hidden="true" />
                 <span className="shrink-0 text-right font-mono">{inclus ? "Inclus" : formatMontant(ligne.quantite * ligne.prix_unitaire)}</span>
               </span>
@@ -752,11 +752,11 @@ export function NouvelleFactureForm({
       <p className="text-body text-muted">La facture ne modifie pas le stock. Créez ensuite un bon de livraison pour enregistrer la sortie des produits.</p>
       </>}
 
-      {/* Barre de pied sur une seule ligne (D-27) : retour, total, étape
-          suivante. Fixe en bas d'écran sous md (l'Espace Agent y masque la
-          barre d'onglets, cf. BottomTabBar ; pb-24 de la racine réserve sa
+      {/* Barre de pied : retour et total puis action pleine largeur sous sm,
+          une seule ligne au-delà. Fixe en bas d'écran sous md (l'Espace Agent y masque la
+          barre d'onglets, cf. BottomTabBar ; le padding de la racine réserve sa
           hauteur), sticky au-delà. */}
-      <div className="fixed inset-x-0 bottom-0 z-sticky flex items-center gap-3 border-t border-border bg-surface px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:sticky md:-mx-4">
+      <div className="fixed inset-x-0 bottom-0 z-sticky grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-t border-border bg-surface px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:flex sm:gap-3 md:sticky md:-mx-4">
         {etape > 1 && (
           <Button
             type="button"
@@ -771,7 +771,7 @@ export function NouvelleFactureForm({
           </Button>
         )}
         {etape > 1 && (
-          <p className="flex min-w-0 shrink-0 flex-col leading-tight sm:mr-auto" aria-live="polite">
+          <p className="flex min-w-0 flex-col break-words leading-tight sm:mr-auto" aria-live="polite">
             <span className="text-body-sm text-muted">Total</span>
             <strong className="font-mono text-body font-semibold text-text">{formatMontant(totalGeneral)}</strong>
           </p>
@@ -780,7 +780,7 @@ export function NouvelleFactureForm({
           type="button"
           variant="primary"
           size="lg"
-          className={`min-w-0 flex-1 ${etape > 1 ? "sm:flex-none" : "sm:ml-auto sm:flex-none"}`}
+          className={`col-span-2 min-w-0 flex-1 ${etape > 1 ? "sm:flex-none" : "sm:ml-auto sm:flex-none"}`}
           aria-label={etape === 2 ? "Vérifier la facture" : undefined}
           loading={actionEnCours === "validee"}
           disabled={actionEnCours !== null || entrepotsChargement}

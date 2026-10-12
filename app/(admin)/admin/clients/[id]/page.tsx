@@ -97,13 +97,13 @@ export default async function ClientDetailPage({
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6 break-words">
       <Breadcrumbs items={[{ label: "Clients", href: "/admin/clients" }, { label: clientTyped.nom }]} />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-wrap items-start gap-3">
+        <div className="flex min-w-0 max-w-full flex-wrap items-start gap-3">
           <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} />
-          <div>
+          <div className="min-w-0 max-w-full">
             <h1 className="text-h1 font-semibold tracking-tight text-text">{clientTyped.nom}</h1>
             <div className="mt-2 flex flex-wrap gap-2">
               <Badge>{LIBELLES_TYPE[clientTyped.type_client]}</Badge>

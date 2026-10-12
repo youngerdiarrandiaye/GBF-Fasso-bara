@@ -30,10 +30,10 @@ export function BottomTabBar() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-surface shadow-lg md:hidden"
+      className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-surface shadow-lg lg:hidden"
       aria-label="Navigation principale"
     >
-      <div className="mx-auto flex h-[calc(4rem+env(safe-area-inset-bottom))] max-w-5xl items-stretch justify-around px-2 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
+      <div className="mx-auto grid h-[calc(4rem+env(safe-area-inset-bottom))] max-w-5xl grid-cols-5 items-stretch gap-1 px-2 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
         {TABS.map((tab) => {
           const actif = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
           return (
@@ -43,7 +43,7 @@ export function BottomTabBar() {
               aria-current={actif ? "page" : undefined}
               aria-label={tab.primary ? "Créer une facture" : tab.label}
               className={cn(
-                "focus-ring tap-target flex flex-col items-center justify-center gap-0.5 rounded-input px-2 text-caption",
+                "focus-ring tap-target flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-input px-1 text-caption",
                 tab.primary ? "bg-green-dk font-semibold text-white" : actif ? "text-green-text" : "text-muted"
               )}
             >

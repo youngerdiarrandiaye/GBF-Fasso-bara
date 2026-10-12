@@ -35,7 +35,7 @@ export function LigneFactureRow({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-body font-medium text-text">{ligne.nom}</p>
-          <p className="font-mono text-body text-muted">
+          <p className="break-words font-mono text-body text-muted">
             {ligne.code} · {ligne.stock_disponible} {ligne.unite} en stock
           </p>
         </div>
@@ -49,7 +49,7 @@ export function LigneFactureRow({
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:grid-cols-3">
         <NumberInput
           label="Quantité"
           value={ligne.quantite}
@@ -73,13 +73,13 @@ export function LigneFactureRow({
             min={0}
           />
         )}
-        <div className="col-span-2 flex flex-col gap-1.5 sm:col-span-1">
+        <div className="flex min-w-0 flex-col gap-1.5 min-[420px]:col-span-2 sm:col-span-1">
           <span className="text-body font-medium text-text">Total ligne</span>
-          <div className="flex h-tap items-center justify-end rounded-input border border-border bg-surface-2 px-3">
+          <div className="flex min-h-tap min-w-0 items-center justify-end rounded-input border border-border bg-surface-2 px-3 py-2">
             {estInclusDansKit ? (
               <Badge tone="blue">Inclus</Badge>
             ) : (
-              <span className="font-mono text-body text-text">{formatMontant(totalLigne)}</span>
+              <span className="min-w-0 break-words font-mono text-body text-text">{formatMontant(totalLigne)}</span>
             )}
           </div>
         </div>

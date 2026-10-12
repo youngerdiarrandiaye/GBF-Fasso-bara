@@ -51,20 +51,20 @@ export function Ticket({
   return (
     <section
       aria-labelledby={id}
-      className="grid grid-cols-1 overflow-hidden rounded-card-lg bg-encre text-white lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
+      className="grid min-w-0 grid-cols-1 overflow-hidden rounded-card-lg bg-encre text-white lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
     >
       <Link
         href={lien.href}
-        className="focus-ring group flex flex-col justify-between gap-6 p-5 transition-colors hover:bg-white/5 sm:p-6"
+        className="focus-ring group flex min-w-0 flex-col justify-between gap-6 p-5 transition-colors hover:bg-white/5 sm:p-6"
       >
-        <div>
-          <h2 id={id} className="text-body text-encre-muted">{titre}</h2>
-          {sousTitre && <p className="mt-0.5 text-body text-encre-muted">{sousTitre}</p>}
+        <div className="min-w-0">
+          <h2 id={id} className="min-w-0 break-words text-body text-encre-muted">{titre}</h2>
+          {sousTitre && <p className="mt-0.5 min-w-0 break-words text-body text-encre-muted">{sousTitre}</p>}
         </div>
         <p className="break-words font-mono text-[2.25rem] font-semibold leading-none tracking-[-0.04em] sm:text-[3rem]">
           {formatMontant(montant)}
         </p>
-        <p className="text-body text-encre-muted group-hover:text-white">{lien.label}</p>
+        <p className="min-w-0 break-words text-body text-encre-muted group-hover:text-white">{lien.label}</p>
       </Link>
 
       {/* Le bord perforé sépare les deux moitiés du ticket : pointillés
@@ -76,16 +76,16 @@ export function Ticket({
               href={ligne.href}
               className="focus-ring tap-target block rounded-input px-3 py-2.5 transition-colors hover:bg-white/5"
             >
-              <span className="flex items-baseline gap-2">
+              <span className="flex min-w-0 flex-wrap items-baseline gap-2">
                 {ligne.signal && (
                   <span className={`h-2 w-2 shrink-0 self-center rounded-full ${SIGNAL[ligne.signal]}`} aria-hidden="true" />
                 )}
-                <span className="shrink-0 text-body">{ligne.libelle}</span>
+                <span className="min-w-0 break-words text-body">{ligne.libelle}</span>
                 <span className="mb-1 min-w-4 flex-1 border-b border-dotted border-white/30" aria-hidden="true" />
-                <span className="shrink-0 text-right font-mono text-body font-semibold">{ligne.valeur}</span>
+                <span className="ml-auto min-w-0 max-w-full break-words text-right font-mono text-body font-semibold">{ligne.valeur}</span>
               </span>
               {(ligne.detail || ligne.jauge) && (
-                <span className="mt-1.5 flex items-center gap-3">
+                <span className="mt-1.5 flex min-w-0 flex-wrap items-center gap-3">
                   {ligne.jauge && (
                     <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/15" aria-hidden="true">
                       <span
@@ -94,7 +94,7 @@ export function Ticket({
                       />
                     </span>
                   )}
-                  {ligne.detail && <span className="shrink-0 text-body-sm text-encre-muted">{ligne.detail}</span>}
+                  {ligne.detail && <span className="min-w-0 break-words text-body-sm text-encre-muted">{ligne.detail}</span>}
                 </span>
               )}
             </Link>

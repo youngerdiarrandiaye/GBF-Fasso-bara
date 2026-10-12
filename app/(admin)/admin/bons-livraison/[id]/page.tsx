@@ -43,15 +43,15 @@ export default async function BonLivraisonDetailPage({ params }: { params: Promi
   const lignes = (lignesData as unknown as LigneBonLivraisonAvecProduit[]) ?? [];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6 break-words">
       <RealtimeRevalidate tables={["bons_livraison", "lignes_bon_livraison"]} />
 
       <Breadcrumbs items={[{ label: "Bons de livraison", href: "/admin/bons-livraison" }, { label: blTyped.numero }]} />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0 max-w-full">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-h1 font-semibold tracking-tight text-text">
+            <h1 className="min-w-0 max-w-full text-h1 font-semibold tracking-tight text-text">
               <span className="rounded-input bg-surface-2 px-2 py-1 font-mono">{blTyped.numero}</span>
             </h1>
             <BonLivraisonStatusBadge statut={blTyped.statut} />

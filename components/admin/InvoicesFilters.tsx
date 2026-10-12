@@ -74,7 +74,7 @@ export function InvoicesFilters({
   return (
     <div className="space-y-3" aria-busy={isPending}>
       <div className={`grid grid-cols-1 gap-3 transition-opacity sm:grid-cols-2 xl:grid-cols-6 ${isPending ? "opacity-70" : ""}`}>
-      <div className="flex flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <label htmlFor="f-numero" className="text-body font-medium text-text">
           Numéro de facture
         </label>
@@ -88,7 +88,7 @@ export function InvoicesFilters({
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <label htmlFor="f-statut" className="text-body font-medium text-text">
           Statut
         </label>
@@ -107,7 +107,7 @@ export function InvoicesFilters({
         </select>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <label htmlFor="f-client" className="text-body font-medium text-text">
           Client
         </label>
@@ -126,7 +126,7 @@ export function InvoicesFilters({
         </select>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <label htmlFor="f-agent" className="text-body font-medium text-text">
           Agent
         </label>
@@ -145,24 +145,25 @@ export function InvoicesFilters({
         </select>
       </div>
 
-      <div className="flex flex-col gap-1.5 xl:col-span-2">
+      <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
         <label htmlFor="f-periode" className="text-body font-medium text-text">
           Période
         </label>
-        <div className="flex items-center gap-2">
+        <div className="grid min-w-0 grid-cols-1 items-center gap-2 min-[420px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
           <input
             id="f-periode"
             type="date"
             defaultValue={searchParams.get("debut") ?? ""}
             onChange={(e) => appliquer("debut", e.target.value)}
-            className="focus-ring h-tap w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
+            className="focus-ring h-tap min-w-0 w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
           />
-          <span className="text-muted">→</span>
+          <span aria-hidden="true" className="hidden text-muted min-[420px]:block">→</span>
           <input
             type="date"
+            aria-label="Fin de la période"
             defaultValue={searchParams.get("fin") ?? ""}
             onChange={(e) => appliquer("fin", e.target.value)}
-            className="focus-ring h-tap w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
+            className="focus-ring h-tap min-w-0 w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
           />
         </div>
       </div>

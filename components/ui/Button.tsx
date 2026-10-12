@@ -33,9 +33,9 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: "h-9 px-3 text-body-sm",
-  md: "h-tap px-4 text-body",
-  lg: "h-[52px] px-6 text-body font-semibold",
+  sm: "min-h-11 px-3 py-2 text-body-sm sm:min-h-9",
+  md: "min-h-tap px-4 py-2 text-body",
+  lg: "min-h-[52px] px-6 py-2 text-body font-semibold",
 };
 
 /**
@@ -52,7 +52,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "focus-ring inline-flex items-center justify-center gap-2 rounded-input font-medium",
+        "focus-ring inline-flex min-w-0 max-w-full items-center justify-center gap-2 rounded-input font-medium",
         "transition-transform duration-btn ease-standard",
         "hover:scale-[1.02] active:scale-[0.98] active:transition-none",
         "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100",
@@ -66,7 +66,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     >
       {loading && (
         <svg
-          className="h-4 w-4 animate-spin"
+          className="h-4 w-4 shrink-0 animate-spin"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
@@ -79,7 +79,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           />
         </svg>
       )}
-      <span aria-live="polite">{children}</span>
+      <span className="min-w-0 break-words" aria-live="polite">{children}</span>
     </button>
   );
 });

@@ -43,9 +43,9 @@ export function StockGauge({
   const hauteur = compact ? 6 : 10;
 
   return (
-    <div className={compact ? "flex items-center gap-2" : "flex flex-col gap-1"}>
+    <div className={compact ? "flex min-w-0 items-center gap-2" : "flex min-w-0 flex-col gap-1"}>
       <svg
-        className="w-full overflow-hidden rounded-pill"
+        className="min-w-0 w-full overflow-hidden rounded-pill"
         style={{ height: hauteur }}
         viewBox={`0 0 100 ${hauteur}`}
         preserveAspectRatio="none"

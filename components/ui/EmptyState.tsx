@@ -26,7 +26,7 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center gap-3 px-4 py-8 text-center", className)}>
+    <div className={cn("flex min-w-0 flex-col items-center gap-3 break-words px-4 py-8 text-center", className)}>
       <span
         aria-hidden="true"
         className={cn(
@@ -36,14 +36,14 @@ export function EmptyState({
       >
         <FontAwesomeIcon icon={icone} className="h-5 w-5" />
       </span>
-      <p className="text-body font-medium text-text">{titre}</p>
-      {description && <p className="max-w-sm text-body text-muted">{description}</p>}
+      <p className="min-w-0 w-full break-words text-body font-medium text-text">{titre}</p>
+      {description && <p className="min-w-0 w-full max-w-sm break-words text-body text-muted">{description}</p>}
       {action && (
         // Lien stylé comme Button (§6.1) plutôt qu'un <button> dans un <a>.
         <Link
           href={action.href}
           className={cn(
-            "focus-ring mt-1 inline-flex h-tap items-center justify-center rounded-input border px-4 text-body font-medium",
+            "focus-ring mt-1 inline-flex min-h-tap max-w-full items-center justify-center rounded-input border px-4 py-2 text-body font-medium",
             "transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] active:transition-none",
             action.variante === "outline"
               ? "border-border bg-transparent text-text hover:bg-surface-2"

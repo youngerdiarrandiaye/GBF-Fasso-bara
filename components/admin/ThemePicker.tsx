@@ -34,12 +34,12 @@ export function ThemePicker({ collapsed }: { collapsed: boolean }) {
   }
 
   return (
-    <fieldset className={cn("flex min-w-0 items-center justify-between gap-3", collapsed && "lg:hidden")}>
+    <fieldset className={cn("flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-3", collapsed && "lg:hidden")}>
       <legend className="sr-only">Thème de votre espace</legend>
       <span aria-hidden="true" className="text-body-sm text-sidebar-text-muted">Thème</span>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 lg:gap-2">
         {THEMES.map((item) => (
-          <label key={item.id} title={item.label} className="relative cursor-pointer">
+          <label key={item.id} title={item.label} className="relative flex h-11 w-11 cursor-pointer items-center justify-center lg:h-8 lg:w-8">
             <input type="radio" name="admin-background" value={item.id} checked={theme === item.id}
               onChange={() => chooseTheme(item.id)} aria-label={item.label} className="peer sr-only" />
             <span aria-hidden="true"

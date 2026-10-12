@@ -109,9 +109,9 @@ export default async function FactureDetailAgentPage({
       </Link>
 
       <section className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="rounded-input bg-surface-2 px-3 py-1 font-mono text-h2 text-text">
+            <h1 className="min-w-0 break-words rounded-input bg-surface-2 px-3 py-1 font-mono text-h2 text-text">
               {facture.numero}
             </h1>
             <StatusBadge statut={facture.statut} />
@@ -129,16 +129,16 @@ export default async function FactureDetailAgentPage({
         />
       </section>
 
-      <section className="grid grid-cols-1 overflow-hidden rounded-card border border-border bg-surface shadow-card min-[380px]:grid-cols-3">
-        <div className="border-b border-border px-3 py-3 min-[380px]:border-b-0 min-[380px]:border-r sm:px-4">
+      <section className="grid grid-cols-1 overflow-hidden rounded-card border border-border bg-surface shadow-card sm:grid-cols-3">
+        <div className="min-w-0 break-words border-b border-border px-3 py-3 sm:border-b-0 sm:border-r sm:px-4">
           <p className="text-caption uppercase tracking-wide text-muted">Total</p>
           <p className="mt-1 font-mono text-body font-semibold text-text sm:text-h2">{formatMontant(facture.total_general)}</p>
         </div>
-        <div className="border-b border-border px-3 py-3 min-[380px]:border-b-0 min-[380px]:border-r sm:px-4">
+        <div className="min-w-0 break-words border-b border-border px-3 py-3 sm:border-b-0 sm:border-r sm:px-4">
           <p className="text-caption uppercase tracking-wide text-muted">Payé</p>
           <p className="mt-1 font-mono text-body font-semibold text-green-text sm:text-h2">{formatMontant(totalPaye)}</p>
         </div>
-        <div className="px-3 py-3 sm:px-4">
+        <div className="min-w-0 break-words px-3 py-3 sm:px-4">
           <p className="text-caption uppercase tracking-wide text-muted">Reste</p>
           <p className={`mt-1 font-mono text-body font-semibold sm:text-h2 ${resteAPayer > 0 ? "text-red-text" : "text-green-text"}`}>
             {formatMontant(resteAPayer)}
@@ -151,13 +151,13 @@ export default async function FactureDetailAgentPage({
           (entreprise_config_public ne les expose pas à l'agent). */}
       <Card className="overflow-hidden !p-0 shadow-card">
         <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
-          <div className="flex flex-col gap-2 border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
+          <div className="flex min-w-0 flex-col gap-2 break-words border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
             <div className="flex items-center gap-3">
               <CompanyBrandMark
                 nom={entreprise?.nom ?? "GIE FASSO BARA"}
                 logoUrl={entreprise?.logo_url ?? null}
               />
-              <div>
+              <div className="min-w-0">
                 <p className="text-h3 text-text">{entreprise?.nom ?? "GIE FASSO BARA"}</p>
                 {entreprise?.ninea && <p className="text-body text-muted">NINEA {entreprise.ninea}</p>}
                 {entreprise?.rc && <p className="text-body text-muted">RC {entreprise.rc}</p>}
@@ -172,7 +172,7 @@ export default async function FactureDetailAgentPage({
             {entreprise?.email && <p className="text-body text-muted">{entreprise.email}</p>}
           </div>
 
-          <div className="flex flex-col gap-1 p-4 sm:p-5">
+          <div className="flex min-w-0 flex-col gap-1 break-words p-4 sm:p-5">
             <p className="text-caption uppercase tracking-wide text-muted">Facturé à</p>
             <p className="text-h3 text-text">{client?.nom}</p>
             {client?.adresse && <p className="text-body text-muted">{client.adresse}</p>}
@@ -204,12 +204,12 @@ export default async function FactureDetailAgentPage({
         <div className="flex flex-col divide-y divide-border md:hidden">
           {lignes.map((ligne) => (
             <div key={ligne.id} className="flex flex-col gap-1.5 p-4">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <p className="text-body text-text">{ligne.produit?.nom}</p>
-                  <p className="font-mono text-body text-muted">{ligne.produit?.code}</p>
+                  <p className="break-words text-body text-text">{ligne.produit?.nom}</p>
+                  <p className="break-words font-mono text-body text-muted">{ligne.produit?.code}</p>
                 </div>
-                <p className="shrink-0 font-mono text-body font-medium text-text">
+                <p className="min-w-0 break-words font-mono text-body font-medium text-text">
                   {ligne.produit?.type_ligne_produit === "inclus_dans_kit" ? (
                     <span className="badge-pastel-neutral rounded-badge px-2 py-1 text-caption">Inclus</span>
                   ) : (
@@ -267,37 +267,37 @@ export default async function FactureDetailAgentPage({
         </div>
 
         <div className="flex flex-col gap-1.5 border-t border-border bg-surface-2 p-4 sm:p-5 lg:ml-auto lg:w-80">
-          <div className="flex justify-between text-body text-muted">
+          <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
             <span>Total HT</span>
             <span className="font-mono text-text">{formatMontant(facture.total_ht)}</span>
           </div>
           {facture.remise_montant > 0 && (
-            <div className="flex justify-between text-body text-muted">
+            <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
               <span>Remise</span>
               <span className="font-mono text-text">-{formatMontant(facture.remise_montant)}</span>
             </div>
           )}
-          <div className="flex justify-between text-body text-muted">
+          <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
             <span>Forfait transport</span>
             <span className="font-mono text-text">{formatMontant(facture.forfait_transport)}</span>
           </div>
           {facture.tva_taux > 0 && (
-            <div className="flex justify-between text-body text-muted">
+            <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
               <span>TVA ({(facture.tva_taux * 100).toFixed(0)}%)</span>
               <span className="font-mono text-text">{formatMontant(facture.total_ht * facture.tva_taux)}</span>
             </div>
           )}
-          <div className="mt-2 flex justify-between border-t border-border pt-2 text-h2 font-semibold text-text">
+          <div className="mt-2 flex flex-col gap-2 border-t border-border pt-2 text-h2 font-semibold text-text">
             <span>Total général</span>
             <span className="font-mono">{formatMontant(facture.total_general)}</span>
           </div>
           {totalPaye > 0 && (
             <>
-              <div className="flex justify-between text-body text-green-text">
+              <div className="flex flex-wrap justify-between gap-2 text-body text-green-text">
                 <span>Déjà payé</span>
                 <span className="font-mono">{formatMontant(totalPaye)}</span>
               </div>
-              <div className="flex justify-between text-body font-medium text-red-text">
+              <div className="flex flex-wrap justify-between gap-2 text-body font-medium text-red-text">
                 <span>Reste à payer</span>
                 <span className="font-mono">{formatMontant(resteAPayer)}</span>
               </div>
@@ -317,7 +317,7 @@ export default async function FactureDetailAgentPage({
           <>
             <div className="flex flex-col divide-y divide-border border-t border-border md:hidden">
               {paiements.map((p) => (
-                <div key={p.id} className="flex items-center justify-between gap-3 p-4">
+                <div key={p.id} className="flex flex-col gap-3 break-words p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</p>
                     <p className="text-body text-muted">
@@ -329,7 +329,7 @@ export default async function FactureDetailAgentPage({
                 </div>
               ))}
               {remboursementsCredit.map((r) => (
-                <div key={r.id} className="flex items-center justify-between gap-3 p-4">
+                <div key={r.id} className="flex flex-col gap-3 break-words p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-body text-text">Recouvrement crédit</p>
                     <p className="text-body text-muted">

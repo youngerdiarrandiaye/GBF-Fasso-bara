@@ -138,21 +138,23 @@ export function ReportsClient({
           </div>
 
           {type === "ventes" && (
-            <div className="flex flex-col gap-1.5 sm:col-span-2 xl:col-span-2">
+            <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2 xl:col-span-2">
               <span className="text-body font-medium text-text">Période</span>
-              <div className="flex items-center gap-2">
+              <div className="grid min-w-0 grid-cols-1 items-center gap-2 min-[420px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
                 <input
                   type="date"
+                  aria-label="Début de la période"
                   value={dateDebut}
                   onChange={(e) => setDateDebut(e.target.value)}
-                  className="focus-ring h-tap w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
+                  className="focus-ring h-tap min-w-0 w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
                 />
-                <span className="text-muted">→</span>
+                <span aria-hidden="true" className="hidden text-muted min-[420px]:block">→</span>
                 <input
                   type="date"
+                  aria-label="Fin de la période"
                   value={dateFin}
                   onChange={(e) => setDateFin(e.target.value)}
-                  className="focus-ring h-tap w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
+                  className="focus-ring h-tap min-w-0 w-full rounded-input border border-border bg-surface px-2 text-body-sm text-text"
                 />
               </div>
             </div>

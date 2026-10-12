@@ -140,21 +140,21 @@ export function MesFacturesList({
             <Card key={facture.id} interactive>
               <Link
                 href={`/mes-factures/${facture.id}`}
-                className="focus-ring -m-4 flex items-start justify-between gap-3 rounded-card p-4"
+                className="focus-ring -m-4 flex flex-col gap-3 rounded-card p-4 sm:flex-row sm:items-start sm:justify-between"
               >
                 <div className="min-w-0">
                   <p className="truncate text-body font-medium text-text">{facture.client?.nom}</p>
-                  <p className="font-mono text-body-sm text-muted">{facture.numero}</p>
-                  <p className="text-body-sm text-muted">
+                  <p className="break-words font-mono text-body-sm text-muted">{facture.numero}</p>
+                  <p className="break-words text-body-sm text-muted">
                     {formatDate(facture.date_facture)}
                     {facture.entrepot?.nom ? ` · ${facture.entrepot.nom}` : ""}
                   </p>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-1.5">
-                  <span className="whitespace-nowrap font-mono text-body font-semibold text-text">
+                <div className="flex min-w-0 flex-col gap-1.5 sm:items-end">
+                  <span className="break-words font-mono text-body font-semibold text-text">
                     {formatMontant(facture.total_general)}
                   </span>
-                  <div className="flex flex-wrap items-center justify-end gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
                     <StatusBadge statut={facture.statut} />
                     {joursDeRetardParFacture.has(facture.id) && (
                       <OverdueBadge joursDeRetard={joursDeRetardParFacture.get(facture.id)!} />

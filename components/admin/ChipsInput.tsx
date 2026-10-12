@@ -46,13 +46,13 @@ export function ChipsInput({
         {values.map((valeur, index) => (
           <span
             key={`${valeur}-${index}`}
-            className="badge-pastel-neutral inline-flex items-center gap-1.5 rounded-input px-2 py-1 text-body-sm"
+            className="badge-pastel-neutral inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-input px-2 py-1 text-body-sm"
           >
-            {valeur}
+            <span className="min-w-0 break-words">{valeur}</span>
             <button
               type="button"
               onClick={() => supprimer(index)}
-              className="focus-ring text-muted hover:text-red-text"
+              className="focus-ring shrink-0 text-muted hover:text-red-text"
               aria-label={`Supprimer ${valeur}`}
             >
               ×

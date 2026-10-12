@@ -35,7 +35,7 @@ export function Topbar({
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-sticky flex h-16 items-center gap-3 border-b border-border bg-surface px-4 shadow-sm">
+    <header className="sticky top-0 z-sticky flex h-16 min-w-0 items-center gap-1.5 border-b border-border bg-surface px-3 shadow-sm sm:gap-3 sm:px-4">
       <button
         type="button"
         onClick={openMobile}
@@ -53,11 +53,11 @@ export function Topbar({
       <AlertsBell alertesInitiales={alertesInitiales} />
       <PaymentAlertsBell alertesInitiales={alertesPaiementInitiales} />
 
-      <div className="relative">
+      <div className="relative shrink-0">
         <button
           type="button"
           onClick={() => setMenuOuvert((v) => !v)}
-          className="focus-ring flex h-10 w-10 items-center justify-center rounded-full bg-surface-2 text-body-sm font-semibold text-text"
+          className="focus-ring flex h-11 w-11 items-center justify-center rounded-full bg-surface-2 text-body-sm font-semibold text-text"
           aria-haspopup="menu"
           aria-expanded={menuOuvert}
           aria-label="Menu utilisateur"
@@ -67,9 +67,9 @@ export function Topbar({
         {menuOuvert && (
           <div
             role="menu"
-            className="absolute right-0 z-dropdown mt-2 w-56 rounded-card border border-border bg-surface p-2 shadow-lg"
+            className="absolute right-0 z-dropdown mt-2 w-56 max-w-[calc(100vw-1.5rem)] rounded-card border border-border bg-surface p-2 shadow-lg"
           >
-            <p className="px-3 py-2 text-body font-medium text-text">{nom}</p>
+            <p className="break-words px-3 py-2 text-body font-medium text-text">{nom}</p>
             <span className="badge-pastel-green mb-1 ml-3 inline-flex w-fit items-center gap-1 rounded-badge px-2 py-0.5 text-caption">
               Admin
             </span>

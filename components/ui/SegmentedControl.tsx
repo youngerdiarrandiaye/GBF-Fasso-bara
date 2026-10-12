@@ -25,9 +25,9 @@ export function SegmentedControl<T extends string>({
 }) {
   return (
     <div
-      role="tablist"
+      role="group"
       className={cn(
-        "inline-flex gap-0.5 rounded-input bg-surface-2 p-1",
+        "inline-flex min-w-0 max-w-full flex-wrap gap-0.5 rounded-input bg-surface-2 p-1",
         disabled && "pointer-events-none opacity-40",
         className
       )}
@@ -38,12 +38,11 @@ export function SegmentedControl<T extends string>({
           <button
             key={option.value}
             type="button"
-            role="tab"
-            aria-selected={actif}
+            aria-pressed={actif}
             disabled={disabled}
             onClick={() => onChange(option.value)}
             className={cn(
-              "focus-ring rounded-input px-4 py-2 text-body-sm transition-colors duration-btn ease-standard",
+              "focus-ring min-h-11 min-w-0 break-words rounded-input px-3 py-2 text-body-sm transition-colors duration-btn ease-standard sm:px-4",
               // « Comptoir » (D-25) : pastille blanche surélevée sur la piste
               // surface-2, comme le sélecteur de période de la maquette.
               actif ? "bg-surface font-semibold text-text shadow-sm" : "font-medium text-muted hover:text-text"

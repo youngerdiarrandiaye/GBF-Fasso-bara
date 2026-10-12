@@ -58,13 +58,13 @@ export function ProductTabs({
   const [onglet, setOnglet] = useState<"mouvements" | "ventes">("mouvements");
 
   return (
-    <div>
-      <div className="flex border-b border-border">
+    <div className="min-w-0">
+      <div className="grid grid-cols-2 border-b border-border sm:flex">
         <button
           type="button"
           onClick={() => setOnglet("mouvements")}
           className={cn(
-            "focus-ring border-b-2 px-4 py-3 text-body font-medium transition-colors duration-btn",
+            "focus-ring min-w-0 break-words border-b-2 px-2 py-3 text-body font-medium transition-colors duration-btn sm:px-4",
             onglet === "mouvements" ? "border-green text-text" : "border-transparent text-muted"
           )}
         >
@@ -74,7 +74,7 @@ export function ProductTabs({
           type="button"
           onClick={() => setOnglet("ventes")}
           className={cn(
-            "focus-ring border-b-2 px-4 py-3 text-body font-medium transition-colors duration-btn",
+            "focus-ring min-w-0 break-words border-b-2 px-2 py-3 text-body font-medium transition-colors duration-btn sm:px-4",
             onglet === "ventes" ? "border-green text-text" : "border-transparent text-muted"
           )}
         >

@@ -102,8 +102,8 @@ export default async function UtilisateursAdminPage({
               const derniereConnexion = dernieresConnexions.get(u.id) ?? null;
               return (
                 <div key={u.id} className="p-4">
-                  <div className="flex items-start justify-between gap-3"><Link href={`/admin/utilisateurs/${u.id}`} className="focus-ring text-body font-semibold text-text hover:underline">{u.nom} {u.id === user?.id && <span className="text-body-sm font-normal text-muted">(vous)</span>}</Link><Badge tone={u.actif ? "green" : "red"}>{u.actif ? "Actif" : "Désactivé"}</Badge></div>
-                  <div className="mt-3 flex items-center justify-between gap-3"><Badge tone={u.role === "admin" ? "green" : "blue"}>{u.role === "admin" ? "Administrateur" : "Agent"}</Badge><UserRowActions utilisateur={u} estSoiMeme={u.id === user?.id} /></div>
+                  <div className="flex flex-wrap items-start justify-between gap-3"><Link href={`/admin/utilisateurs/${u.id}`} className="focus-ring min-w-0 break-words text-body font-semibold text-text hover:underline">{u.nom} {u.id === user?.id && <span className="text-body-sm font-normal text-muted">(vous)</span>}</Link><Badge tone={u.actif ? "green" : "red"}>{u.actif ? "Actif" : "Désactivé"}</Badge></div>
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3"><Badge tone={u.role === "admin" ? "green" : "blue"}>{u.role === "admin" ? "Administrateur" : "Agent"}</Badge><UserRowActions utilisateur={u} estSoiMeme={u.id === user?.id} /></div>
                   <p className="mt-3 text-caption text-muted">Dernière connexion : {derniereConnexion ? formatDateTime(derniereConnexion) : "Jamais connecté"}</p>
                 </div>
               );

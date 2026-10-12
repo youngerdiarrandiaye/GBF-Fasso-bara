@@ -19,12 +19,12 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-badge px-2.5 py-1 text-body-sm font-medium",
+        "inline-flex min-w-0 max-w-full items-center gap-1.5 break-words rounded-badge px-2.5 py-1 text-body-sm font-medium",
         `badge-pastel-${tone}`,
         className
       )}
     >
-      {children}
+      <span className="min-w-0 break-words">{children}</span>
     </span>
   );
 }

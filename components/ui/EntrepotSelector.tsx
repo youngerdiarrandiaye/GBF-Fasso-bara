@@ -62,7 +62,7 @@ export function EntrepotSelector({
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex min-w-0 flex-col gap-1.5">
       <p className="text-body font-medium text-text">{label}</p>
       <div className="flex flex-wrap gap-2">
         {actifs.map((entrepot) => {
@@ -77,7 +77,7 @@ export function EntrepotSelector({
               onClick={() => onChange(entrepot.id)}
               aria-pressed={selectionne}
               className={cn(
-                "focus-ring flex min-h-[40px] items-center gap-2 rounded-input border px-4 py-3 text-body transition-transform duration-btn ease-standard",
+                "focus-ring flex min-h-11 min-w-0 max-w-full items-center gap-2 rounded-input border px-4 py-3 text-left text-body transition-transform duration-btn ease-standard disabled:cursor-not-allowed disabled:opacity-40",
                 selectionne
                   ? "badge-pastel-green border-green-dk font-semibold ring-1 ring-green-dk"
                   : exclu
@@ -90,10 +90,10 @@ export function EntrepotSelector({
                 className={cn("h-4 w-4 shrink-0", selectionne ? "text-green-text" : "text-muted")}
                 aria-hidden="true"
               />
-              <span className="flex flex-col items-start leading-tight">
-                <span>{entrepot.nom}</span>
+              <span className="flex min-w-0 flex-col items-start break-words leading-tight">
+                <span className="min-w-0 max-w-full break-words">{entrepot.nom}</span>
                 {hint !== undefined && (
-                  <span className={cn("font-mono text-caption", selectionne ? "text-white/80" : "text-muted")}>
+                  <span className={cn("min-w-0 max-w-full break-words font-mono text-caption", selectionne ? "text-white/80" : "text-muted")}>
                     {formatQuantite(hint, unite)} en stock
                   </span>
                 )}

@@ -102,7 +102,7 @@ export default async function ProduitDetailPage({
   const produitTyped = produit as unknown as ProduitRow & { categorie: { id: string; nom: string } | null };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6 break-words">
       <RealtimeRevalidate tables={["produits", "mouvements_stock"]} />
 
       <Breadcrumbs
@@ -110,12 +110,12 @@ export default async function ProduitDetailPage({
       />
 
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-wrap items-start gap-4">
+        <div className="flex min-w-0 max-w-full flex-wrap items-start gap-4">
           <ProductPhotoGallery photosUrls={produitTyped.photos_urls} nom={produitTyped.nom} />
-          <div>
+          <div className="min-w-0 max-w-full">
             <div className="flex flex-wrap items-center gap-3">
               <CompanyBrandMark nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} size="sm" />
-              <h1 className="text-h1 font-semibold tracking-tight text-text">{produitTyped.nom}</h1>
+              <h1 className="min-w-0 max-w-full text-h1 font-semibold tracking-tight text-text">{produitTyped.nom}</h1>
               <StockLevelBadge
                 quantiteStock={produitTyped.quantite_stock}
                 seuilAlerte={produitTyped.seuil_alerte}

@@ -374,7 +374,7 @@ export function NouveauBonLivraisonForm({
         <p>Client : <strong>{client?.nom}</strong></p>
         <p>Entrepôt : <strong>{entrepotSelectionne?.nom}</strong></p>
         <p>Facture : <strong>{factureLiee?.numero ?? "Sans facture"}</strong></p>
-        <ul className="mt-3 space-y-2">{lignes.map((ligne) => <li key={ligne.produit_id} className="flex justify-between gap-3"><span>{ligne.nom}</span><strong>{ligne.quantite} {ligne.unite}</strong></li>)}</ul>
+        <ul className="mt-3 space-y-2">{lignes.map((ligne) => <li key={ligne.produit_id} className="flex flex-wrap justify-between gap-3"><span className="min-w-0 break-words">{ligne.nom}</span><strong>{ligne.quantite} {ligne.unite}</strong></li>)}</ul>
       </div>
       <InlineAlert tone="blue">En confirmant, ces produits seront retirés du stock de l’entrepôt {entrepotSelectionne?.nom}. Aucun stock n’est retiré avant cette confirmation.</InlineAlert>
       <div className="flex flex-col gap-1.5">
@@ -436,7 +436,7 @@ export function NouveauBonLivraisonForm({
       </details>
 
       </fieldset>
-      <div className={`sticky z-sticky -mx-4 flex flex-col gap-2 border-t border-border bg-surface p-4 sm:flex-row sm:justify-end ${espaceAdmin ? "bottom-0" : "bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0"}`}>
+      <div className={`sticky z-sticky -mx-4 flex flex-col gap-2 border-t border-border bg-surface p-4 sm:flex-row sm:justify-end ${espaceAdmin ? "bottom-0" : "bottom-[calc(4rem+env(safe-area-inset-bottom))] lg:bottom-0"}`}>
         {etape > 1 && <Button type="button" variant="outline" size="lg" disabled={enCours} onClick={() => allerEtape(etape - 1)}>Retour</Button>}
         {etape < 3 ? <Button type="button" size="lg" fullWidth className="sm:w-auto" disabled={enCours || factureChargement || !client || !entrepotSelectionne || (etape === 2 && !lignes.length)} onClick={() => {
           if (etape === 2) {
