@@ -1,20 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { SignOutButton } from "@/components/agent/SignOutButton";
 import { AlertsBell } from "@/components/admin/AlertsBell";
 import { PaymentAlertsBell } from "@/components/admin/PaymentAlertsBell";
-import { useSidebar } from "@/components/admin/SidebarContext";
 import { GlobalSearch } from "@/components/admin/GlobalSearch";
 import type { AlerteFactureRow, AlerteStockRow } from "@/lib/supabase/database.types";
 
 /**
  * Barre supérieure Admin — sticky, cloche d'alertes temps réel + menu
- * utilisateur. Le bouton burger (< lg) ouvre le tiroir de navigation porté
- * par la Sidebar (voir SidebarContext) : un seul menu de navigation mobile,
- * plus de liste dupliquée ici.
+ * utilisateur. Pas de navigation ici : sous lg elle vit dans AdminBottomNav
+ * (barre basse + feuille « Plus »), à partir de lg dans la Sidebar.
  */
 export function Topbar({
   nom,
@@ -26,7 +22,6 @@ export function Topbar({
   alertesPaiementInitiales: AlerteFactureRow[];
 }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const { mobileOpen, openMobile } = useSidebar();
   const initiales = nom
     .split(" ")
     .map((part) => part[0])
@@ -36,18 +31,6 @@ export function Topbar({
 
   return (
     <header className="sticky top-0 z-sticky flex h-16 min-w-0 items-center gap-1.5 border-b border-border bg-surface px-3 shadow-sm sm:gap-3 sm:px-4">
-      <button
-        type="button"
-        onClick={openMobile}
-        className="focus-ring flex h-11 shrink-0 items-center justify-center gap-2 rounded-input border border-green-dk bg-green-dk px-3 text-body-sm font-semibold text-white shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 lg:hidden"
-        aria-label="Ouvrir le menu"
-        aria-controls="admin-navigation"
-        aria-expanded={mobileOpen}
-      >
-        <FontAwesomeIcon icon={faBars} className="h-5 w-5" aria-hidden="true" />
-        <span className="hidden min-[420px]:inline">Menu</span>
-      </button>
-
       <GlobalSearch />
 
       <AlertsBell alertesInitiales={alertesInitiales} />

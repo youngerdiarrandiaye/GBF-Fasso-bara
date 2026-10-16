@@ -8,18 +8,12 @@ interface SidebarContextValue {
   /** Sidebar repliée en mode icônes seules (≥ lg), préférence persistée. */
   collapsed: boolean;
   toggleCollapsed: () => void;
-  /** Tiroir mobile ouvert/fermé (< lg), volontairement non persisté : on ne
-   *  veut jamais rouvrir un tiroir mobile au chargement d'une nouvelle page. */
-  mobileOpen: boolean;
-  openMobile: () => void;
-  closeMobile: () => void;
 }
 
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     // La préférence locale n'est lisible qu'après l'hydratation. La valeur
@@ -36,11 +30,8 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const openMobile = useCallback(() => setMobileOpen(true), []);
-  const closeMobile = useCallback(() => setMobileOpen(false), []);
-
   return (
-    <SidebarContext.Provider value={{ collapsed, toggleCollapsed, mobileOpen, openMobile, closeMobile }}>
+    <SidebarContext.Provider value={{ collapsed, toggleCollapsed }}>
       {children}
     </SidebarContext.Provider>
   );

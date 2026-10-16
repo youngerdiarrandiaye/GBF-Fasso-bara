@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/admin/Sidebar";
 import { Topbar } from "@/components/admin/Topbar";
+import { AdminBottomNav } from "@/components/admin/AdminBottomNav";
 import { SidebarProvider } from "@/components/admin/SidebarContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import { NetworkStatusBanner } from "@/components/ui/NetworkStatusBanner";
@@ -85,11 +86,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 alertesPaiementInitiales={(alertesPaiementInitiales as AlerteFactureRow[]) ?? []}
               />
               <NetworkStatusBanner />
-              <main className="mx-auto min-w-0 w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
+              <main className="mx-auto min-w-0 w-full max-w-[1400px] flex-1 px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8 lg:pb-6">
                 {children}
               </main>
             </div>
           </div>
+          <AdminBottomNav />
         </SidebarProvider>
       </ToastProvider>
     </div>
