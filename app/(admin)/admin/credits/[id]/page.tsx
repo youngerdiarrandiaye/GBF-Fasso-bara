@@ -152,7 +152,23 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
         <div className="p-4">
           <h2 className="text-h2 text-text">Historique des remboursements</h2>
         </div>
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-border border-t border-border md:hidden">
+          {remboursements.length === 0 ? (
+            <li><EmptyState icone={faHandHoldingDollar} titre="Aucun remboursement enregistré pour ce crédit." /></li>
+          ) : (
+            remboursements.map((r) => (
+              <li key={r.id} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-body-sm text-muted">{formatDate(r.date_remboursement)}</p>
+                  <p className="shrink-0 font-mono text-body font-semibold text-green-text">{formatMontant(r.montant)}</p>
+                </div>
+                <p className="mt-1 text-body-sm text-muted">Par {r.utilisateur?.nom ?? "—"}</p>
+                {r.notes && <p className="mt-1 break-words text-body-sm text-text">{r.notes}</p>}
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-[600px] w-full border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">

@@ -371,9 +371,10 @@ export default async function DashboardAdminPage({
       </header>
 
       {/* Une seule action en tête de page : l'action du quotidien (facturer).
-          Les autres (produit, paiements, clients, livraison) sont dans le
-          menu latéral, hamburger sur mobile. */}
-      <div>
+          Les autres (produit, paiements, clients, livraison) sont dans la
+          sidebar (desktop) ou la feuille « Plus » (mobile), où l'action
+          « Créer » de la barre basse remplace ce bouton. */}
+      <div className="hidden lg:block">
         <Link
           href="/admin/nouvelle-facture"
           className="focus-ring inline-flex h-tap items-center gap-2 rounded-input border border-green-dk bg-green-dk px-4 text-body font-medium text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98]"
@@ -409,24 +410,24 @@ export default async function DashboardAdminPage({
             <EmptyState icone={faCircleCheck} titre="Rien à traiter pour le moment" description="Livraisons, paiements, stock, crédits et transferts sont à jour." ton="succes" />
           </Card>
         ) : (
-          <ul className="cascade grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <ul className="cascade grid grid-cols-2 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {prioritesActives.map((p) => (
-              <li key={p.href}>
+              <li key={p.href} className="min-w-0">
                 <Link
                   href={p.href}
-                  className="focus-ring group flex h-full items-center gap-4 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow] duration-card ease-out hover:-translate-y-0.5 hover:shadow-card-hover"
+                  className="focus-ring group flex h-full flex-col gap-3 rounded-card-lg border border-border bg-surface p-4 transition-[transform,box-shadow] duration-card ease-out hover:-translate-y-0.5 hover:shadow-card-hover sm:flex-row sm:items-center sm:gap-4"
                 >
-                  <span className={`min-w-[2ch] shrink-0 text-right font-mono text-[2.25rem] font-semibold leading-none tracking-[-0.04em] ${p.ton}`}>
+                  <span className={`shrink-0 font-mono text-[2.25rem] font-semibold leading-none tracking-[-0.04em] sm:min-w-[2ch] sm:text-right ${p.ton}`}>
                     {p.nombre}
                   </span>
-                  <span className="min-w-0 flex-1 border-l border-border pl-4">
+                  <span className="min-w-0 flex-1 sm:border-l sm:border-border sm:pl-4">
                     <span className="flex items-center gap-2 text-body font-semibold text-text">
                       <FontAwesomeIcon icon={p.icone} className={`h-3.5 w-3.5 shrink-0 ${p.ton}`} aria-hidden="true" />
                       {p.titre}
                     </span>
                     <span className="mt-0.5 block text-body-sm text-muted">{p.detail}</span>
                   </span>
-                  <FontAwesomeIcon icon={faArrowRight} className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  <FontAwesomeIcon icon={faArrowRight} className="hidden h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1 sm:block" aria-hidden="true" />
                 </Link>
               </li>
             ))}

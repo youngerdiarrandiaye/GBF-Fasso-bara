@@ -59,13 +59,13 @@ export function ProductTabs({
 
   return (
     <div className="min-w-0">
-      <div className="grid grid-cols-2 border-b border-border sm:flex">
+      <div className="m-3 grid grid-cols-2 gap-1 rounded-full bg-surface-2 p-1 sm:m-0 sm:flex sm:gap-0 sm:rounded-none sm:border-b sm:border-border sm:bg-transparent sm:p-0">
         <button
           type="button"
           onClick={() => setOnglet("mouvements")}
           className={cn(
-            "focus-ring min-w-0 break-words border-b-2 px-2 py-3 text-body font-medium transition-colors duration-btn sm:px-4",
-            onglet === "mouvements" ? "border-green text-text" : "border-transparent text-muted"
+            "focus-ring min-h-11 min-w-0 break-words rounded-full px-2 py-2 text-body-sm font-medium transition-colors duration-btn sm:rounded-none sm:border-b-2 sm:px-4 sm:py-3 sm:text-body",
+            onglet === "mouvements" ? "bg-green-dk text-white sm:border-green sm:bg-transparent sm:text-text" : "text-muted sm:border-transparent"
           )}
         >
           Mouvements de stock
@@ -74,8 +74,8 @@ export function ProductTabs({
           type="button"
           onClick={() => setOnglet("ventes")}
           className={cn(
-            "focus-ring min-w-0 break-words border-b-2 px-2 py-3 text-body font-medium transition-colors duration-btn sm:px-4",
-            onglet === "ventes" ? "border-green text-text" : "border-transparent text-muted"
+            "focus-ring min-h-11 min-w-0 break-words rounded-full px-2 py-2 text-body-sm font-medium transition-colors duration-btn sm:rounded-none sm:border-b-2 sm:px-4 sm:py-3 sm:text-body",
+            onglet === "ventes" ? "bg-green-dk text-white sm:border-green sm:bg-transparent sm:text-text" : "text-muted sm:border-transparent"
           )}
         >
           Historique des ventes
@@ -83,7 +83,42 @@ export function ProductTabs({
       </div>
 
       {onglet === "mouvements" ? (
-        <div className="overflow-x-auto">
+        <>
+        <ul className="divide-y divide-border md:hidden">
+          {mouvements.length === 0 ? (
+            <li className="px-4 py-6 text-center text-body text-muted">Aucun mouvement de stock enregistré.</li>
+          ) : (
+            mouvements.map((m) => {
+              const config = MOUVEMENT_CONFIG[m.type];
+              return (
+                <li key={m.id} className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={cn("inline-flex items-center gap-1.5 font-medium", config.tone)}>
+                      <FontAwesomeIcon icon={config.icon} className="h-3.5 w-3.5" aria-hidden="true" />
+                      {config.label}
+                    </span>
+                    <p className="shrink-0 font-mono text-body font-semibold text-text">
+                      {formatQuantite(m.quantite, libelleUnite(unite, Math.abs(m.quantite)))}
+                    </p>
+                  </div>
+                  {m.motif && <p className="mt-1 break-words text-body-sm text-text">{m.motif}</p>}
+                  <p className="mt-1 break-words text-body-sm text-muted">
+                    {formatDateTime(m.created_at)}{m.utilisateur_nom ? ` · ${m.utilisateur_nom}` : ""}
+                  </p>
+                  {m.facture_id && (
+                    <Link
+                      href={`/admin/factures/${m.facture_id}`}
+                      className="focus-ring mt-2 inline-flex min-h-11 items-center rounded-input bg-surface-2 px-2 font-mono text-body-sm text-text hover:underline"
+                    >
+                      {m.facture_numero ?? m.facture_id}
+                    </Link>
+                  )}
+                </li>
+              );
+            })
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-[820px] w-full border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
@@ -138,8 +173,32 @@ export function ProductTabs({
             </tbody>
           </table>
         </div>
+        </>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        <ul className="divide-y divide-border md:hidden">
+          {ventes.length === 0 ? (
+            <li className="px-4 py-6 text-center text-body text-muted">Aucune vente enregistrée pour ce produit.</li>
+          ) : (
+            ventes.map((v) => (
+              <li key={v.id}>
+                <Link href={`/admin/factures/${v.facture_id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-mono text-body font-semibold text-text">{v.numero}</p>
+                      <p className="mt-1 break-words text-body-sm text-muted">{v.client_nom} · {formatDate(v.date_facture)}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-mono text-body font-semibold text-text">{formatMontant(v.total_ligne)}</p>
+                      <p className="font-mono text-body-sm text-muted">{formatQuantite(v.quantite, libelleUnite(unite, v.quantite))}</p>
+                    </div>
+                  </div>
+                </Link>
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-[640px] w-full border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
@@ -182,6 +241,7 @@ export function ProductTabs({
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );

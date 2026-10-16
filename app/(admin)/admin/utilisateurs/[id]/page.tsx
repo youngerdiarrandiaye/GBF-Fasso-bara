@@ -160,7 +160,32 @@ export default async function UtilisateurDetailPage({
 
           <Card className="!p-0">
             <h2 className="p-4 text-h2 text-text">Factures de cet agent</h2>
-            <div className="overflow-x-auto">
+            <ul className="divide-y divide-border border-t border-border md:hidden">
+              {factures.length === 0 ? (
+                <li><EmptyState icone={faFileInvoice} titre="Aucune facture créée par cet agent." /></li>
+              ) : (
+                factures.map((facture) => (
+                  <li key={facture.id}>
+                    <Link href={`/admin/factures/${facture.id}`} className="focus-ring block p-4 transition-colors hover:bg-surface-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-mono text-body font-semibold text-text">{facture.numero}</p>
+                          <p className="mt-1 break-words text-body-sm text-muted">{facture.client?.nom} · {formatDate(facture.date_facture)}</p>
+                        </div>
+                        <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
+                      </div>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <StatusBadge statut={facture.statut} />
+                        {joursDeRetardParFacture.has(facture.id) && (
+                          <OverdueBadge joursDeRetard={joursDeRetardParFacture.get(facture.id)!} />
+                        )}
+                      </div>
+                    </Link>
+                  </li>
+                ))
+              )}
+            </ul>
+            <div className="hidden overflow-x-auto md:block">
               <table className="min-w-[680px] w-full border-collapse">
                 <thead>
                   <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">

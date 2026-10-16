@@ -107,7 +107,24 @@ export default async function BonLivraisonDetailPage({ params }: { params: Promi
             saisie de chaque ligne.
           </p>
         </div>
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-border border-t border-border md:hidden">
+          {lignes.length === 0 ? (
+            <li><EmptyState icone={faBoxOpen} titre="Aucune ligne enregistrée." /></li>
+          ) : (
+            lignes.map((l) => (
+              <li key={l.id} className="flex items-start justify-between gap-3 p-4">
+                <div className="min-w-0">
+                  <p className="break-words text-body text-text">{l.produit.nom}</p>
+                  <p className="font-mono text-body-sm text-muted">{l.produit.code}</p>
+                </div>
+                <p className="shrink-0 text-right font-mono text-body font-semibold text-text">
+                  {formatQuantite(l.quantite, libelleUnite(l.produit.unite, l.quantite))}
+                </p>
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-[460px] w-full border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">

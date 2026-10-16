@@ -79,7 +79,44 @@ export default async function EntrepotDetailPage({ params }: { params: Promise<{
             Source de vérité du stock (règle métier 16) — ajustement manuel avec motif obligatoire.
           </p>
         </div>
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-border border-t border-border md:hidden">
+          {lignesStock.length === 0 ? (
+            <li><EmptyState icone={faBoxesStacked} titre="Aucun produit en stock dans cet entrepôt pour le moment." /></li>
+          ) : (
+            lignesStock.map((l) => (
+              <li key={l.id} className="flex flex-col gap-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="break-words text-body font-medium text-text">{l.produit.nom}</p>
+                    <p className="font-mono text-body-sm text-muted">{l.produit.code}</p>
+                  </div>
+                  <StockLevelBadge quantiteStock={l.quantite_stock} seuilAlerte={l.seuil_alerte} />
+                </div>
+                <div className="grid grid-cols-2 gap-3 rounded-input bg-surface-2 p-3">
+                  <div>
+                    <p className="text-caption text-muted">Quantité</p>
+                    <p className="font-mono text-body font-semibold text-text">{formatQuantite(l.quantite_stock, libelleUnite(l.produit.unite, l.quantite_stock))}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-caption text-muted">Seuil d&apos;alerte</p>
+                    <p className="font-mono text-body text-muted">{formatQuantite(l.seuil_alerte)}</p>
+                  </div>
+                </div>
+                <StockEntrepotRowActions
+                  produitId={l.produit.id}
+                  produitNom={l.produit.nom}
+                  produitCode={l.produit.code}
+                  unite={l.produit.unite}
+                  entrepotId={entrepotTyped.id}
+                  entrepotNom={entrepotTyped.nom}
+                  quantiteStock={l.quantite_stock}
+                  seuilAlerte={l.seuil_alerte}
+                />
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-[700px] w-full border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">

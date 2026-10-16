@@ -4,7 +4,7 @@ import { NavigationLink as Link } from "@/components/ui/NavigationLink";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faMagnifyingGlass, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { cn } from "@/lib/cn";
 import { ThemePicker } from "@/components/admin/ThemePicker";
 import { ACTION_PRINCIPALE, GROUPES, ONGLETS_BAS, estActif, estDansPlus } from "@/components/admin/adminNav";
@@ -92,10 +92,13 @@ export function AdminBottomNav() {
           <Link
             href={ACTION_PRINCIPALE.href}
             aria-label="Créer une facture"
-            className="focus-ring tap-target flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-input bg-green-dk px-1 text-caption font-semibold text-white shadow-sm"
+            className="focus-ring relative flex min-w-0 items-start justify-center"
           >
-            <FontAwesomeIcon icon={ACTION_PRINCIPALE.icon} className="h-4 w-4" aria-hidden="true" />
-            {ACTION_PRINCIPALE.label}
+            {/* Bouton rond surélevé, comme le « + » central des apps mobiles */}
+            <span className="absolute -top-5 flex h-14 w-14 items-center justify-center rounded-full border-4 border-surface bg-green-dk text-white shadow-lg transition-transform active:scale-95">
+              <FontAwesomeIcon icon={faPlus} className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span className="sr-only">{ACTION_PRINCIPALE.label}</span>
           </Link>
 
           {ONGLETS_BAS.slice(2).map((onglet) => (

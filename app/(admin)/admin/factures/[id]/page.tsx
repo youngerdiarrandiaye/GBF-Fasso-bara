@@ -344,7 +344,30 @@ export default async function FactureDetailAdminPage({
           <h2 className="text-h3 text-text">Paiements</h2>
           <span className="text-body-sm text-muted">{paiements.length + remboursementsCredit.length}</span>
         </div>
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-border md:hidden">
+          {paiements.length === 0 && remboursementsCredit.length === 0 && (
+            <li><EmptyState icone={faMoneyBillWave} titre="Aucun paiement enregistré pour cette facture." /></li>
+          )}
+          {paiements.map((p) => (
+            <li key={p.id} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</p>
+                <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(p.montant)}</p>
+              </div>
+              <p className="mt-1 break-words text-body-sm text-muted">{formatDate(p.date_paiement)}{p.reference ? ` · ${p.reference}` : ""}</p>
+            </li>
+          ))}
+          {remboursementsCredit.map((r) => (
+            <li key={r.id} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-body text-text">Recouvrement crédit</p>
+                <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(r.montant)}</p>
+              </div>
+              <p className="mt-1 break-words text-body-sm text-muted">{formatDate(r.date_remboursement)}{r.notes ? ` · ${r.notes}` : ""}</p>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-[560px] w-full border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-caption uppercase tracking-[0.06em] text-muted">
