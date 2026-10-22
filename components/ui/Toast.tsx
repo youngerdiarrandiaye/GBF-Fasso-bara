@@ -88,7 +88,7 @@ export function useToast(): ToastContextValue {
  * faire basculer la position des toasts — voir docs/toast-et-coherence-
  * donnees.md §3.3 / D-Toast-01 : coin supérieur droit partout, SAUF Agent
  * mobile (< 640px) où les toasts restent en bas d'écran, au-dessus de la
- * `BottomTabBar` et du bouton flottant "Nouvelle facture", pour rester au
+ * `AgentBottomNav` et du bouton flottant "Nouvelle facture", pour rester au
  * plus près du geste qui vient de les déclencher. */
 function useEnDessousDe(largeurPx: number): boolean {
   // `useSyncExternalStore`, pas `useState` + `setState` synchrone dans un

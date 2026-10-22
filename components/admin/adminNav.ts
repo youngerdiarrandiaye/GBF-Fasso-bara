@@ -13,15 +13,9 @@ import {
   faTruck,
   faTruckRampBox,
   faHandHoldingDollar,
-  type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
+import { estLienActif, type LienNav } from "@/components/ui/MobileBottomNav";
 
-export interface LienNav {
-  href: string;
-  label: string;
-  icon: IconDefinition;
-  exact?: boolean;
-}
 
 /**
  * Source unique de la navigation Admin : la Sidebar (≥ lg) et la feuille
@@ -84,23 +78,7 @@ export const ACTION_PRINCIPALE: LienNav = {
   icon: faFileCirclePlus,
 };
 
-function correspond(pathname: string, lien: LienNav) {
-  return lien.exact ? pathname === lien.href : pathname === lien.href || pathname.startsWith(`${lien.href}/`);
-}
-
-/**
- * Vrai si `lien` est l'entrée la plus précise pour `pathname` : sur
- * /admin/bons-livraison/nouveau, « Nouvelle livraison » est actif, pas
- * « Bons de livraison ».
- */
+/** Entrée la plus précise pour `pathname` (voir estLienActif). */
 export function estActif(pathname: string, lien: LienNav) {
-  if (!correspond(pathname, lien)) return false;
-  return !GROUPES.some((g) =>
-    g.liens.some((autre) => autre.href.length > lien.href.length && autre.href.startsWith(lien.href) && correspond(pathname, autre))
-  );
-}
-
-/** Vrai si la page courante n'est portée par aucun onglet épinglé → « Plus » actif. */
-export function estDansPlus(pathname: string) {
-  return !ONGLETS_BAS.some((o) => estActif(pathname, o)) && !estActif(pathname, ACTION_PRINCIPALE);
+  return estLienActif(pathname, lien, GROUPES.flatMap((g) => g.liens));
 }

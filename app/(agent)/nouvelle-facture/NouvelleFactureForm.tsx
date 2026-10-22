@@ -754,7 +754,7 @@ export function NouvelleFactureForm({
 
       {/* Barre de pied : retour et total puis action pleine largeur sous sm,
           une seule ligne au-delà. Fixe en bas d'écran sous md (l'Espace Agent y masque la
-          barre d'onglets, cf. BottomTabBar ; le padding de la racine réserve sa
+          barre d'onglets, cf. AgentBottomNav ; le padding de la racine réserve sa
           hauteur), sticky au-delà. */}
       <div className="fixed inset-x-0 bottom-0 z-sticky grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-t border-border bg-surface px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:flex sm:gap-3 md:sticky md:-mx-4">
         {etape > 1 && (

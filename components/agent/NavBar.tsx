@@ -64,11 +64,13 @@ export function NavBar({ nom }: { nom: string }) {
           </Link>
         </nav>
 
-        <div className="relative shrink-0">
+        <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-2 text-body-sm font-semibold text-text lg:hidden">{initiales || "A"}</span>
+
+        <div className="relative hidden shrink-0 lg:block">
           <button
             type="button"
             onClick={() => setMenuOuvert((v) => !v)}
-            className="focus-ring flex h-11 items-center justify-center gap-2 rounded-input border border-accent bg-accent px-3 text-body-sm font-semibold text-accent-on shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 lg:w-11 lg:rounded-full lg:border-transparent lg:bg-surface-2 lg:px-0 lg:text-text lg:shadow-none lg:hover:brightness-95"
+            className="focus-ring hidden h-11 items-center justify-center gap-2 rounded-input border border-accent bg-accent px-3 text-body-sm font-semibold text-accent-on shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 lg:flex lg:w-11 lg:rounded-full lg:border-transparent lg:bg-surface-2 lg:px-0 lg:text-text lg:shadow-none lg:hover:brightness-95"
             aria-haspopup="menu"
             aria-expanded={menuOuvert}
             aria-label="Menu"

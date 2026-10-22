@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { NavBar } from "@/components/agent/NavBar";
-import { BottomTabBar } from "@/components/agent/BottomTabBar";
+import { AgentBottomNav } from "@/components/agent/AgentBottomNav";
 import { ToastProvider } from "@/components/ui/Toast";
 import { NetworkStatusBanner } from "@/components/ui/NetworkStatusBanner";
 
@@ -44,7 +44,7 @@ export default async function AgentLayout({ children }: { children: React.ReactN
         <NavBar nom={profil.nom} />
         <NetworkStatusBanner />
         <main className="mx-auto min-w-0 w-full max-w-5xl px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-6 lg:pb-10">{children}</main>
-        <BottomTabBar />
+        <AgentBottomNav nom={profil.nom} />
       </ToastProvider>
     </div>
   );
