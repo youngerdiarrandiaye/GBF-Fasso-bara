@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { cn } from "@/lib/cn";
 import { CompanyBrandMark } from "@/components/facture/CompanyBrandMark";
-import { ThemePicker } from "@/components/admin/ThemePicker";
 import { useSidebar } from "@/components/admin/SidebarContext";
 import { GROUPES, estActif } from "@/components/admin/adminNav";
 
@@ -105,9 +104,6 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
         ))}
         {groups.length === 0 && <p role="status" className={cn("px-3 py-6 text-body-sm text-sidebar-text-muted", collapsed && "hidden")}>Aucune rubrique trouvée.</p>}
       </nav>
-      <div className={cn("shrink-0 border-t border-sidebar-text-muted/15 px-4 py-3", collapsed && "hidden")}>
-        <ThemePicker collapsed={collapsed} />
-      </div>
     </aside>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { MobileBottomNav } from "@/components/ui/MobileBottomNav";
-import { ThemePicker } from "@/components/admin/ThemePicker";
 import { ACTION_PRINCIPALE, GROUPES, ONGLETS_BAS } from "@/components/admin/adminNav";
 
 /**
@@ -19,7 +18,6 @@ export function AdminBottomNav() {
       groupes={GROUPES}
       libelleRubriques="Rubriques Admin"
       masquerSur="/admin/nouvelle-facture"
-      pied={<ThemePicker />}
     />
   );
 }

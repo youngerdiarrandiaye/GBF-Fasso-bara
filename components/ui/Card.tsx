@@ -9,13 +9,16 @@ export function Card({
   children,
   className,
   interactive = false,
+  id,
 }: {
   children: React.ReactNode;
   className?: string;
   interactive?: boolean;
+  id?: string;
 }) {
   return (
     <div
+      id={id}
       className={cn(
         "min-w-0 rounded-card border border-border bg-surface p-4 shadow-sm",
         interactive &&
