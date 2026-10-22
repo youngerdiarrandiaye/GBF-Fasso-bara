@@ -52,7 +52,7 @@ export function ReportsBarChart({ data }: { data: PointRapport[] }) {
             formatter={(value: number) => [formatMontant(value), "Ventes"]}
             labelStyle={{ color: "var(--color-muted)" }}
           />
-          <Bar dataKey="total" fill="var(--color-green)" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="total" fill="var(--accent)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

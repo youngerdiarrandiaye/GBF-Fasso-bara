@@ -69,14 +69,14 @@
   --color-encre: #0E2A1A;
   --color-encre-muted: #B9D8C3;
 
-  --color-chart-serie-1: var(--color-green);    /* vert clair — CA facturé */
-  --color-chart-serie-2: var(--color-green-dk); /* vert foncé — CA encaissé */
+  --color-chart-serie-1: var(--accent);
+  --color-chart-serie-2: color-mix(in srgb, var(--accent) 55%, var(--color-surface));
 
-  --color-agent-ring-1: var(--color-green);        /* #16A34A */
-  --color-agent-ring-2: var(--color-hero-end);     /* #4ADE80 */
-  --color-agent-ring-3: var(--color-green-dk);     /* #15803D */
+  --color-agent-ring-1: var(--accent);
+  --color-agent-ring-2: color-mix(in srgb, var(--accent) 70%, var(--color-surface));
+  --color-agent-ring-3: color-mix(in srgb, var(--accent) 50%, var(--color-surface));
   --color-agent-ring-4: var(--color-accent-start); /* #2DD4BF turquoise */
-  --color-agent-ring-5: var(--color-hero-start);   /* #0D3320 */
+  --color-agent-ring-5: color-mix(in srgb, var(--accent) 30%, var(--color-surface));
 
   /* ---------------------------------------------------------------------------
      Rayons (voir règle absolue : inputs/badges génériques = rounded-lg,

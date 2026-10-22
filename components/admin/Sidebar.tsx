@@ -59,7 +59,7 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
           aria-label={collapsed ? "Déplier le menu" : "Replier le menu"}
           aria-expanded={!collapsed}
           title={collapsed ? "Déplier le menu" : "Replier le menu"}
-          className="focus-ring flex h-10 w-10 shrink-0 items-center justify-center rounded-input text-sidebar-text-muted hover:bg-[color-mix(in_srgb,var(--color-green)_8%,var(--color-sidebar-bg))]"
+          className="focus-ring flex h-10 w-10 shrink-0 items-center justify-center rounded-input text-sidebar-text-muted hover:bg-[color-mix(in_srgb,var(--accent)_8%,var(--color-sidebar-bg))]"
         >
           <FontAwesomeIcon icon={collapsed ? faChevronRight : faChevronLeft} className="h-3.5 w-3.5" />
         </button>
@@ -92,7 +92,7 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
                     collapsed && "justify-center px-2",
                     actif
                       ? "bg-sidebar-active font-semibold text-sidebar-active-text shadow-sm"
-                      : "text-sidebar-text-muted hover:bg-[color-mix(in_srgb,var(--color-green)_8%,var(--color-sidebar-bg))]"
+                      : "text-sidebar-text-muted hover:bg-[color-mix(in_srgb,var(--accent)_8%,var(--color-sidebar-bg))]"
                   )}
                 >
                   <FontAwesomeIcon icon={lien.icon} className="h-4 w-4 shrink-0" aria-hidden="true" />

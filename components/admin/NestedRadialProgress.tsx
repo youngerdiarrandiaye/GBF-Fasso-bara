@@ -52,7 +52,7 @@ export function NestedRadialProgress({
                 <p className="shrink-0 font-mono text-body text-muted">{pourcentage}% · {formatMontant(agent.total)}</p>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-surface-2">
-                <div className="h-full rounded-full bg-green" style={{ width: `${largeur}%` }} />
+                <div className="h-full rounded-full bg-accent" style={{ width: `${largeur}%` }} />
               </div>
             </li>
           );

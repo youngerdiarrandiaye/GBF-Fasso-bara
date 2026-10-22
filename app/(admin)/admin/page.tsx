@@ -529,7 +529,7 @@ export default async function DashboardAdminPage({
             </div>
             <div className="flex items-center gap-3">
               <Link href="/admin/rapports" className="focus-ring rounded-input text-body-sm text-muted hover:text-text">Exporter</Link>
-              <Link href="/admin/factures" className="focus-ring inline-flex h-9 items-center gap-1 rounded-input bg-surface-2 px-3 text-body-sm font-medium text-text hover:bg-[color-mix(in_srgb,var(--color-green)_12%,var(--color-surface))]">
+              <Link href="/admin/factures" className="focus-ring inline-flex h-9 items-center gap-1 rounded-input bg-surface-2 px-3 text-body-sm font-medium text-text hover:bg-[color-mix(in_srgb,var(--accent)_12%,var(--color-surface))]">
                 Toutes les factures
               </Link>
             </div>

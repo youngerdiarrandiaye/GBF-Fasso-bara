@@ -19,7 +19,7 @@ export function Card({
       className={cn(
         "min-w-0 rounded-card border border-border bg-surface p-4 shadow-sm",
         interactive &&
-          "transition-[transform,box-shadow,background-color,border-color] duration-card ease-out hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--color-green)_35%,var(--color-border))] hover:bg-surface-2 hover:shadow-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+          "transition-[transform,box-shadow,background-color,border-color] duration-card ease-out hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--color-border))] hover:bg-surface-2 hover:shadow-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0",
         className
       )}
     >

@@ -15,7 +15,7 @@ type QuickAction = {
 
 const TONE_CLASSES: Record<QuickActionTone, string> = {
   blue: "bg-blue/10 text-blue-text",
-  green: "bg-green/10 text-green-text",
+  green: "bg-accent/10 text-accent-text",
   amber: "bg-amber/10 text-amber-text",
   purple: "bg-purple/10 text-purple-text",
   red: "bg-red/10 text-red-text",

@@ -93,7 +93,7 @@ export function EntrepotSelector({
               <span className="flex min-w-0 flex-col items-start break-words leading-tight">
                 <span className="min-w-0 max-w-full break-words">{entrepot.nom}</span>
                 {hint !== undefined && (
-                  <span className={cn("min-w-0 max-w-full break-words font-mono text-caption", selectionne ? "text-white/80" : "text-muted")}>
+                  <span className={cn("min-w-0 max-w-full break-words font-mono text-caption", selectionne ? "text-accent-on/80" : "text-muted")}>
                     {formatQuantite(hint, unite)} en stock
                   </span>
                 )}

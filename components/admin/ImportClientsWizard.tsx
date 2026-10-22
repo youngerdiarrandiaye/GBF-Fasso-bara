@@ -259,7 +259,7 @@ export function ImportClientsWizard() {
             )}
           >
             {f.label}
-            <span className={cn("font-mono text-caption", filtre === f.id ? "text-white/80" : "text-muted")}>{f.n}</span>
+            <span className={cn("font-mono text-caption", filtre === f.id ? "text-accent-on/80" : "text-muted")}>{f.n}</span>
           </button>
         ))}
         <span className="mx-1 hidden h-9 w-px bg-border sm:block" aria-hidden="true" />
@@ -289,7 +289,7 @@ export function ImportClientsWizard() {
                       disabled={ligne.erreurs.length > 0}
                       onChange={() => basculer(ligne)}
                       aria-label={`Importer ${ligne.nom}`}
-                      className="focus-ring mt-0.5 h-6 w-6 shrink-0 accent-[var(--color-green-dk)]"
+                      className="focus-ring mt-0.5 h-6 w-6 shrink-0 accent-[var(--accent)]"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-body font-semibold text-text">{ligne.nom}</p>
@@ -355,7 +355,7 @@ export function ImportClientsWizard() {
                           disabled={ligne.erreurs.length > 0}
                           onChange={() => basculer(ligne)}
                           aria-label={`Importer ${ligne.nom}`}
-                          className="focus-ring h-5 w-5 accent-[var(--color-green-dk)]"
+                          className="focus-ring h-5 w-5 accent-[var(--accent)]"
                         />
                       </td>
                       <td className="px-2 py-3">
