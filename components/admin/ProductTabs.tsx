@@ -65,7 +65,7 @@ export function ProductTabs({
           onClick={() => setOnglet("mouvements")}
           className={cn(
             "focus-ring min-h-11 min-w-0 break-words rounded-full px-2 py-2 text-body-sm font-medium transition-colors duration-btn sm:rounded-none sm:border-b-2 sm:px-4 sm:py-3 sm:text-body",
-            onglet === "mouvements" ? "bg-green-dk text-white sm:border-green sm:bg-transparent sm:text-text" : "text-muted sm:border-transparent"
+            onglet === "mouvements" ? "bg-accent text-accent-on sm:border-accent sm:bg-transparent sm:text-text" : "text-muted sm:border-transparent"
           )}
         >
           Mouvements de stock
@@ -75,7 +75,7 @@ export function ProductTabs({
           onClick={() => setOnglet("ventes")}
           className={cn(
             "focus-ring min-h-11 min-w-0 break-words rounded-full px-2 py-2 text-body-sm font-medium transition-colors duration-btn sm:rounded-none sm:border-b-2 sm:px-4 sm:py-3 sm:text-body",
-            onglet === "ventes" ? "bg-green-dk text-white sm:border-green sm:bg-transparent sm:text-text" : "text-muted sm:border-transparent"
+            onglet === "ventes" ? "bg-accent text-accent-on sm:border-accent sm:bg-transparent sm:text-text" : "text-muted sm:border-transparent"
           )}
         >
           Historique des ventes

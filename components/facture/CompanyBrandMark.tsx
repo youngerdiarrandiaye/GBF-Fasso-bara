@@ -56,7 +56,7 @@ export function CompanyBrandMark({
 
   return (
     <span
-      className={`flex ${classeTaille} shrink-0 items-center justify-center rounded-input bg-green-dk text-body-sm font-bold text-white`}
+      className={`flex ${classeTaille} shrink-0 items-center justify-center rounded-input bg-accent text-body-sm font-bold text-accent-on`}
       aria-hidden="true"
     >
       {initiales || "?"}

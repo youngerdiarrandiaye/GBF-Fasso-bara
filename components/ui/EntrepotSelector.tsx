@@ -79,15 +79,15 @@ export function EntrepotSelector({
               className={cn(
                 "focus-ring flex min-h-11 min-w-0 max-w-full items-center gap-2 rounded-input border px-4 py-3 text-left text-body transition-transform duration-btn ease-standard disabled:cursor-not-allowed disabled:opacity-40",
                 selectionne
-                  ? "badge-pastel-green border-green-dk font-semibold ring-1 ring-green-dk"
+                  ? "badge-pastel-green border-accent font-semibold ring-1 ring-accent"
                   : exclu
                     ? "cursor-not-allowed border-border bg-surface opacity-40"
-                    : "border-border bg-surface text-text hover:scale-[1.02] hover:border-green/60"
+                    : "border-border bg-surface text-text hover:scale-[1.02] hover:border-accent/60"
               )}
             >
               <FontAwesomeIcon
                 icon={faWarehouse}
-                className={cn("h-4 w-4 shrink-0", selectionne ? "text-green-text" : "text-muted")}
+                className={cn("h-4 w-4 shrink-0", selectionne ? "text-accent-text" : "text-muted")}
                 aria-hidden="true"
               />
               <span className="flex min-w-0 flex-col items-start break-words leading-tight">

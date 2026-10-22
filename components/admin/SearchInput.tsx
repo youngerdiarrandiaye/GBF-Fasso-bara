@@ -44,7 +44,7 @@ export function SearchInput({ placeholder, label }: { placeholder: string; label
       </div>
       {isPending && <LoadingStatus label="Recherche en cours…" />}
       {valeur && (
-        <button type="button" onClick={reinitialiser} className="focus-ring min-h-9 rounded-input px-2 text-body-sm font-medium text-green-text hover:underline">
+        <button type="button" onClick={reinitialiser} className="focus-ring min-h-9 rounded-input px-2 text-body-sm font-medium text-accent-text hover:underline">
           Réinitialiser la recherche
         </button>
       )}

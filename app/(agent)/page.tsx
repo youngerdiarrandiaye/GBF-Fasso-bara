@@ -92,7 +92,7 @@ export default async function AccueilAgentPage() {
 
       <Link
         href="/nouvelle-facture"
-        className="focus-ring flex min-h-14 items-center justify-center gap-3 rounded-modal bg-green-dk px-5 text-h3 font-semibold text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] lg:hidden"
+        className="focus-ring flex min-h-14 items-center justify-center gap-3 rounded-modal bg-accent px-5 text-h3 font-semibold text-accent-on transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] lg:hidden"
       >
         <FontAwesomeIcon icon={faFileCirclePlus} className="h-5 w-5" aria-hidden="true" />
         Nouvelle facture
@@ -111,7 +111,7 @@ export default async function AccueilAgentPage() {
             key={action.href}
             href={action.href}
             className={`focus-ring flex min-h-24 min-w-0 flex-col justify-between gap-3 rounded-modal border p-4 text-body font-semibold transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] ${
-              action.primary ? "border-green-dk bg-green-dk text-white" : "border-border bg-surface text-text"
+              action.primary ? "border-accent bg-accent text-accent-on" : "border-border bg-surface text-text"
             }`}
           >
             <FontAwesomeIcon icon={action.icon} className="h-6 w-6" aria-hidden="true" />
@@ -138,7 +138,7 @@ export default async function AccueilAgentPage() {
                   </div>
                   <Link
                     href={`/bons-livraison/nouveau?facture=${f.id}`}
-                    className="focus-ring inline-flex h-tap shrink-0 items-center rounded-input border border-green-dk px-4 text-body font-semibold text-green-text hover:bg-surface-2"
+                    className="focus-ring inline-flex h-tap shrink-0 items-center rounded-input border border-accent px-4 text-body font-semibold text-accent-text hover:bg-surface-2"
                   >
                     Livrer
                   </Link>

@@ -109,7 +109,7 @@ export function MesFacturesList({
             onClick={() => setEntrepotFiltre(TOUS_LES_ENTREPOTS)}
             className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
               entrepotFiltre === TOUS_LES_ENTREPOTS
-                ? "badge-pastel-green font-semibold ring-1 ring-green-dk"
+                ? "badge-pastel-green font-semibold ring-1 ring-accent"
                 : "border border-border bg-surface text-muted hover:text-text"
             }`}
           >
@@ -122,7 +122,7 @@ export function MesFacturesList({
               onClick={() => setEntrepotFiltre(entrepot.id)}
               className={`focus-ring tap-target shrink-0 rounded-pill px-4 text-body font-medium ${
                 entrepotFiltre === entrepot.id
-                  ? "badge-pastel-green font-semibold ring-1 ring-green-dk"
+                  ? "badge-pastel-green font-semibold ring-1 ring-accent"
                   : "border border-border bg-surface text-muted hover:text-text"
               }`}
             >

@@ -147,7 +147,7 @@ export function ImportClientsWizard() {
         <div className="flex flex-wrap gap-3">
           <Link
             href="/admin/clients"
-            className="focus-ring inline-flex h-tap items-center rounded-input border border-green-dk bg-green-dk px-4 text-body font-medium text-white hover:brightness-90"
+            className="focus-ring inline-flex h-tap items-center rounded-input border border-accent bg-accent px-4 text-body font-medium text-accent-on hover:brightness-90"
           >
             Voir les clients
           </Link>
@@ -177,8 +177,8 @@ export function ImportClientsWizard() {
             if (fichier) void lireFichier(fichier);
           }}
           className={cn(
-            "focus-within:ring-2 focus-within:ring-green flex cursor-pointer flex-col items-center gap-3 rounded-card border-2 border-dashed px-6 py-12 text-center transition-colors",
-            glisse ? "border-green bg-green/5" : "border-border bg-surface hover:border-green/60"
+            "focus-within:ring-2 focus-within:ring-accent flex cursor-pointer flex-col items-center gap-3 rounded-card border-2 border-dashed px-6 py-12 text-center transition-colors",
+            glisse ? "border-accent bg-accent/5" : "border-border bg-surface hover:border-accent/60"
           )}
         >
           <FontAwesomeIcon icon={faFileExcel} className="h-10 w-10 text-green-text" aria-hidden="true" />
@@ -255,7 +255,7 @@ export function ImportClientsWizard() {
             onClick={() => setFiltre(f.id)}
             className={cn(
               "focus-ring inline-flex h-9 items-center gap-2 rounded-input border px-3 text-body-sm font-medium transition-colors",
-              filtre === f.id ? "border-green-dk bg-green-dk text-white" : "border-border bg-surface text-text hover:bg-surface-2"
+              filtre === f.id ? "border-accent bg-accent text-accent-on" : "border-border bg-surface text-text hover:bg-surface-2"
             )}
           >
             {f.label}

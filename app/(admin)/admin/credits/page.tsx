@@ -93,7 +93,7 @@ export default async function CreditsPage({
           <Link
             href="/admin/credits"
             className={`focus-ring rounded-input px-3 py-2 text-body-sm font-medium ${
-              vueStatut === "en_cours" ? "bg-green-dk text-white" : "bg-surface-2 text-muted hover:text-text"
+              vueStatut === "en_cours" ? "bg-accent text-accent-on" : "bg-surface-2 text-muted hover:text-text"
             }`}
           >
             En cours
@@ -101,7 +101,7 @@ export default async function CreditsPage({
           <Link
             href="/admin/credits?statut=solde"
             className={`focus-ring rounded-input px-3 py-2 text-body-sm font-medium ${
-              vueStatut === "solde" ? "bg-green-dk text-white" : "bg-surface-2 text-muted hover:text-text"
+              vueStatut === "solde" ? "bg-accent text-accent-on" : "bg-surface-2 text-muted hover:text-text"
             }`}
           >
             Historique (soldés)

@@ -1,0 +1,98 @@
+/* =============================================================================
+   THÈMES DE MARQUE (kit CoachSen) — posés sur <html data-brand="…">, voir
+   lib/theme.ts. « Comptoir » est le thème par défaut (blocs :root / admin /
+   agent de globals.css) ; les blocs suivants le surchargent. La marque
+   (--accent) est volontairement distincte du vert de STATUT (--color-green :
+   « payée », stock OK) qui, lui, ne change jamais de thème.
+   Règle de lisibilité : le texte posé sur l'accent est toujours --on-accent ;
+   l'accent n'est jamais utilisé comme couleur de texte sur fond clair
+   (--accent-text, plus foncé, prend le relais).
+   ============================================================================= */
+
+/* Nuit citron — sombre, vert citron */
+:root[data-brand="nuit"],
+[data-brand="nuit"] [data-theme="admin"],
+[data-brand="nuit"] [data-theme="agent"] {
+  --color-bg: #0A0A0A;
+  --color-surface: #121212;
+  --color-surface-2: #1B1B1B;
+  --color-border: #2A2A2A;
+  --color-text: #F2F2F2;
+  --color-muted: #9B9B9B;
+  --accent: #C8F31D;
+  --accent-text: #C8F31D;
+  --on-accent: #0A0A0A;
+  --grad: #C8F31D;
+  --glow: radial-gradient(120% 90% at 100% 0%, #C8F31D26 0%, #C8F31D00 55%);
+  --color-encre: #121212;
+  --color-encre-muted: #9B9B9B;
+  color-scheme: dark;
+}
+
+/* Corail — clair, rose et orange */
+:root[data-brand="corail"],
+[data-brand="corail"] [data-theme="admin"],
+[data-brand="corail"] [data-theme="agent"] {
+  --color-bg: #FBF6F8;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F7EEF2;
+  --color-border: #EADDE4;
+  --color-text: #1D1620;
+  --color-muted: #7D6F78;
+  --accent: #FF1F6B;
+  --accent-text: #C0124F;
+  --on-accent: #FFFFFF;
+  --grad: linear-gradient(160deg, #FF1F6B 0%, #FF6A4D 60%, #FF9F43 100%);
+  --glow: radial-gradient(120% 90% at 100% 0%, #FF1F6B1F 0%, #FF1F6B00 55%);
+  --color-encre: #1D1620;
+  --color-encre-muted: #D9C5D0;
+  --color-sidebar-bg: var(--color-surface);
+  --color-sidebar-text: var(--color-text);
+  --color-sidebar-text-muted: var(--color-muted);
+  --color-sidebar-active-bg: #FFE3EC;
+  --color-sidebar-active-text: #C0124F;
+}
+
+/* Lagon — sombre, anthracite et turquoise */
+:root[data-brand="lagon"],
+[data-brand="lagon"] [data-theme="admin"],
+[data-brand="lagon"] [data-theme="agent"] {
+  --color-bg: #0C0D0E;
+  --color-surface: #161819;
+  --color-surface-2: #1E2123;
+  --color-border: #2C3133;
+  --color-text: #F2F5F6;
+  --color-muted: #8F9C9F;
+  --accent: #5FC9D2;
+  --accent-text: #5FC9D2;
+  --on-accent: #062A2E;
+  --grad: linear-gradient(160deg, #3B8A92 0%, #2B6870 100%);
+  --glow: radial-gradient(120% 90% at 100% 0%, #5FC9D226 0%, #5FC9D200 55%);
+  --color-encre: #14282B;
+  --color-encre-muted: #A8C4C7;
+  color-scheme: dark;
+}
+
+/* Réglages communs aux deux thèmes sombres : couleurs de texte de statut
+   éclaircies, ombres noires, menu latéral qui suit la surface. */
+:root[data-brand="nuit"],
+[data-brand="nuit"] [data-theme="admin"],
+[data-brand="nuit"] [data-theme="agent"],
+:root[data-brand="lagon"],
+[data-brand="lagon"] [data-theme="admin"],
+[data-brand="lagon"] [data-theme="agent"] {
+  --color-text-green: var(--color-green);
+  --color-text-amber: var(--color-amber);
+  --color-text-red: var(--color-red);
+  --color-text-blue: #60A5FA;
+  --color-text-purple: #A78BFA;
+  --color-sidebar-bg: var(--color-surface);
+  --color-sidebar-text: var(--color-text);
+  --color-sidebar-text-muted: var(--color-muted);
+  --color-sidebar-active-bg: var(--accent);
+  --color-sidebar-active-text: var(--on-accent);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.40);
+  --shadow-card-hover: 0 20px 40px rgba(0, 0, 0, 0.48);
+}

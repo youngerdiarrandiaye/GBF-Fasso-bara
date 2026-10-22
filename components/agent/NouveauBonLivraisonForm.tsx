@@ -324,8 +324,8 @@ export function NouveauBonLivraisonForm({
       <ol aria-label="Étapes de la livraison" className="grid grid-cols-3 gap-2">
         {["Client", "Produits", "Confirmation"].map((label, index) => (
           <li key={label} aria-current={etape === index + 1 ? "step" : undefined} className="flex flex-col gap-1.5 pt-1 text-body">
-            <span aria-hidden="true" className={`h-1 rounded-pill ${index + 1 <= etape ? "bg-green-dk" : "bg-border"}`} />
-            <span className={etape === index + 1 ? "font-semibold text-text" : index + 1 < etape ? "font-medium text-green-text" : "text-muted"}>{label}</span>
+            <span aria-hidden="true" className={`h-1 rounded-pill ${index + 1 <= etape ? "bg-accent" : "bg-border"}`} />
+            <span className={etape === index + 1 ? "font-semibold text-text" : index + 1 < etape ? "font-medium text-accent-text" : "text-muted"}>{label}</span>
           </li>
         ))}
       </ol>

@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faHouse, faFileLines, faUsers, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { SignOutButton } from "@/components/agent/SignOutButton";
 import { cn } from "@/lib/cn";
+import { ThemePicker } from "@/components/admin/ThemePicker";
 
 /**
  * Navbar Agent — docs/design-system.md §6.10 : fond surface, sticky top,
@@ -26,7 +27,7 @@ export function NavBar({ nom }: { nom: string }) {
     <header className="sticky top-0 z-sticky border-b border-border bg-surface shadow-sm">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-input bg-green-dk text-body-sm font-bold text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-input bg-accent text-body-sm font-bold text-accent-on">
             GFB
           </span>
           <span className="hidden text-h3 text-text sm:inline">FASSO BARA</span>
@@ -35,28 +36,28 @@ export function NavBar({ nom }: { nom: string }) {
         <nav className="hidden items-center gap-1 lg:flex">
           <Link
             href="/"
-            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname === "/" ? "bg-surface-2 font-medium text-green-text" : "text-text")}
+            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname === "/" ? "bg-surface-2 font-medium text-accent-text" : "text-text")}
           >
             <FontAwesomeIcon icon={faHouse} className="h-4 w-4" aria-hidden="true" />
             Accueil
           </Link>
           <Link
             href="/mes-factures"
-            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname.startsWith("/mes-factures") ? "bg-surface-2 font-medium text-green-text" : "text-text")}
+            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname.startsWith("/mes-factures") ? "bg-surface-2 font-medium text-accent-text" : "text-text")}
           >
             <FontAwesomeIcon icon={faFileLines} className="h-4 w-4" aria-hidden="true" />
             Mes factures
           </Link>
           <Link
             href="/clients"
-            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname.startsWith("/clients") ? "bg-surface-2 font-medium text-green-text" : "text-text")}
+            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname.startsWith("/clients") ? "bg-surface-2 font-medium text-accent-text" : "text-text")}
           >
             <FontAwesomeIcon icon={faUsers} className="h-4 w-4" aria-hidden="true" />
             Clients
           </Link>
           <Link
             href="/bons-livraison"
-            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname.startsWith("/bons-livraison") ? "bg-surface-2 font-medium text-green-text" : "text-text")}
+            className={cn("focus-ring tap-target flex items-center gap-2 rounded-input px-3 text-body hover:bg-surface-2", pathname.startsWith("/bons-livraison") ? "bg-surface-2 font-medium text-accent-text" : "text-text")}
           >
             <FontAwesomeIcon icon={faTruck} className="h-4 w-4" aria-hidden="true" />
             Bons de livraison
@@ -67,7 +68,7 @@ export function NavBar({ nom }: { nom: string }) {
           <button
             type="button"
             onClick={() => setMenuOuvert((v) => !v)}
-            className="focus-ring flex h-11 items-center justify-center gap-2 rounded-input border border-green-dk bg-green-dk px-3 text-body-sm font-semibold text-white shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 lg:w-11 lg:rounded-full lg:border-transparent lg:bg-surface-2 lg:px-0 lg:text-text lg:shadow-none lg:hover:brightness-95"
+            className="focus-ring flex h-11 items-center justify-center gap-2 rounded-input border border-accent bg-accent px-3 text-body-sm font-semibold text-accent-on shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-95 lg:w-11 lg:rounded-full lg:border-transparent lg:bg-surface-2 lg:px-0 lg:text-text lg:shadow-none lg:hover:brightness-95"
             aria-haspopup="menu"
             aria-expanded={menuOuvert}
             aria-label="Menu"
@@ -99,6 +100,7 @@ export function NavBar({ nom }: { nom: string }) {
                   {lien.label}
                 </Link>
               ))}
+              <ThemePicker className="border-t border-border px-3 py-2" />
               <SignOutButton className="w-full justify-start" />
             </div>
           )}

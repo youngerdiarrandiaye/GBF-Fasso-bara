@@ -51,7 +51,7 @@ export function InstallAppPrompt({ className, compact = false }: { className?: s
       aria-label="Installer l'application"
       className={cn("min-w-0 gap-3 rounded-card border border-border bg-surface p-4", compact ? "grid grid-cols-[auto_minmax(0,1fr)] items-start" : "flex flex-col sm:flex-row sm:flex-wrap sm:items-center", className)}
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-input bg-green/10 text-green-text" aria-hidden="true">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-input bg-accent/10 text-accent-text" aria-hidden="true">
         <FontAwesomeIcon icon={mode === "ios" ? faArrowUpFromBracket : faDownload} className="h-4 w-4" />
       </span>
       <div className="min-w-0 flex-1">

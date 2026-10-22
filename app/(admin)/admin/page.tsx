@@ -377,7 +377,7 @@ export default async function DashboardAdminPage({
       <div className="hidden lg:block">
         <Link
           href="/admin/nouvelle-facture"
-          className="focus-ring inline-flex h-tap items-center gap-2 rounded-input border border-green-dk bg-green-dk px-4 text-body font-medium text-white transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98]"
+          className="focus-ring inline-flex h-tap items-center gap-2 rounded-input border border-accent bg-accent px-4 text-body font-medium text-accent-on transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98]"
         >
           <FontAwesomeIcon icon={faFileCirclePlus} className="h-4 w-4" aria-hidden="true" />
           Nouvelle facture
@@ -575,7 +575,7 @@ export default async function DashboardAdminPage({
                       <td className="px-5 py-4">
                         <Link
                           href={`/admin/factures/${facture.id}`}
-                          className="focus-ring font-mono text-body-sm font-semibold text-text group-hover:text-green-text"
+                          className="focus-ring font-mono text-body-sm font-semibold text-text group-hover:text-accent-text"
                         >
                           {facture.numero}
                         </Link>
@@ -598,7 +598,7 @@ export default async function DashboardAdminPage({
           {totalCountFactures > factures.length && (
             <Link
               href="/admin/factures"
-              className="focus-ring flex min-h-tap items-center justify-center gap-2 border-t border-border px-4 py-3 text-body font-medium text-green-text hover:bg-surface-2"
+              className="focus-ring flex min-h-tap items-center justify-center gap-2 border-t border-border px-4 py-3 text-body font-medium text-accent-text hover:bg-surface-2"
             >
               Voir plus
               <span className="text-body-sm text-muted">({totalCountFactures - factures.length} autre{totalCountFactures - factures.length > 1 ? "s" : ""})</span>

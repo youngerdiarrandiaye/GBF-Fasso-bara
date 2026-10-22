@@ -16,7 +16,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   // Vert foncé : contraste AA du texte blanc (#16A34A ne l'atteint pas) — D-25.
-  primary: "bg-green-dk text-white border border-green-dk hover:brightness-90",
+  primary: "bg-accent text-accent-on border border-accent hover:brightness-90",
   secondary: "bg-surface-2 text-text border border-border hover:bg-border/60",
   outline: "bg-transparent text-text border border-border hover:bg-surface-2",
   ghost: "bg-transparent text-text border border-transparent hover:bg-surface-2",
@@ -29,7 +29,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   // quasi invisible (contraste non-texte ≈ 1.2:1), voir docs §3.7/§6.1 D-18.
   // `navy` reste inchangé uniquement dans la sidebar (carte CTA "Besoin
   // d'aide ?", D-15) — jamais réutilisé ici.
-  navy: "bg-green-dk text-white border border-green-dk hover:brightness-110",
+  navy: "bg-accent text-accent-on border border-accent hover:brightness-110",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {

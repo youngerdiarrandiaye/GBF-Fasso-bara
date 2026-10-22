@@ -115,7 +115,7 @@ export default async function BonsLivraisonPage({
             >
               Filtrer
             </button>
-            {statut && <Link href="/admin/bons-livraison" className="focus-ring min-h-11 rounded-input px-3 py-2.5 text-body-sm font-medium text-green-text hover:underline">Réinitialiser</Link>}
+            {statut && <Link href="/admin/bons-livraison" className="focus-ring min-h-11 rounded-input px-3 py-2.5 text-body-sm font-medium text-accent-text hover:underline">Réinitialiser</Link>}
           </form>
         </Card>
 

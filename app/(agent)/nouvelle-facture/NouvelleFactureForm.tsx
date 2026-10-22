@@ -531,8 +531,8 @@ export function NouvelleFactureForm({
             aria-current={etape === index + 1 ? "step" : undefined}
             className="focus-ring flex min-h-tap flex-col gap-1.5 rounded-input px-1 pt-1 text-left text-body disabled:opacity-40"
           >
-            <span aria-hidden="true" className={`h-1 rounded-pill ${index + 1 <= etape ? "bg-green-dk" : "bg-border"}`} />
-            <span className={etape === index + 1 ? "font-semibold text-text" : index + 1 < etape ? "font-medium text-green-text" : "text-muted"}>
+            <span aria-hidden="true" className={`h-1 rounded-pill ${index + 1 <= etape ? "bg-accent" : "bg-border"}`} />
+            <span className={etape === index + 1 ? "font-semibold text-text" : index + 1 < etape ? "font-medium text-accent-text" : "text-muted"}>
               {libelle}
             </span>
           </button>

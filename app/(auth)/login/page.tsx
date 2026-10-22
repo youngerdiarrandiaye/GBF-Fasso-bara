@@ -29,7 +29,7 @@ export default async function LoginPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm font-semibold uppercase tracking-widest text-green-text">Bienvenue chez GFB</p>
+        <p className="text-body-sm font-semibold uppercase tracking-widest text-accent-text">Bienvenue chez GFB</p>
         <h1 className="text-h1 font-semibold tracking-tight text-text">Connectez-vous</h1>
         <p className="text-body leading-relaxed text-muted">Accédez à votre espace avec vos identifiants professionnels.</p>
       </div>

@@ -66,7 +66,7 @@ export function Sidebar({ nom, logoUrl }: { nom: string; logoUrl: string | null 
       </div>
 
       <div className={cn("px-4 py-4", collapsed && "hidden")}>
-        <label className="flex min-h-11 items-center gap-2 rounded-input border border-sidebar-text-muted/20 bg-sidebar-text-muted/5 px-3 focus-within:border-green">
+        <label className="flex min-h-11 items-center gap-2 rounded-input border border-sidebar-text-muted/20 bg-sidebar-text-muted/5 px-3 focus-within:border-accent">
           <FontAwesomeIcon icon={faMagnifyingGlass} className="h-4 w-4 text-sidebar-text-muted" aria-hidden="true" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Rechercher dans le menu" placeholder="Rechercher une rubrique…" className="min-w-0 flex-1 bg-transparent py-2 text-body-sm text-sidebar-text outline-none placeholder:text-sidebar-text-muted" />
           {search && <button type="button" onClick={() => setSearch("")} aria-label="Effacer la recherche" className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-input"><FontAwesomeIcon icon={faXmark} className="h-3 w-3" /></button>}

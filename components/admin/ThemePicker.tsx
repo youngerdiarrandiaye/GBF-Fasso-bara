@@ -1,55 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { cn } from "@/lib/cn";
+import { THEMES, THEME_DEFAUT, THEME_EVENT, appliquerTheme, lireTheme, type ThemeId } from "@/lib/theme";
 
-const STORAGE_KEY = "gfb-admin-background";
-// « Comptoir » (clair) est le fond par défaut depuis D-25 ; l'ancien choix
-// « Clair » (lavande) enregistré dans un navigateur est repris en Comptoir.
-const THEMES = [
-  { id: "comptoir", label: "Comptoir", color: "#F4F6F3" },
-  { id: "forest", label: "Vert sombre", color: "#0F1712" },
-  { id: "night", label: "Bleu nuit", color: "#101827" },
-  { id: "sand", label: "Sable", color: "#F5EFE4" },
-] as const;
-type Theme = (typeof THEMES)[number]["id"];
-
-export function ThemePicker({ collapsed }: { collapsed: boolean }) {
-  const [theme, setTheme] = useState<Theme>("comptoir");
+/**
+ * Sélecteur de thème (kit CoachSen) : un aperçu cliquable par thème — fond du
+ * thème avec sa pastille d'accent. Le choix s'applique tout de suite à toute
+ * l'application (Admin, Agent, connexion) et reste mémorisé ; plusieurs
+ * sélecteurs peuvent être montés en même temps (sidebar + feuille « Plus »),
+ * ils restent synchronisés via l'événement THEME_EVENT.
+ */
+export function ThemePicker({ collapsed = false, className }: { collapsed?: boolean; className?: string }) {
+  const [theme, setTheme] = useState<ThemeId>(THEME_DEFAUT);
+  const nom = useId();
 
   useEffect(() => {
-    let saved: string | null = null;
-    try { saved = window.localStorage.getItem(STORAGE_KEY); } catch { /* Stockage indisponible. */ }
-    const initial = THEMES.find((item) => item.id === saved)?.id ?? "comptoir";
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTheme(initial);
-    document.documentElement.setAttribute("data-admin-background", initial);
-    return () => { document.documentElement.removeAttribute("data-admin-background"); };
+    setTheme(lireTheme());
+    const surChangement = (event: Event) => setTheme((event as CustomEvent<ThemeId>).detail);
+    window.addEventListener(THEME_EVENT, surChangement);
+    return () => window.removeEventListener(THEME_EVENT, surChangement);
   }, []);
 
-  function chooseTheme(next: Theme) {
-    setTheme(next);
-    document.documentElement.setAttribute("data-admin-background", next);
-    try { window.localStorage.setItem(STORAGE_KEY, next); } catch { /* Le choix reste actif pour cette session. */ }
-  }
-
   return (
-    <fieldset className={cn("flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-3", collapsed && "lg:hidden")}>
+    <fieldset className={cn("flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-3", collapsed && "lg:hidden", className)}>
       <legend className="sr-only">Thème de votre espace</legend>
-      <span aria-hidden="true" className="text-body-sm text-sidebar-text-muted">Thème</span>
+      <span aria-hidden="true" className="text-body-sm text-muted">Thème</span>
       <div className="flex items-center gap-1 lg:gap-2">
         {THEMES.map((item) => (
           <label key={item.id} title={item.label} className="relative flex h-11 w-11 cursor-pointer items-center justify-center lg:h-8 lg:w-8">
-            <input type="radio" name="admin-background" value={item.id} checked={theme === item.id}
-              onChange={() => chooseTheme(item.id)} aria-label={item.label} className="peer sr-only" />
-            <span aria-hidden="true"
+            <input
+              type="radio"
+              name={nom}
+              value={item.id}
+              checked={theme === item.id}
+              onChange={() => appliquerTheme(item.id)}
+              aria-label={item.label}
+              className="peer sr-only"
+            />
+            <span
+              aria-hidden="true"
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full border text-caption font-bold transition-shadow",
-                "peer-focus-visible:ring-2 peer-focus-visible:ring-green peer-focus-visible:ring-offset-2",
-                theme === item.id ? "border-green ring-2 ring-green ring-offset-2 ring-offset-sidebar-bg" : "border-black/20 hover:ring-2 hover:ring-green/40"
+                "flex h-8 w-8 items-center justify-center rounded-full border border-black/20 transition-shadow",
+                "peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-focus-visible:ring-offset-2",
+                theme === item.id ? "ring-2 ring-accent ring-offset-2 ring-offset-surface" : "hover:ring-2 hover:ring-accent/40"
               )}
-              style={{ backgroundColor: item.color, color: item.id === "comptoir" || item.id === "sand" ? "#182331" : "#FFFFFF" }}>
-              {theme === item.id ? "✓" : ""}
+              style={{ backgroundColor: item.fond }}
+            >
+              <span className="h-3.5 w-3.5 rounded-full" style={{ backgroundColor: item.accent }} />
             </span>
           </label>
         ))}

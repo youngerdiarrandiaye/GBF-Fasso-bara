@@ -47,7 +47,7 @@ export function EmptyState({
             "transition-transform duration-btn ease-standard hover:scale-[1.02] active:scale-[0.98] active:transition-none",
             action.variante === "outline"
               ? "border-border bg-transparent text-text hover:bg-surface-2"
-              : "border-green bg-green text-white hover:bg-green-dk"
+              : "border-accent bg-accent text-accent-on hover:bg-accent"
           )}
         >
           {action.label}

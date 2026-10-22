@@ -114,7 +114,7 @@ export function LoginForm() {
         </button>
       </div>
 
-      <Link href="/mot-de-passe-oublie" className="focus-ring self-end rounded-input text-body-sm font-medium text-green-text underline-offset-4 hover:underline">
+      <Link href="/mot-de-passe-oublie" className="focus-ring self-end rounded-input text-body-sm font-medium text-accent-text underline-offset-4 hover:underline">
         Mot de passe oublié ?
       </Link>
 

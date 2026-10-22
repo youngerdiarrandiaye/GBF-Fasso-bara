@@ -47,7 +47,7 @@ export function ProductPhotoGallery({ photosUrls, nom }: { photosUrls: string[];
               type="button"
               onClick={() => setIndexSelectionne(index)}
               className={`focus-ring h-8 w-8 shrink-0 overflow-hidden rounded-input border ${
-                index === indexSelectionne ? "border-green" : "border-border"
+                index === indexSelectionne ? "border-accent" : "border-border"
               }`}
               aria-label={`Voir la photo ${index + 1} de ${nom}`}
               aria-pressed={index === indexSelectionne}

@@ -150,7 +150,7 @@ export function AlertsBell({ alertesInitiales }: { alertesInitiales: AlerteStock
           <Link
             href="/admin/stock"
             onClick={() => setOuvert(false)}
-            className="focus-ring mt-1 block rounded-input px-2 py-2 text-center text-body-sm text-green-text hover:bg-surface-2"
+            className="focus-ring mt-1 block rounded-input px-2 py-2 text-center text-body-sm text-accent-text hover:bg-surface-2"
           >
             Voir le stock
           </Link>

@@ -101,11 +101,11 @@ export function StockFilters({ categories }: { categories: CategorieProduitRow[]
         <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
           <span className="text-body-sm text-muted">{filtresActifs.length} filtre{filtresActifs.length > 1 ? "s" : ""} actif{filtresActifs.length > 1 ? "s" : ""}</span>
           {filtresActifs.map(([cle, valeur]) => (
-            <button key={cle} type="button" onClick={() => appliquerFiltre(cle, "")} className="focus-ring min-h-9 rounded-badge bg-surface-2 px-3 text-body-sm text-text hover:text-green-text" aria-label={`Retirer le filtre ${cle}`}>
+            <button key={cle} type="button" onClick={() => appliquerFiltre(cle, "")} className="focus-ring min-h-9 rounded-badge bg-surface-2 px-3 text-body-sm text-text hover:text-accent-text" aria-label={`Retirer le filtre ${cle}`}>
               {libelleFiltre(cle, valeur)} ×
             </button>
           ))}
-          <button type="button" onClick={reinitialiser} className="focus-ring min-h-9 rounded-input px-2 text-body-sm font-medium text-green-text hover:underline">
+          <button type="button" onClick={reinitialiser} className="focus-ring min-h-9 rounded-input px-2 text-body-sm font-medium text-accent-text hover:underline">
             Réinitialiser
           </button>
         </div>

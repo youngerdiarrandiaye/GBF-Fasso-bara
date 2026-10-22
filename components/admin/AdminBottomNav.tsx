@@ -95,7 +95,7 @@ export function AdminBottomNav() {
             className="focus-ring relative flex min-w-0 items-start justify-center"
           >
             {/* Bouton rond surélevé, comme le « + » central des apps mobiles */}
-            <span className="absolute -top-5 flex h-14 w-14 items-center justify-center rounded-full border-4 border-surface bg-green-dk text-white shadow-lg transition-transform active:scale-95">
+            <span className="absolute -top-5 flex h-14 w-14 items-center justify-center rounded-full border-4 border-surface bg-accent text-accent-on shadow-lg transition-transform active:scale-95">
               <FontAwesomeIcon icon={faPlus} className="h-5 w-5" aria-hidden="true" />
             </span>
             <span className="sr-only">{ACTION_PRINCIPALE.label}</span>
@@ -114,7 +114,7 @@ export function AdminBottomNav() {
             aria-controls="admin-plus-sheet"
             className={cn(
               "focus-ring tap-target flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-input px-1 text-caption",
-              plusActif ? "font-semibold text-green-text" : "text-muted"
+              plusActif ? "font-semibold text-accent-text" : "text-muted"
             )}
           >
             <FontAwesomeIcon icon={faEllipsis} className="h-4 w-4" aria-hidden="true" />
@@ -145,7 +145,7 @@ export function AdminBottomNav() {
         )}
       >
         <div className="flex shrink-0 items-center gap-2 px-4 pt-4">
-          <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-input border border-sidebar-text-muted/20 bg-sidebar-text-muted/5 px-3 focus-within:border-green">
+          <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-input border border-sidebar-text-muted/20 bg-sidebar-text-muted/5 px-3 focus-within:border-accent">
             <FontAwesomeIcon icon={faMagnifyingGlass} className="h-4 w-4 text-sidebar-text-muted" aria-hidden="true" />
             <input
               value={recherche}
@@ -207,7 +207,7 @@ function OngletLien({ onglet, actif }: { onglet: (typeof ONGLETS_BAS)[number]; a
       aria-current={actif ? "page" : undefined}
       className={cn(
         "focus-ring tap-target flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-input px-1 text-caption",
-        actif ? "font-semibold text-green-text" : "text-muted"
+        actif ? "font-semibold text-accent-text" : "text-muted"
       )}
     >
       <FontAwesomeIcon icon={onglet.icon} className="h-4 w-4" aria-hidden="true" />

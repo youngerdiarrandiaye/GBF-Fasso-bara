@@ -23,7 +23,7 @@
  * bg-gradient-accent, bg-gradient-accent-y, text-display-lg.
  */
 
-module.exports = {
+const tokens = {
   colors: {
     bg: 'var(--color-bg)',
     surface: 'var(--color-surface)',
@@ -61,7 +61,13 @@ module.exports = {
       DEFAULT: 'var(--color-purple)',
       text: 'var(--color-text-purple)',
     },
+    // Marque (thèmes, app/themes.css) : bg-accent, text-accent-text (texte sur
+    // fond de page), text-accent-on (texte posé SUR l'accent). Le vert de
+    // statut reste `green`.
     accent: {
+      DEFAULT: 'var(--accent)',
+      text: 'var(--accent-text)',
+      on: 'var(--on-accent)',
       start: 'var(--color-accent-start)',
       end: 'var(--color-accent-end)',
     },
@@ -113,6 +119,8 @@ module.exports = {
     'gradient-accent': 'var(--gradient-accent)',
     'gradient-accent-y': 'var(--gradient-accent-y)',
     'gradient-hero': 'var(--gradient-hero)',
+    'gradient-brand': 'var(--grad)',
+    'glow-brand': 'var(--glow)',
   },
 
   borderRadius: {
@@ -195,3 +203,23 @@ module.exports = {
     'toast-in': 'toast-in var(--duration-toast) var(--ease-spring) forwards',
   },
 };
+
+/**
+ * Tailwind 3 ne génère aucune classe d'opacité (`bg-accent/10`, `border-border/60`)
+ * pour une couleur écrite `var(--…)`. Chaque couleur devient donc une fonction :
+ * sans opacité elle reste `var(--…)`, avec opacité elle devient un `color-mix`
+ * sur transparent (même rendu que rgb/alpha, mais compatible avec les thèmes).
+ */
+function avecOpacite(valeur) {
+  if (typeof valeur === 'string') {
+    return ({ opacityValue }) =>
+      opacityValue === undefined || opacityValue === '1'
+        ? valeur
+        : `color-mix(in srgb, ${valeur} calc(${opacityValue} * 100%), transparent)`;
+  }
+  return Object.fromEntries(Object.entries(valeur).map(([cle, v]) => [cle, avecOpacite(v)]));
+}
+
+tokens.colors = avecOpacite(tokens.colors);
+
+module.exports = tokens;
