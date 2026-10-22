@@ -4,6 +4,7 @@ import { NavBar } from "@/components/agent/NavBar";
 import { AgentBottomNav } from "@/components/agent/AgentBottomNav";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ConfirmProvider } from "@/components/ui/ConfirmProvider";
+import { SessionWatcher } from "@/components/ui/SessionWatcher";
 import { NetworkStatusBanner } from "@/components/ui/NetworkStatusBanner";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +44,7 @@ export default async function AgentLayout({ children }: { children: React.ReactN
     <div data-theme="agent" className="min-h-screen bg-bg">
       <ToastProvider>
       <ConfirmProvider>
+        <SessionWatcher />
         <NavBar nom={profil.nom} />
         <NetworkStatusBanner />
         <main className="mx-auto min-w-0 w-full max-w-5xl px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-6 lg:pb-10">{children}</main>

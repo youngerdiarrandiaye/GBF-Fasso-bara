@@ -6,6 +6,7 @@ import { AdminBottomNav } from "@/components/admin/AdminBottomNav";
 import { SidebarProvider } from "@/components/admin/SidebarContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ConfirmProvider } from "@/components/ui/ConfirmProvider";
+import { SessionWatcher } from "@/components/ui/SessionWatcher";
 import { NetworkStatusBanner } from "@/components/ui/NetworkStatusBanner";
 import type { AlerteFactureRow, AlerteStockRow, EntrepriseConfigRow } from "@/lib/supabase/database.types";
 
@@ -78,6 +79,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div data-theme="admin" className="min-h-screen bg-bg">
       <ToastProvider>
       <ConfirmProvider>
+        <SessionWatcher />
         <SidebarProvider>
           <div className="flex min-h-screen">
             <Sidebar nom={config?.nom ?? "GIE FASSO BARA"} logoUrl={config?.logo_url ?? null} />
