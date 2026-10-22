@@ -132,7 +132,7 @@ export default async function AccueilAgentPage() {
                 <Card className="flex items-center gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-body font-semibold text-text">{f.client_nom}</p>
-                    <p className="truncate font-mono text-body text-muted">
+                    <p className="truncate font-mono text-body text-muted montant">
                       {f.numero} · {formatMontant(f.total_general)}
                     </p>
                   </div>
@@ -165,7 +165,7 @@ export default async function AccueilAgentPage() {
                     <p className="break-words font-mono text-body text-muted">{facture.numero}</p>
                   </div>
                   <div className="flex min-w-0 flex-col items-start gap-1.5 sm:items-end">
-                    <span className="break-words font-mono text-body text-text">{formatMontant(facture.total_general)}</span>
+                    <span className="break-words font-mono text-body text-text montant">{formatMontant(facture.total_general)}</span>
                     <StatusBadge statut={facture.statut} />
                   </div>
                 </div>

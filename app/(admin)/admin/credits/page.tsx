@@ -119,8 +119,8 @@ export default async function CreditsPage({
                   <CreditStatusBadge statut={c.statut} />
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-3 rounded-input bg-surface-2 p-3">
-                  <div><p className="text-caption text-muted">Montant total</p><p className="font-mono text-body text-text">{formatMontant(c.montant_total)}</p></div>
-                  <div className="text-right"><p className="text-caption text-muted">Solde restant</p><p className="font-mono text-body font-semibold text-red-text">{formatMontant(c.solde_restant)}</p></div>
+                  <div><p className="text-caption text-muted">Montant total</p><p className="font-mono text-body text-text montant">{formatMontant(c.montant_total)}</p></div>
+                  <div className="text-right"><p className="text-caption text-muted">Solde restant</p><p className="font-mono text-body font-semibold text-red-text montant">{formatMontant(c.solde_restant)}</p></div>
                 </div>
               </Link>
             ))}
@@ -152,10 +152,10 @@ export default async function CreditsPage({
                       <td className="px-4 py-3 text-body font-medium text-text">{c.client?.nom}</td>
                       <td className="px-4 py-3 text-body-sm text-muted">{c.agent?.nom}</td>
                       <td className="px-4 py-3 text-body-sm text-muted">{formatDate(c.date_ouverture)}</td>
-                      <td className="px-4 py-3 text-right font-mono text-body text-text">
+                      <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                         {formatMontant(c.montant_total)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-body font-medium text-red-text">
+                      <td className="px-4 py-3 text-right font-mono text-body font-medium text-red-text montant">
                         {formatMontant(c.solde_restant)}
                       </td>
                       <td className="px-4 py-3">

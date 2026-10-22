@@ -454,7 +454,7 @@ export default async function DashboardAdminPage({
                       <Link href={`/admin/factures/${facture.facture_id}`} className="focus-ring truncate text-body font-semibold text-text hover:underline">{facture.client_nom}</Link>
                       <p className="mt-1 font-mono text-body-sm text-muted">{facture.numero}</p>
                     </div>
-                    <p className="shrink-0 font-mono text-body font-semibold text-red-text">{formatMontant(facture.solde_restant)}</p>
+                    <p className="shrink-0 font-mono text-body font-semibold text-red-text montant">{formatMontant(facture.solde_restant)}</p>
                   </div>
                   <div className="mt-3"><OverdueBadge joursDeRetard={facture.jours_de_retard} /></div>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -487,7 +487,7 @@ export default async function DashboardAdminPage({
                         </Link>
                       </td>
                       <td className="px-4 py-3 text-body text-text">{facture.client_nom}</td>
-                      <td className="px-4 py-3 text-right font-mono text-body text-text">
+                      <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                         {formatMontant(facture.solde_restant)}
                       </td>
                       <td className="px-4 py-3">
@@ -544,7 +544,7 @@ export default async function DashboardAdminPage({
                     <p className="truncate text-body font-semibold text-text">{facture.client?.nom ?? "Client non renseigné"}</p>
                     <p className="mt-1 font-mono text-caption text-muted">{facture.numero} · {formatDate(facture.date_facture)}</p>
                   </div>
-                  <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
+                  <p className="shrink-0 font-mono text-body font-semibold text-text montant">{formatMontant(facture.total_general)}</p>
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <StatusBadge statut={facture.statut} />
@@ -586,7 +586,7 @@ export default async function DashboardAdminPage({
                       <td className="px-5 py-4">
                         <StatusBadge statut={facture.statut} />
                       </td>
-                      <td className="whitespace-nowrap px-5 py-4 text-right font-mono text-body font-semibold text-text">
+                      <td className="whitespace-nowrap px-5 py-4 text-right font-mono text-body font-semibold text-text montant">
                         {formatMontant(facture.total_general)}
                       </td>
                     </tr>
@@ -626,7 +626,7 @@ export default async function DashboardAdminPage({
                       <span className="block text-body-sm text-muted">Ouvert le {formatDate(c.date_ouverture)}</span>
                     </span>
                     <span className="flex shrink-0 flex-col items-end gap-1">
-                      <span className="font-mono text-body font-semibold text-red-text">{formatMontant(c.solde_restant)}</span>
+                      <span className="font-mono text-body font-semibold text-red-text montant">{formatMontant(c.solde_restant)}</span>
                       <CreditStatusBadge statut={c.statut} />
                     </span>
                   </Link>
@@ -652,8 +652,8 @@ export default async function DashboardAdminPage({
             <ChartPeriodControl key={`${NB_SEMAINES}-${ventesDebutParam ?? ""}-${ventesFinParam ?? ""}`} valeurActuelle={NB_SEMAINES} dateDebut={periodePersonnalisee ? dateVersISO(debutPeriodeGraph) : undefined} dateFin={periodePersonnalisee ? dateVersISO(finPeriodeGraph) : undefined} />
           </div>
           <div className="mb-5 grid grid-cols-1 gap-3 border-y border-border py-4 sm:grid-cols-2">
-            <div><p className="text-body-sm text-muted">Ventes facturées sur la période</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-text">{formatMontant(semaines.reduce((total, semaine) => total + semaine.facture, 0))}</p></div>
-            <div><p className="text-body-sm text-muted">Paiements reçus sur la période</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-green-text">{formatMontant(semaines.reduce((total, semaine) => total + semaine.encaisse, 0))}</p></div>
+            <div><p className="text-body-sm text-muted">Ventes facturées sur la période</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-text montant">{formatMontant(semaines.reduce((total, semaine) => total + semaine.facture, 0))}</p></div>
+            <div><p className="text-body-sm text-muted">Paiements reçus sur la période</p><p className="mt-1 break-words font-mono text-h2 font-semibold text-green-text montant">{formatMontant(semaines.reduce((total, semaine) => total + semaine.encaisse, 0))}</p></div>
           </div>
           <WeeklySalesBarChart data={semaines} />
         </Card>

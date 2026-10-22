@@ -133,7 +133,7 @@ export default async function StockPage({
                   {produit.type_ligne_produit === "inclus_dans_kit" ? (
                     <span className="shrink-0 whitespace-nowrap text-body-sm text-muted">Inclus dans le kit</span>
                   ) : (
-                    <span className="shrink-0 whitespace-nowrap font-mono text-body font-semibold text-text">{formatMontant(produit.prix_unitaire ?? 0)}</span>
+                    <span className="shrink-0 whitespace-nowrap font-mono text-body font-semibold text-text montant">{formatMontant(produit.prix_unitaire ?? 0)}</span>
                   )}
                 </div>
                 <p className="mt-0.5 flex min-w-0 items-center gap-2 text-body-sm text-muted">

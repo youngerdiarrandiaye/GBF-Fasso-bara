@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
+import { useConfirm } from "@/components/ui/ConfirmProvider";
 import { useFacturePdfShare } from "./useFacturePdfShare";
 import { declencherTelechargementPdf, messageErreurPdf, normaliserUrlFichierLocal } from "./telechargerPdf";
 import { envoyerFactureParEmail } from "@/lib/actions/email-facture";
@@ -35,6 +36,7 @@ export function FactureActions({
   totalGeneral: number;
 }) {
   const { showToast } = useToast();
+  const confirmer = useConfirm();
   const [enCoursTelechargement, setEnCoursTelechargement] = useState(false);
   const [enCoursImpression, setEnCoursImpression] = useState(false);
   const [pdfUrlImpression, setPdfUrlImpression] = useState<string | null>(null);
@@ -83,7 +85,12 @@ export function FactureActions({
 
   async function envoyerEmail() {
     if (!clientEmail) return;
-    if (!window.confirm(`Envoyer ${factureNumero} par e-mail à ${clientEmail} ?`)) return;
+    const ok = await confirmer({
+      titre: "Envoyer la facture par e-mail ?",
+      message: `${factureNumero} sera envoyée à ${clientEmail}. Le client la recevra tout de suite, en pièce jointe.`,
+      libelleConfirmer: "Envoyer",
+    });
+    if (!ok) return;
     setEnCoursEmail(true);
     const resultat = await envoyerFactureParEmail(factureId);
     setEnCoursEmail(false);

@@ -35,7 +35,7 @@ export function NestedRadialProgress({
           <p className="text-caption font-semibold uppercase tracking-[0.14em] text-muted">Agent leader</p>
           <p className="mt-1 truncate text-h3 font-semibold text-text">{topAgents[0]?.nom}</p>
         </div>
-        <p className="shrink-0 font-mono text-body font-semibold text-green-text">{formatMontant(topAgents[0]?.total ?? 0)}</p>
+        <p className="shrink-0 font-mono text-body font-semibold text-green-text montant">{formatMontant(topAgents[0]?.total ?? 0)}</p>
       </div>
 
       <ul className="grid gap-3">
@@ -49,7 +49,7 @@ export function NestedRadialProgress({
                   <span className="mr-2 font-mono text-caption text-muted">{String(index + 1).padStart(2, "0")}</span>
                   {agent.nom}
                 </p>
-                <p className="shrink-0 font-mono text-body text-muted">{pourcentage}% · {formatMontant(agent.total)}</p>
+                <p className="shrink-0 font-mono text-body text-muted montant">{pourcentage}% · {formatMontant(agent.total)}</p>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-surface-2">
                 <div className="h-full rounded-full bg-accent" style={{ width: `${largeur}%` }} />

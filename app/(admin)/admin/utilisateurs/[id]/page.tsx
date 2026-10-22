@@ -135,7 +135,7 @@ export default async function UtilisateurDetailPage({
         {estAgent ? (
           <Card>
             <p className="text-body-sm text-muted">Chiffre d&apos;affaires du mois</p>
-            <p className="mt-1 font-mono text-display text-text">{formatMontant(caMois)}</p>
+            <p className="mt-1 font-mono text-display text-text montant">{formatMontant(caMois)}</p>
           </Card>
         ) : (
           <Card>
@@ -150,7 +150,7 @@ export default async function UtilisateurDetailPage({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Card>
               <p className="text-body-sm text-muted">Chiffre d&apos;affaires total (factures conclues)</p>
-              <p className="mt-1 font-mono text-display text-text">{formatMontant(caTotal)}</p>
+              <p className="mt-1 font-mono text-display text-text montant">{formatMontant(caTotal)}</p>
             </Card>
             <Card>
               <p className="text-body-sm text-muted">Nombre de factures</p>
@@ -172,7 +172,7 @@ export default async function UtilisateurDetailPage({
                           <p className="font-mono text-body font-semibold text-text">{facture.numero}</p>
                           <p className="mt-1 break-words text-body-sm text-muted">{facture.client?.nom} · {formatDate(facture.date_facture)}</p>
                         </div>
-                        <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
+                        <p className="shrink-0 font-mono text-body font-semibold text-text montant">{formatMontant(facture.total_general)}</p>
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <StatusBadge statut={facture.statut} />
@@ -222,7 +222,7 @@ export default async function UtilisateurDetailPage({
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-right font-mono text-body text-text">
+                        <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                           {formatMontant(facture.total_general)}
                         </td>
                       </tr>

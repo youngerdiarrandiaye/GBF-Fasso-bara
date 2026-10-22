@@ -155,7 +155,7 @@ export function ProduitAutocomplete({
                   {produit.type_ligne_produit === "inclus_dans_kit" ? (
                     <Badge tone="blue">Inclus dans kit</Badge>
                   ) : (
-                    <span className="shrink-0 font-mono text-body text-text">
+                    <span className="shrink-0 font-mono text-body text-text montant">
                       {formatMontant(produit.prix_unitaire ?? 0)}
                     </span>
                   )}

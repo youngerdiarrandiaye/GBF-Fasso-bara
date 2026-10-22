@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { Toaster, toast } from "vyrn";
 import type { ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { THEME_EVENT } from "@/lib/theme";
 import { faCheck, faTriangleExclamation, faXmark, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 export type ToastVariant = "success" | "warning" | "error" | "info";
@@ -19,6 +20,8 @@ interface ShowToastOptions {
    *  un id déjà existant met à jour ce toast au lieu d'en ajouter un second"
    *  (README vyrn, "Stable ids and deduplication") — sémantique identique. */
   key?: string;
+  /** Bouton d'action du toast (ex. « Actualiser »). */
+  action?: { label: string; onClick: () => void };
 }
 
 interface ToastContextValue {
@@ -62,6 +65,7 @@ function showToast(message: string, variant: ToastVariant = "info", options?: Sh
   const id = TOAST_FN[variant](message, {
     id: options?.key,
     ...(options?.persistent ? { duration: 0 } : {}),
+    ...(options?.action ? { action: { label: options.action.label, onClick: options.action.onClick } } : {}),
   });
   return String(id);
 }
@@ -117,19 +121,18 @@ function useEnDessousDe(largeurPx: number): boolean {
  * Router. Le nom du composant et sa prop `children` sont conservés
  * uniquement pour ne pas devoir toucher les deux fichiers de layout.
  */
-export function ToastProvider({
-  children,
-  theme = "light",
-}: {
-  children: ReactNode;
-  /** Admin est désormais un thème sombre permanent, indépendant de
-   *  `prefers-color-scheme` — passé explicitement par le layout Admin pour
-   *  que le "chrome" non redéfini par nos classes (ex. couleur par défaut de
-   *  la barre de progression) reste cohérent avec le canevas sombre. Agent
-   *  reste clair, valeur par défaut. */
-  theme?: "light" | "dark";
-}) {
+export function ToastProvider({ children }: { children: ReactNode }) {
   const mobile = useEnDessousDe(640);
+  // Le thème de marque (Nuit citron, Lagon = sombres ; Comptoir, Corail =
+  // clairs) décide du rendu des toasts : on lit le `color-scheme` calculé.
+  const sombre = useSyncExternalStore(
+    (notifier) => {
+      window.addEventListener(THEME_EVENT, notifier);
+      return () => window.removeEventListener(THEME_EVENT, notifier);
+    },
+    () => getComputedStyle(document.documentElement).colorScheme.includes("dark"),
+    () => false
+  );
 
   return (
     <>
@@ -137,7 +140,7 @@ export function ToastProvider({
       <Toaster
         position={mobile ? "bottom-center" : "top-right"}
         offset={mobile ? { bottom: 80, left: 16, right: 16 } : { top: 80, right: 16 }}
-        theme={theme}
+        theme={sombre ? "dark" : "light"}
         gap={8}
         zIndex={60}
         visibleToasts={4}

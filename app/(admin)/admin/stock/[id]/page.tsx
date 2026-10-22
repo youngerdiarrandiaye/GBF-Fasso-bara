@@ -170,7 +170,7 @@ export default async function ProduitDetailPage({
               <p className="mt-1 font-mono text-h2 text-text">Inclus</p>
             )
           ) : (
-            <p className="mt-1 font-mono text-h2 text-text">
+            <p className="mt-1 font-mono text-h2 text-text montant">
               {formatMontant(produitTyped.prix_unitaire ?? 0)}
             </p>
           )}

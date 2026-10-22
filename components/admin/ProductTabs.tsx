@@ -189,7 +189,7 @@ export function ProductTabs({
                       <p className="mt-1 break-words text-body-sm text-muted">{v.client_nom} · {formatDate(v.date_facture)}</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="font-mono text-body font-semibold text-text">{formatMontant(v.total_ligne)}</p>
+                      <p className="font-mono text-body font-semibold text-text montant">{formatMontant(v.total_ligne)}</p>
                       <p className="font-mono text-body-sm text-muted">{formatQuantite(v.quantite, libelleUnite(unite, v.quantite))}</p>
                     </div>
                   </div>
@@ -232,7 +232,7 @@ export function ProductTabs({
                     <td className="px-4 py-3 text-right font-mono text-body text-text">
                       {formatQuantite(v.quantite, libelleUnite(unite, v.quantite))}
                     </td>
-                    <td className="px-4 py-3 text-right font-mono text-body text-text">
+                    <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                       {formatMontant(v.total_ligne)}
                     </td>
                   </tr>

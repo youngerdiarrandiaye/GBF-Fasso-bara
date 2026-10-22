@@ -57,4 +57,4 @@ export function appliquerTheme(id: ThemeId, memoriser = true) {
  *  par défaut quand un autre thème est mémorisé. Doit rester autonome. */
 export const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});var m=${JSON.stringify(
   Object.fromEntries(THEMES.map((x) => [x.id, x.themeColor]))
-)};if(t&&t!==${JSON.stringify(THEME_DEFAUT)}&&m[t]){document.documentElement.setAttribute("data-brand",t);var e=document.querySelector('meta[name="theme-color"]');if(e)e.setAttribute("content",m[t]);}}catch(e){}})();`;
+)};if(localStorage.getItem("gfb-montants-masques")==="1")document.documentElement.setAttribute("data-montants","masques");if(t&&t!==${JSON.stringify(THEME_DEFAUT)}&&m[t]){document.documentElement.setAttribute("data-brand",t);var e=document.querySelector('meta[name="theme-color"]');if(e)e.setAttribute("content",m[t]);}}catch(e){}})();`;

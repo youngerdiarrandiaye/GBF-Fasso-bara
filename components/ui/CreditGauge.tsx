@@ -83,7 +83,7 @@ export function CreditGauge({
       {!compact && (
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-caption text-muted">{pourcentageDuSeuil}&nbsp;% du seuil</span>
-          <span className="min-w-0 break-words text-right font-mono text-body-sm text-muted">
+          <span className="min-w-0 break-words text-right font-mono text-body-sm text-muted montant">
             {formatMontant(encoursCredit)} / {formatMontant(seuilCreditMax)}
           </span>
         </div>

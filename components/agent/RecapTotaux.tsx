@@ -37,7 +37,7 @@ export function RecapTotaux({
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-body">
         <span className="text-muted">Total HT</span>
-        <span className="font-mono text-text">{formatMontant(totalHT)}</span>
+        <span className="font-mono text-text montant">{formatMontant(totalHT)}</span>
       </div>
 
       {remise > 0 && <p className="flex justify-between gap-3 text-body"><span>Remise</span><span>{formatMontant(remise)}</span></p>}
@@ -74,7 +74,7 @@ export function RecapTotaux({
           TVA ({Math.round(tvaTaux * 100)}%)
         </span>
         <span className="flex items-center gap-2">
-          {tvaActive && <span className="font-mono text-body text-text">{formatMontant(montantTva)}</span>}
+          {tvaActive && <span className="font-mono text-body text-text montant">{formatMontant(montantTva)}</span>}
           <input
             type="checkbox"
             checked={tvaActive}
@@ -87,7 +87,7 @@ export function RecapTotaux({
 
       <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-h3 text-text">Total général</span>
-        <span className="min-w-0 break-words font-mono text-h2 font-bold text-text">{formatMontant(totalGeneral)}</span>
+        <span className="min-w-0 break-words font-mono text-h2 font-bold text-text montant">{formatMontant(totalGeneral)}</span>
       </div>
     </div>
   );

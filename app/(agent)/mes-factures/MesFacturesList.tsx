@@ -151,7 +151,7 @@ export function MesFacturesList({
                   </p>
                 </div>
                 <div className="flex min-w-0 flex-col gap-1.5 sm:items-end">
-                  <span className="break-words font-mono text-body font-semibold text-text">
+                  <span className="break-words font-mono text-body font-semibold text-text montant">
                     {formatMontant(facture.total_general)}
                   </span>
                   <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">

@@ -132,11 +132,11 @@ export default async function FactureDetailAgentPage({
       <section className="grid grid-cols-1 overflow-hidden rounded-card border border-border bg-surface shadow-card sm:grid-cols-3">
         <div className="min-w-0 break-words border-b border-border px-3 py-3 sm:border-b-0 sm:border-r sm:px-4">
           <p className="text-caption uppercase tracking-wide text-muted">Total</p>
-          <p className="mt-1 font-mono text-body font-semibold text-text sm:text-h2">{formatMontant(facture.total_general)}</p>
+          <p className="mt-1 font-mono text-body font-semibold text-text sm:text-h2 montant">{formatMontant(facture.total_general)}</p>
         </div>
         <div className="min-w-0 break-words border-b border-border px-3 py-3 sm:border-b-0 sm:border-r sm:px-4">
           <p className="text-caption uppercase tracking-wide text-muted">Payé</p>
-          <p className="mt-1 font-mono text-body font-semibold text-green-text sm:text-h2">{formatMontant(totalPaye)}</p>
+          <p className="mt-1 font-mono text-body font-semibold text-green-text sm:text-h2 montant">{formatMontant(totalPaye)}</p>
         </div>
         <div className="min-w-0 break-words px-3 py-3 sm:px-4">
           <p className="text-caption uppercase tracking-wide text-muted">Reste</p>
@@ -217,7 +217,7 @@ export default async function FactureDetailAgentPage({
                   )}
                 </p>
               </div>
-              <p className="text-body text-muted">
+              <p className="text-body text-muted montant">
                 {formatQuantite(ligne.quantite, libelleUnite(ligne.produit?.unite ?? "piece", ligne.quantite))}
                 {ligne.produit?.type_ligne_produit !== "inclus_dans_kit" &&
                   ` · ${formatMontant(ligne.prix_unitaire)} / unité`}
@@ -269,37 +269,37 @@ export default async function FactureDetailAgentPage({
         <div className="flex flex-col gap-1.5 border-t border-border bg-surface-2 p-4 sm:p-5 lg:ml-auto lg:w-80">
           <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
             <span>Total HT</span>
-            <span className="font-mono text-text">{formatMontant(facture.total_ht)}</span>
+            <span className="font-mono text-text montant">{formatMontant(facture.total_ht)}</span>
           </div>
           {facture.remise_montant > 0 && (
             <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
               <span>Remise</span>
-              <span className="font-mono text-text">-{formatMontant(facture.remise_montant)}</span>
+              <span className="font-mono text-text montant">-{formatMontant(facture.remise_montant)}</span>
             </div>
           )}
           <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
             <span>Forfait transport</span>
-            <span className="font-mono text-text">{formatMontant(facture.forfait_transport)}</span>
+            <span className="font-mono text-text montant">{formatMontant(facture.forfait_transport)}</span>
           </div>
           {facture.tva_taux > 0 && (
             <div className="flex flex-wrap justify-between gap-2 text-body text-muted">
               <span>TVA ({(facture.tva_taux * 100).toFixed(0)}%)</span>
-              <span className="font-mono text-text">{formatMontant(facture.total_ht * facture.tva_taux)}</span>
+              <span className="font-mono text-text montant">{formatMontant(facture.total_ht * facture.tva_taux)}</span>
             </div>
           )}
           <div className="mt-2 flex flex-col gap-2 border-t border-border pt-2 text-h2 font-semibold text-text">
             <span>Total général</span>
-            <span className="font-mono">{formatMontant(facture.total_general)}</span>
+            <span className="font-mono montant">{formatMontant(facture.total_general)}</span>
           </div>
           {totalPaye > 0 && (
             <>
               <div className="flex flex-wrap justify-between gap-2 text-body text-green-text">
                 <span>Déjà payé</span>
-                <span className="font-mono">{formatMontant(totalPaye)}</span>
+                <span className="font-mono montant">{formatMontant(totalPaye)}</span>
               </div>
               <div className="flex flex-wrap justify-between gap-2 text-body font-medium text-red-text">
                 <span>Reste à payer</span>
-                <span className="font-mono">{formatMontant(resteAPayer)}</span>
+                <span className="font-mono montant">{formatMontant(resteAPayer)}</span>
               </div>
             </>
           )}
@@ -325,7 +325,7 @@ export default async function FactureDetailAgentPage({
                       {p.reference && ` · ${p.reference}`}
                     </p>
                   </div>
-                  <p className="shrink-0 font-mono text-body text-text">{formatMontant(p.montant)}</p>
+                  <p className="shrink-0 font-mono text-body text-text montant">{formatMontant(p.montant)}</p>
                 </div>
               ))}
               {remboursementsCredit.map((r) => (
@@ -337,7 +337,7 @@ export default async function FactureDetailAgentPage({
                       {r.notes && ` · ${r.notes}`}
                     </p>
                   </div>
-                  <p className="shrink-0 font-mono text-body text-text">{formatMontant(r.montant)}</p>
+                  <p className="shrink-0 font-mono text-body text-text montant">{formatMontant(r.montant)}</p>
                 </div>
               ))}
             </div>
@@ -358,7 +358,7 @@ export default async function FactureDetailAgentPage({
                       <td className="px-4 py-3 text-body text-muted">{formatDate(p.date_paiement)}</td>
                       <td className="px-4 py-3 text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</td>
                       <td className="px-4 py-3 text-body text-muted">{p.reference ?? "—"}</td>
-                      <td className="px-4 py-3 text-right font-mono text-body text-text">
+                      <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                         {formatMontant(p.montant)}
                       </td>
                     </tr>
@@ -368,7 +368,7 @@ export default async function FactureDetailAgentPage({
                       <td className="px-4 py-3 text-body text-muted">{formatDate(r.date_remboursement)}</td>
                       <td className="px-4 py-3 text-body text-text">Recouvrement crédit</td>
                       <td className="px-4 py-3 text-body text-muted">{r.notes ?? "—"}</td>
-                      <td className="px-4 py-3 text-right font-mono text-body text-text">
+                      <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                         {formatMontant(r.montant)}
                       </td>
                     </tr>

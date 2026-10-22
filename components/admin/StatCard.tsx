@@ -93,7 +93,7 @@ export function StatCard({
         <p className={cn("min-w-0 flex-1 text-body-sm font-medium", hero ? "text-grad-on/80" : "text-muted")}>{label}</p>
         {href && <span aria-hidden="true" className={cn("text-body-sm transition-transform group-hover:translate-x-1", hero ? "text-grad-on/80" : "text-muted")}>→</span>}
       </div>
-      <p className={cn("break-words font-mono text-[1.75rem] font-semibold leading-none tracking-[-0.04em]", toneClass)}>{valeurAffichee}</p>
+      <p className={cn("break-words font-mono text-[1.75rem] font-semibold leading-none tracking-[-0.04em]", toneClass, (format === "montant" || valeurAffichee.includes("FCFA")) && "montant")}>{valeurAffichee}</p>
       {hint && <p className={cn("text-body-sm", hero ? "text-grad-on/75" : "text-muted")}>{hint}</p>}
     </div>
   );

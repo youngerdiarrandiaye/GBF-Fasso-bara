@@ -194,7 +194,7 @@ export default async function ClientsAdminPage({
                         </td>
                         <td className="px-4 py-3 text-right font-mono text-body text-text">
                           {solde > 0 ? (
-                            <span className="text-red-text">{formatMontant(solde)}</span>
+                            <span className="text-red-text montant">{formatMontant(solde)}</span>
                           ) : (
                             formatMontant(0)
                           )}

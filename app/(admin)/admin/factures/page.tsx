@@ -141,7 +141,7 @@ export default async function FacturesAdminPage({
                     <p className="font-mono text-body-sm font-semibold text-text">{facture.numero}</p>
                     <p className="mt-1 truncate text-body font-medium text-text">{facture.client?.nom}</p>
                   </div>
-                  <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(facture.total_general)}</p>
+                  <p className="shrink-0 font-mono text-body font-semibold text-text montant">{formatMontant(facture.total_general)}</p>
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <StatusBadge statut={facture.statut} />
@@ -190,7 +190,7 @@ export default async function FacturesAdminPage({
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-body text-text">
+                      <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                         {formatMontant(facture.total_general)}
                       </td>
                     </tr>

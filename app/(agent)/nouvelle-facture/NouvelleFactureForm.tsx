@@ -626,9 +626,9 @@ export function NouvelleFactureForm({
               <span className="flex items-baseline gap-2">
                 <span className="min-w-0 break-words text-text">{ligne.nom}</span>
                 <span className="mb-1 min-w-4 flex-1 border-b border-dotted border-border" aria-hidden="true" />
-                <span className="shrink-0 text-right font-mono">{inclus ? "Inclus" : formatMontant(ligne.quantite * ligne.prix_unitaire)}</span>
+                <span className="shrink-0 text-right font-mono montant">{inclus ? "Inclus" : formatMontant(ligne.quantite * ligne.prix_unitaire)}</span>
               </span>
-              <span className="block font-mono text-body-sm text-muted">
+              <span className="block font-mono text-body-sm text-muted montant">
                 {inclus ? `${ligne.quantite} inclus dans le kit` : `${ligne.quantite} × ${formatMontant(ligne.prix_unitaire)}`}
               </span>
             </li>;
@@ -773,7 +773,7 @@ export function NouvelleFactureForm({
         {etape > 1 && (
           <p className="flex min-w-0 flex-col break-words leading-tight sm:mr-auto" aria-live="polite">
             <span className="text-body-sm text-muted">Total</span>
-            <strong className="font-mono text-body font-semibold text-text">{formatMontant(totalGeneral)}</strong>
+            <strong className="font-mono text-body font-semibold text-text montant">{formatMontant(totalGeneral)}</strong>
           </p>
         )}
         <Button

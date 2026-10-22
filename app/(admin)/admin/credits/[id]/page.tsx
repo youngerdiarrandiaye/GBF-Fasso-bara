@@ -79,7 +79,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
           </div>
           <p className="mt-1 text-body-sm text-muted">
             Solde restant :{" "}
-            <span className="font-mono font-medium text-text">{formatMontant(creditTyped.solde_restant)}</span>
+            <span className="font-mono font-medium text-text montant">{formatMontant(creditTyped.solde_restant)}</span>
           </p>
           {creditTyped.client?.telephone && (
             <p className="mt-0.5 text-body-sm text-muted">{creditTyped.client.telephone}</p>
@@ -97,15 +97,15 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
           <p className="text-body-sm text-muted">Montant total du crédit</p>
-          <p className="mt-1 font-mono text-h2 text-text">{formatMontant(creditTyped.montant_total)}</p>
+          <p className="mt-1 font-mono text-h2 text-text montant">{formatMontant(creditTyped.montant_total)}</p>
         </Card>
         <Card>
           <p className="text-body-sm text-muted">Déjà remboursé</p>
-          <p className="mt-1 font-mono text-h2 text-green-text">{formatMontant(creditTyped.montant_rembourse)}</p>
+          <p className="mt-1 font-mono text-h2 text-green-text montant">{formatMontant(creditTyped.montant_rembourse)}</p>
         </Card>
         <Card>
           <p className="text-body-sm text-muted">Solde restant dû</p>
-          <p className="mt-1 font-mono text-h2 text-red-text">{formatMontant(creditTyped.solde_restant)}</p>
+          <p className="mt-1 font-mono text-h2 text-red-text montant">{formatMontant(creditTyped.solde_restant)}</p>
         </Card>
       </div>
 
@@ -160,7 +160,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
               <li key={r.id} className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <p className="text-body-sm text-muted">{formatDate(r.date_remboursement)}</p>
-                  <p className="shrink-0 font-mono text-body font-semibold text-green-text">{formatMontant(r.montant)}</p>
+                  <p className="shrink-0 font-mono text-body font-semibold text-green-text montant">{formatMontant(r.montant)}</p>
                 </div>
                 <p className="mt-1 text-body-sm text-muted">Par {r.utilisateur?.nom ?? "—"}</p>
                 {r.notes && <p className="mt-1 break-words text-body-sm text-text">{r.notes}</p>}
@@ -187,7 +187,7 @@ export default async function CreditDetailPage({ params }: { params: Promise<{ i
                 remboursements.map((r) => (
                   <tr key={r.id} className="border-t border-border hover:bg-surface-2">
                     <td className="px-4 py-3 text-body-sm text-muted">{formatDate(r.date_remboursement)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-body text-green-text">
+                    <td className="px-4 py-3 text-right font-mono text-body text-green-text montant">
                       {formatMontant(r.montant)}
                     </td>
                     <td className="px-4 py-3 text-body-sm text-muted">{r.utilisateur?.nom ?? "—"}</td>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatMontant } from "@/lib/format";
+import { cn } from "@/lib/cn";
 
 /**
  * Ticket — synthèse chiffrée rendue sur la carte principale (dégradé de marque) (D-25, un seul bloc
@@ -61,7 +62,7 @@ export function Ticket({
           <h2 id={id} className="min-w-0 break-words text-body text-grad-on/75">{titre}</h2>
           {sousTitre && <p className="mt-0.5 min-w-0 break-words text-body text-grad-on/75">{sousTitre}</p>}
         </div>
-        <p className="break-words font-mono text-[2.25rem] font-semibold leading-none tracking-[-0.04em] sm:text-[3rem]">
+        <p className="break-words font-mono text-[2.25rem] font-semibold leading-none tracking-[-0.04em] sm:text-[3rem] montant">
           {formatMontant(montant)}
         </p>
         <p className="min-w-0 break-words text-body text-grad-on/75 group-hover:text-grad-on">{lien.label}</p>
@@ -82,7 +83,7 @@ export function Ticket({
                 )}
                 <span className="min-w-0 break-words text-body">{ligne.libelle}</span>
                 <span className="mb-1 min-w-4 flex-1 border-b border-dotted border-grad-on/40" aria-hidden="true" />
-                <span className="ml-auto min-w-0 max-w-full break-words text-right font-mono text-body font-semibold">{ligne.valeur}</span>
+                <span className={cn("ml-auto min-w-0 max-w-full break-words text-right font-mono text-body font-semibold", ligne.valeur.includes("FCFA") && "montant")}>{ligne.valeur}</span>
               </span>
               {(ligne.detail || ligne.jauge) && (
                 <span className="mt-1.5 flex min-w-0 flex-wrap items-center gap-3">

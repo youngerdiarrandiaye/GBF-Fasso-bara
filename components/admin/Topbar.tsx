@@ -5,6 +5,7 @@ import { SignOutButton } from "@/components/agent/SignOutButton";
 import { AlertsBell } from "@/components/admin/AlertsBell";
 import { PaymentAlertsBell } from "@/components/admin/PaymentAlertsBell";
 import { GlobalSearch } from "@/components/admin/GlobalSearch";
+import { MasquerMontantsButton } from "@/components/ui/MasquerMontantsButton";
 import type { AlerteFactureRow, AlerteStockRow } from "@/lib/supabase/database.types";
 
 /**
@@ -32,6 +33,7 @@ export function Topbar({
   return (
     <header className="sticky top-0 z-sticky flex h-16 min-w-0 items-center gap-1.5 border-b border-border bg-surface px-3 shadow-sm sm:gap-3 sm:px-4">
       <GlobalSearch />
+      <MasquerMontantsButton />
 
       <AlertsBell alertesInitiales={alertesInitiales} />
       <PaymentAlertsBell alertesInitiales={alertesPaiementInitiales} />

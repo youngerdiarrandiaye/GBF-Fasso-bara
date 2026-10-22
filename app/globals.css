@@ -350,3 +350,11 @@
     color: var(--color-muted);
   }
 }
+
+/* Montants masqués (bouton œil, lib/amounts.ts) : flou + sélection désactivée.
+   Le flou reste lisible pour l'utilisateur qui réaffiche d'un geste, mais
+   illisible pour qui regarde par-dessus l'épaule. */
+html[data-montants="masques"] .montant {
+  filter: blur(9px);
+  user-select: none;
+}

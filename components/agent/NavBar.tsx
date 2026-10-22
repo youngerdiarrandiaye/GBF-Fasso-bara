@@ -8,6 +8,7 @@ import { faBars, faHouse, faFileLines, faUsers, faTruck } from "@fortawesome/fre
 import { SignOutButton } from "@/components/agent/SignOutButton";
 import { cn } from "@/lib/cn";
 import { ThemePicker } from "@/components/admin/ThemePicker";
+import { MasquerMontantsButton } from "@/components/ui/MasquerMontantsButton";
 
 /**
  * Navbar Agent — docs/design-system.md §6.10 : fond surface, sticky top,
@@ -64,6 +65,9 @@ export function NavBar({ nom }: { nom: string }) {
           </Link>
         </nav>
 
+        <div className="ml-auto mr-1 flex items-center">
+          <MasquerMontantsButton />
+        </div>
         <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-2 text-body-sm font-semibold text-text lg:hidden">{initiales || "A"}</span>
 
         <div className="relative hidden shrink-0 lg:block">

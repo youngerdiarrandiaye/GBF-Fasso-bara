@@ -137,11 +137,11 @@ export default async function FactureDetailAdminPage({
       <section className="grid grid-cols-1 overflow-hidden rounded-card border border-border bg-surface shadow-card sm:grid-cols-3">
         <div className="border-b border-border px-4 py-3 sm:border-b-0 sm:border-r">
           <p className="text-caption uppercase tracking-wide text-muted">Total</p>
-          <p className="mt-1 font-mono text-h2 text-text">{formatMontant(facture.total_general)}</p>
+          <p className="mt-1 font-mono text-h2 text-text montant">{formatMontant(facture.total_general)}</p>
         </div>
         <div className="border-b border-border px-4 py-3 sm:border-b-0 sm:border-r">
           <p className="text-caption uppercase tracking-wide text-muted">Payé</p>
-          <p className="mt-1 font-mono text-h2 text-green-text">{formatMontant(totalPaye)}</p>
+          <p className="mt-1 font-mono text-h2 text-green-text montant">{formatMontant(totalPaye)}</p>
         </div>
         <div className="px-4 py-3">
           <p className="text-caption uppercase tracking-wide text-muted">À encaisser</p>
@@ -270,39 +270,39 @@ export default async function FactureDetailAdminPage({
           <div className="flex min-w-0 w-full flex-col gap-1.5 rounded-input bg-surface-2 p-4 lg:w-80">
             <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
               <span>Total HT</span>
-              <span className="font-mono text-text">{formatMontant(facture.total_ht)}</span>
+              <span className="font-mono text-text montant">{formatMontant(facture.total_ht)}</span>
             </div>
             {facture.remise_montant > 0 && (
               <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
                 <span>Remise</span>
-                <span className="font-mono text-text">-{formatMontant(facture.remise_montant)}</span>
+                <span className="font-mono text-text montant">-{formatMontant(facture.remise_montant)}</span>
               </div>
             )}
             <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
               <span>Forfait transport</span>
-              <span className="font-mono text-text">{formatMontant(facture.forfait_transport)}</span>
+              <span className="font-mono text-text montant">{formatMontant(facture.forfait_transport)}</span>
             </div>
             {facture.tva_taux > 0 && (
               <div className="flex flex-wrap justify-between gap-x-3 text-body text-muted">
                 <span>TVA ({(facture.tva_taux * 100).toFixed(0)}%)</span>
-                <span className="font-mono text-text">
+                <span className="font-mono text-text montant">
                   {formatMontant(facture.total_ht * facture.tva_taux)}
                 </span>
               </div>
             )}
             <div className="mt-2 flex flex-wrap justify-between gap-x-3 border-t border-border pt-2 text-h2 font-semibold text-text">
               <span>Total général</span>
-              <span className="font-mono">{formatMontant(facture.total_general)}</span>
+              <span className="font-mono montant">{formatMontant(facture.total_general)}</span>
             </div>
             {totalPaye > 0 && (
               <>
                 <div className="flex flex-wrap justify-between gap-x-3 text-body text-green-text">
                   <span>Déjà payé</span>
-                  <span className="font-mono">{formatMontant(totalPaye)}</span>
+                  <span className="font-mono montant">{formatMontant(totalPaye)}</span>
                 </div>
                 <div className="flex flex-wrap justify-between gap-x-3 text-body font-medium text-red-text">
                   <span>Reste à payer</span>
-                  <span className="font-mono">{formatMontant(resteAPayer)}</span>
+                  <span className="font-mono montant">{formatMontant(resteAPayer)}</span>
                 </div>
               </>
             )}
@@ -352,7 +352,7 @@ export default async function FactureDetailAdminPage({
             <li key={p.id} className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</p>
-                <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(p.montant)}</p>
+                <p className="shrink-0 font-mono text-body font-semibold text-text montant">{formatMontant(p.montant)}</p>
               </div>
               <p className="mt-1 break-words text-body-sm text-muted">{formatDate(p.date_paiement)}{p.reference ? ` · ${p.reference}` : ""}</p>
             </li>
@@ -361,7 +361,7 @@ export default async function FactureDetailAdminPage({
             <li key={r.id} className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="text-body text-text">Recouvrement crédit</p>
-                <p className="shrink-0 font-mono text-body font-semibold text-text">{formatMontant(r.montant)}</p>
+                <p className="shrink-0 font-mono text-body font-semibold text-text montant">{formatMontant(r.montant)}</p>
               </div>
               <p className="mt-1 break-words text-body-sm text-muted">{formatDate(r.date_remboursement)}{r.notes ? ` · ${r.notes}` : ""}</p>
             </li>
@@ -388,7 +388,7 @@ export default async function FactureDetailAdminPage({
                     <td className="px-4 py-3 text-body-sm text-muted">{formatDate(p.date_paiement)}</td>
                     <td className="px-4 py-3 text-body text-text">{MODES_PAIEMENT_LABEL[p.mode_paiement]}</td>
                     <td className="px-4 py-3 text-body-sm text-muted">{p.reference ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-mono text-body text-text">
+                    <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                       {formatMontant(p.montant)}
                     </td>
                   </tr>
@@ -399,7 +399,7 @@ export default async function FactureDetailAdminPage({
                   <td className="px-4 py-3 text-body-sm text-muted">{formatDate(r.date_remboursement)}</td>
                   <td className="px-4 py-3 text-body text-text">Recouvrement crédit</td>
                   <td className="px-4 py-3 text-body-sm text-muted">{r.notes ?? "—"}</td>
-                  <td className="px-4 py-3 text-right font-mono text-body text-text">
+                  <td className="px-4 py-3 text-right font-mono text-body text-text montant">
                     {formatMontant(r.montant)}
                   </td>
                 </tr>

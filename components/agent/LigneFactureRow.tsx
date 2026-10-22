@@ -79,7 +79,7 @@ export function LigneFactureRow({
             {estInclusDansKit ? (
               <Badge tone="blue">Inclus</Badge>
             ) : (
-              <span className="min-w-0 break-words font-mono text-body text-text">{formatMontant(totalLigne)}</span>
+              <span className="min-w-0 break-words font-mono text-body text-text montant">{formatMontant(totalLigne)}</span>
             )}
           </div>
         </div>
