@@ -83,12 +83,12 @@
      cartes = rounded-xl, modals = rounded-2xl ; les badges de STATUT dérogent
      et utilisent rounded-full, voir --radius-badge-pill)
      --------------------------------------------------------------------------- */
-  --radius-input: 10px;         /* champs, boutons — « Comptoir » (D-25) */
+  --radius-input: 14px;         /* champs — kit CoachSen */
   --radius-badge: 8px;          /* rounded-lg — badges génériques (rôle, catégorie, kit) */
   --radius-badge-pill: 9999px;  /* rounded-full — badges de STATUT uniquement */
-  --radius-card: 14px;          /* cartes — « Comptoir » (D-25) */
+  --radius-card: 22px;          /* cartes et fenêtres — kit CoachSen */
   --radius-card-lg: var(--radius-card); /* 12px de secours — voir override [data-theme="admin"] et §3.6/D-11 */
-  --radius-modal: 16px;         /* rounded-2xl */
+  --radius-modal: 22px;         /* fenêtres */
 
   /* ---------------------------------------------------------------------------
      Motion — règles absolues de micro-interactions (docs/design-system.md §7)
@@ -135,7 +135,7 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-12: 48px;
-  --tap-target-min: 44px; /* cible tactile minimale, usage terrain */
+  --tap-target-min: 48px; /* cible tactile minimale (kit CoachSen) */
 
   /* ---------------------------------------------------------------------------
      Z-index
@@ -187,7 +187,7 @@
   --color-sidebar-active-bg: #E8F3EC;   /* item actif teinté (D-25, remplace le vert plein de D-16) */
   --color-sidebar-active-text: #0F5F2D;
 
-  --radius-card-lg: 16px; /* rounded-[20px] — cartes vedettes dashboard Admin uniquement, voir §3.6/D-11 (valeur conservée, contexte visuel remplacé par D-14) */
+  --radius-card-lg: 22px; /* cartes vedettes */
 
   /* Ombres fortes, noir pur — cohérent avec un fond sombre (§4 du doc,
      jamais mis à jour pendant la parenthèse Ultraleads). */

@@ -22,7 +22,7 @@
   --accent: #C8F31D;
   --accent-text: #C8F31D;
   --on-accent: #0A0A0A;
-  --grad: #C8F31D;
+  --grad: linear-gradient(160deg, #C8F31D 0%, #C8F31D 100%);
   --glow: radial-gradient(120% 90% at 100% 0%, #C8F31D26 0%, #C8F31D00 55%);
   --color-encre: #121212;
   --color-encre-muted: #9B9B9B;
@@ -96,3 +96,9 @@
   --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.40);
   --shadow-card-hover: 0 20px 40px rgba(0, 0, 0, 0.48);
 }
+
+/* Carte principale (chiffre clé) : fond --grad, texte --on-grad. */
+:root { --on-grad: #FFFFFF; }
+:root[data-brand="nuit"],
+[data-brand="nuit"] [data-theme="admin"],
+[data-brand="nuit"] [data-theme="agent"] { --on-grad: #0A0A0A; }

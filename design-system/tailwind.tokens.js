@@ -37,6 +37,8 @@ const tokens = {
       dk: 'var(--color-green-dk)',
       text: 'var(--color-text-green)',
     },
+    // Texte posé sur la carte principale (fond --grad) : bg-gradient-brand text-grad-on
+    'grad-on': 'var(--on-grad)',
     encre: {
       DEFAULT: 'var(--color-encre)',
       muted: 'var(--color-encre-muted)',

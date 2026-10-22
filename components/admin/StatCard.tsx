@@ -64,7 +64,7 @@ export function StatCard({
         : String(valeurAnimee)
       : value;
 
-  const toneClass = hero ? "text-text"
+  const toneClass = hero ? "text-grad-on"
     : tone === "green"
       ? "text-green-text"
       : tone === "amber"
@@ -75,7 +75,7 @@ export function StatCard({
             ? "text-blue-text"
             : "text-text";
 
-  const signalClass = hero ? "bg-green"
+  const signalClass = hero ? "bg-grad-on"
     : tone === "green"
       ? "bg-green"
       : tone === "amber"
@@ -90,11 +90,11 @@ export function StatCard({
     <div className="flex h-full flex-col justify-between gap-3">
       <div className="flex items-start gap-2">
         <span className={cn("mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full", signalClass)} aria-hidden="true" />
-        <p className={cn("min-w-0 flex-1 text-body-sm font-medium", hero ? "text-green-text" : "text-muted")}>{label}</p>
-        {href && <span aria-hidden="true" className={cn("text-body-sm transition-transform group-hover:translate-x-1", hero ? "text-muted" : "text-muted")}>→</span>}
+        <p className={cn("min-w-0 flex-1 text-body-sm font-medium", hero ? "text-grad-on/80" : "text-muted")}>{label}</p>
+        {href && <span aria-hidden="true" className={cn("text-body-sm transition-transform group-hover:translate-x-1", hero ? "text-grad-on/80" : "text-muted")}>→</span>}
       </div>
       <p className={cn("break-words font-mono text-[1.75rem] font-semibold leading-none tracking-[-0.04em]", toneClass)}>{valeurAffichee}</p>
-      {hint && <p className="text-body-sm text-muted">{hint}</p>}
+      {hint && <p className={cn("text-body-sm", hero ? "text-grad-on/75" : "text-muted")}>{hint}</p>}
     </div>
   );
 
@@ -111,7 +111,7 @@ export function StatCard({
       <Link href={href} className="focus-ring group block h-full rounded-card-lg">
         <Card
           interactive
-          className={cn("h-full cursor-pointer rounded-card-lg p-5", hero && "!border-[color-mix(in_srgb,var(--color-green)_34%,var(--color-border))]")}
+          className={cn("h-full cursor-pointer rounded-card-lg p-5", hero && "bg-gradient-brand !border-transparent")}
         >
           {content}
         </Card>
@@ -120,7 +120,7 @@ export function StatCard({
   }
 
   if (hero) {
-    return <Card className="rounded-card-lg !border-[color-mix(in_srgb,var(--color-green)_34%,var(--color-border))] p-5">{content}</Card>;
+    return <Card className="rounded-card-lg bg-gradient-brand !border-transparent p-5">{content}</Card>;
   }
 
   return <Card className="rounded-card-lg p-5">{content}</Card>;
