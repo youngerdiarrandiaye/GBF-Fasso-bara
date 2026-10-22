@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
@@ -45,9 +45,15 @@ export function FactureActions({
   const { partager, enCours: enCoursPartage } = useFacturePdfShare();
 
   const desactive = statut === "brouillon";
-  // Détection synchrone au render — le libellé ne doit pas attendre un appel
-  // réseau pour être décidé.
-  const supportePartageNatif = typeof navigator !== "undefined" && !!navigator.canShare;
+  // Détection synchrone côté client — le libellé ne doit pas attendre un appel
+  // réseau. Le rendu serveur (et l'hydratation) part de « WhatsApp », puis le
+  // navigateur bascule sur « Partager » s'il sait partager un fichier : sans
+  // useSyncExternalStore, les deux rendus diffèrent et React régénère l'arbre.
+  const supportePartageNatif = useSyncExternalStore(
+    () => () => {},
+    () => typeof navigator !== "undefined" && !!navigator.canShare,
+    () => false
+  );
   const libelleWhatsapp = supportePartageNatif ? "Partager" : "WhatsApp";
 
   async function telecharger() {

@@ -41,7 +41,7 @@ export function CompanyBrandMark({
         width={TAILLES_PX[size]}
         height={TAILLES_PX[size]}
         unoptimized={estHoteLocal}
-        className={`${classeTaille} shrink-0 rounded-input object-contain`}
+        className={`${classeTaille} shrink-0 rounded-input bg-white object-contain p-1 ring-1 ring-black/10`}
       />
     );
   }

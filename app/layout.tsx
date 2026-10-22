@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { ServiceWorkerRegister } from "@/components/ui/ServiceWorkerRegister";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
+import "@fontsource-variable/plus-jakarta-sans";
 import "./globals.css";
 import "./themes.css";
 

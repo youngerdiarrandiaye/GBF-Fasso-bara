@@ -90,7 +90,7 @@ export function Ticket({
                   {ligne.jauge && (
                     <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-grad-on/20" aria-hidden="true">
                       <span
-                        className={`block h-full rounded-full ${SIGNAL[ligne.jauge.zone]}`}
+                        className={`block h-full rounded-full ${ligne.jauge.zone === "green" ? "bg-grad-on" : SIGNAL[ligne.jauge.zone]}`}
                         style={{ width: `${Math.min(100, Math.round(ligne.jauge.ratio * 100))}%` }}
                       />
                     </span>

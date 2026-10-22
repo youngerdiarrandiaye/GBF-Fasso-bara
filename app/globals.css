@@ -113,7 +113,7 @@
      build ou le premier affichage, et la police native évite les décalages. */
   /* Geist (paquet npm `geist`, servi par l'application via next/font/local :
      aucun appel réseau à l'exécution) — direction « Comptoir » (D-25). */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Plus Jakarta Sans Variable', var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
 
   --text-display: 2rem;      /* 32px — valeurs clés dashboard */
