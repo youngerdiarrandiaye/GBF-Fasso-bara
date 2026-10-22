@@ -73,6 +73,36 @@ function resolveInternalFetchUrl(url: string): string {
 }
 
 /**
+ * Adresses à essayer, dans l'ordre, pour récupérer une image Storage :
+ * 1. la même origine que celle utilisée par la fonction pour ses propres
+ *    appels Storage (`SUPABASE_URL`) — c'est celle qui est sûrement joignable
+ *    depuis le conteneur, y compris sur un déploiement auto-hébergé où
+ *    l'adresse publique n'est pas joignable de l'intérieur (hairpin NAT) ou
+ *    porte un port fermé ;
+ * 2. l'adresse enregistrée telle quelle (image hébergée ailleurs, ou
+ *    `PUBLIC_SUPABASE_URL` correctement renseignée).
+ * Les URLs hors `/storage/v1/` ne sont jamais réécrites.
+ */
+function urlsCandidates(url: string): string[] {
+  const candidates: string[] = [];
+  const interne = resolveInternalFetchUrl(url);
+  if (interne !== url) candidates.push(interne);
+  try {
+    const internalBase = Deno.env.get("SUPABASE_URL");
+    const cible = new URL(url);
+    if (internalBase && cible.pathname.startsWith("/storage/v1/")) {
+      const base = new URL(internalBase);
+      cible.protocol = base.protocol;
+      cible.host = base.host;
+      const viaSupabaseUrl = cible.toString();
+      if (!candidates.includes(viaSupabaseUrl)) candidates.push(viaSupabaseUrl);
+    }
+  } catch { /* URL invalide : on ne garde que l'adresse d'origine */ }
+  if (!candidates.includes(url)) candidates.push(url);
+  return candidates;
+}
+
+/**
  * Télécharge une image (logo entreprise, tampon/signature ou photo produit)
  * et détecte son format à partir du Content-Type / de l'extension. Ne lève
  * jamais d'exception : retourne `null` si l'image est indisponible, pour ne
@@ -80,9 +110,23 @@ function resolveInternalFetchUrl(url: string): string {
  */
 export async function fetchImageBytes(url: string | null | undefined): Promise<FetchedImage | null> {
   if (!url) return null;
+
+  let res: Response | null = null;
+  for (const candidate of urlsCandidates(url)) {
+    try {
+      const essai = await fetch(candidate);
+      if (essai.ok) {
+        res = essai;
+        break;
+      }
+      console.warn(`fetchImageBytes: HTTP ${essai.status} pour ${candidate}`);
+    } catch (err) {
+      console.warn(`fetchImageBytes: échec du téléchargement de ${candidate}`, err);
+    }
+  }
+  if (!res) return null;
+
   try {
-    const res = await fetch(resolveInternalFetchUrl(url));
-    if (!res.ok) return null;
     const contentType = res.headers.get("content-type") ?? "";
     const bytes = new Uint8Array(await res.arrayBuffer());
     let kind: ImageKind;
@@ -91,7 +135,7 @@ export async function fetchImageBytes(url: string | null | undefined): Promise<F
     } else if (
       contentType.includes("jpeg") ||
       contentType.includes("jpg") ||
-      /\.(jpe?g)$/i.test(url)
+      /.(jpe?g)$/i.test(url)
     ) {
       kind = "jpg";
     } else {
@@ -101,7 +145,7 @@ export async function fetchImageBytes(url: string | null | undefined): Promise<F
     }
     return { bytes, kind };
   } catch (err) {
-    console.warn(`fetchImageBytes: échec du téléchargement de ${url}`, err);
+    console.warn(`fetchImageBytes: lecture impossible de ${url}`, err);
     return null;
   }
 }

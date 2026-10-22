@@ -599,7 +599,9 @@ async function buildFacturePdf(params: {
     ).length;
   }
   const validiteTexte = `Validité de la proforma : ${entreprise.validite_proforma_jours} jours à compter du ${formatDateFr(facture.date_facture)}.`;
-  lignesMentions += wrapText(validiteTexte, fonts.regular, 8, mentionsWidth).length;
+  if (facture.statut === "proforma") {
+    lignesMentions += wrapText(validiteTexte, fonts.regular, 8, mentionsWidth).length;
+  }
   let margeNotes = 0;
   if (facture.notes) {
     margeNotes = 4;
@@ -1321,9 +1323,13 @@ function drawMentionsLegales(
     }
   }
   const validiteTexte = `Validité de la proforma : ${entreprise.validite_proforma_jours} jours à compter du ${formatDateFr(facture.date_facture)}.`;
-  for (const line of wrapText(validiteTexte, fonts.regular, 8, mentionsWidth)) {
-    page.drawText(line, { x: MARGIN, y, size: 8, font: fonts.regular, color: COLOR_TEXT_PRIMARY });
-    y -= 11;
+  // La validité n'a de sens que tant que le document est une proforma : elle
+  // n'apparaît plus sur une facture validée ou payée.
+  if (facture.statut === "proforma") {
+    for (const line of wrapText(validiteTexte, fonts.regular, 8, mentionsWidth)) {
+      page.drawText(line, { x: MARGIN, y, size: 8, font: fonts.regular, color: COLOR_TEXT_PRIMARY });
+      y -= 11;
+    }
   }
   if (facture.notes) {
     y -= 4;
